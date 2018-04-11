@@ -1,0 +1,21 @@
+{
+  "identification": {
+    "images": [
+      {
+        "type": "main-id",
+        "url": "http://pixdaus.com/files/items/pics/7/84/542784_81cef138c75698faddafee92d42c0cc5_large.jpg"
+      }
+    ],
+    "lions": [
+      {
+        "id": 98
+      },
+      {
+        "id": 99
+      },
+      {
+        "id": 100
+      }
+    ]
+  }
+}

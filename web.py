@@ -91,4 +91,7 @@ api.add_resource(LincClassifyAPI, '/linc/v1/classify')
 api.add_resource(LincResultAPI, '/linc/v1/results/<string:celery_id>')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    if __debug__:
+        app.run(debug=True)
+    else:
+        app.run(debug=False, host='0.0.0.0')
