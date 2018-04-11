@@ -1,0 +1,14 @@
+scipy
+matplotlib
+scikit-image
+numpy
+requests
+keras
+celery[redis]
+scikit-learn
+flask
+flask_restful
+tensorflow
+h5py
+Pillow
+imgaug

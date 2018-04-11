@@ -1,0 +1,5 @@
+*.json
+*.h5
+.idea
+*.egg
+__pycache__
