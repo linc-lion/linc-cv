@@ -1,6 +1,3 @@
-features_lut.json
-images_lut.json
-linc_db.json
 *.h5
 .idea
 *.egg

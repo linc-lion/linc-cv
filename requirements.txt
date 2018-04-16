@@ -12,3 +12,4 @@ tensorflow
 h5py
 Pillow
 imgaug
+toolz
