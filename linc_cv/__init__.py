@@ -3,6 +3,7 @@ import os
 import warnings
 from typing import Iterable
 
+# ignore h5py deprecation warning we cannot control
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
