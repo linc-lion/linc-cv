@@ -5,7 +5,8 @@ import inspect
 from linc_cv.ml import generate_linc_lut
 from linc_cv.parse_lion_db import linc_db_to_image_lut
 from linc_cv.scrape_lion_db import scrape_lion_database
-from tests.validation_ml import validate_random_lions
+from linc_cv.validation_ml import validate_random_lions
+from linc_cv.whiskers.download import download_whisker_images
 
 
 def main():
@@ -30,6 +31,9 @@ def main():
     parser.add_argument(
         '--validate-random-lions', action='store_true',
         help=inspect.getdoc(validate_random_lions))
+    parser.add_argument(
+        '--download-whisker-images', action='store_true',
+        help=inspect.getdoc(download_whisker_images))
 
     args = parser.parse_args()
     if args.scrape_lion_database:
@@ -44,3 +48,6 @@ def main():
 
     if args.validate_random_lions:
         validate_random_lions()
+
+    if args.download_whisker_images:
+        download_whisker_images()

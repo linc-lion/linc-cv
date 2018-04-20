@@ -10,7 +10,7 @@ from keras.preprocessing.image import ImageDataGenerator, img_to_array
 from skimage.color import rgb2gray, gray2rgb
 from skimage.filters import threshold_sauvola, gaussian
 
-from linc_cv import *
+from linc_cv import CLASS_INDICIES_PATH, WHISKER_FEATURES_PATH
 from linc_cv.ml import download_image, ClassifierError
 
 with open(CLASS_INDICIES_PATH) as f:

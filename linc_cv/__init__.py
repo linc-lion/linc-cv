@@ -1,24 +1,24 @@
 # coding=utf-8
 import os
 import warnings
+from typing import Iterable
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 
 
-def _p(filename):
-    return os.path.join(BASE_DIR, 'data', filename)
+def datapath(path: Iterable):
+    return os.path.join(BASE_DIR, 'data', *path)
 
 
-DATA_PATH = os.path.join(BASE_DIR, 'data')
-IMAGES_LUT_PATH = _p('images_lut.json')
-FEATURES_LUT_PATH = _p('features_lut.json')
-LINC_DB_PATH = _p('linc_db.json')
+IMAGES_LUT_PATH = datapath(['images_lut.json'])
+FEATURES_LUT_PATH = datapath(['features_lut.json'])
+LINC_DB_PATH = datapath(['linc_db.json'])
 
-CLASS_INDICIES_PATH = _p('class_indicies.json')
+CLASS_INDICIES_PATH = datapath(['class_indicies.json'])
 
-LION_FEATURES_PATH = _p('lion_features.h5')
-WHISKER_FEATURES_PATH = _p('whisker_features.h5')
+LION_FEATURES_PATH = datapath(['lion_features.h5'])
+WHISKER_FEATURES_PATH = datapath(['whisker_features.h5'])
 
-WHISKER_IMAGES_TRAINTEST_PATH = _p(os.path.join('whiskers_images_traintest', 'test'))
+WHISKER_IMAGES_TRAINTEST_PATH = datapath(['whiskers_images_traintest', 'test'])

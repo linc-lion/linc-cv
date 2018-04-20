@@ -20,7 +20,7 @@ from keras.utils.np_utils import to_categorical
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 
-from . import *
+from . import LION_FEATURES_PATH, FEATURES_LUT_PATH, IMAGES_LUT_PATH
 
 linc_features = None
 features_lut = None

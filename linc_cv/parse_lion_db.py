@@ -1,8 +1,7 @@
 # coding=utf-8
 import json
-import os
 
-from . import BASE_DIR
+from . import IMAGES_LUT_PATH, LINC_DB_PATH
 
 
 def linc_db_to_image_lut():
@@ -14,7 +13,7 @@ def linc_db_to_image_lut():
 
     linc_images_lut = {}
 
-    with open(os.path.join(BASE_DIR, 'data', 'linc_db.json')) as f:
+    with open(LINC_DB_PATH) as f:
         j = json.load(f)
 
     cnt = 0
@@ -31,7 +30,7 @@ def linc_db_to_image_lut():
         except KeyError:
             continue
 
-    with open(os.path.join(BASE_DIR, 'data', 'images_lut.json'), 'w') as f:
+    with open(IMAGES_LUT_PATH, 'w') as f:
         json.dump(linc_images_lut, f)
 
     print('Successfully parsed LINC DB into image URL lookup table.')

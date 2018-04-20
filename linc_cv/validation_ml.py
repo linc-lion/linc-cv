@@ -8,7 +8,7 @@ import numpy as np
 from linc_cv.ml import initialize, ClassifierError, predict_lion
 
 
-def new_test_lion(lion_id_count=5):
+def get_test_lion(lion_id_count=5):
     global linc_features, features_lut, model
     linc_features, features_lut, model = initialize()
     feature_types = list(features_lut.keys())
@@ -27,7 +27,7 @@ def new_test_lion(lion_id_count=5):
 
 def validate_random_lion(*args):
     try:
-        gt_class, test_feature_idx, feature_type, lion_ids = new_test_lion()
+        gt_class, test_feature_idx, feature_type, lion_ids = get_test_lion()
         return predict_lion(feature_type, lion_ids, gt_class=gt_class, test_feature_idx=test_feature_idx)
     except ClassifierError as e:
         print(e.message)

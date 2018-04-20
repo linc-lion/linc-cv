@@ -8,9 +8,11 @@ import sys
 
 import requests
 
+from linc_cv import datapath, IMAGES_LUT_PATH
+
 
 def download_whisker_image(image_url, lion_id, idx):
-    filepath = f'data/whisker_images/{lion_id}/{idx}'
+    filepath = datapath(['whisker_images', f'{lion_id}/{idx}'])
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
     with open(filepath, 'wb') as f:
         r = requests.get(image_url, stream=True)
@@ -19,8 +21,13 @@ def download_whisker_image(image_url, lion_id, idx):
     sys.stdout.flush()
 
 
-if __name__ == '__main__':
-    with open('data/images_lut.json') as f:
+def download_whisker_images():
+    """
+    Download all whisker images for processing and training a
+    new whisker classifier
+    """
+
+    with open(IMAGES_LUT_PATH) as f:
         images_lut = json.load(f)
 
     data = []
@@ -33,5 +40,5 @@ if __name__ == '__main__':
         except KeyError:
             continue
 
-    with multiprocessing.Pool(processes=32) as pool:
+    with multiprocessing.Pool(processes=multiprocessing.cpu_count() * 2) as pool:
         pool.starmap(download_whisker_image, data)

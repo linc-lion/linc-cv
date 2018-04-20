@@ -8,7 +8,7 @@ from skimage.color import rgb2gray
 from skimage.filters import threshold_sauvola, gaussian
 from skimage.io import imsave
 
-from linc_cv import DATA_PATH
+from linc_cv import datapath
 
 
 def imshow(im):
@@ -24,7 +24,7 @@ def process(whisker_image_path):
         return None
     im = gaussian(im, sigma=2)
     im = im > threshold_sauvola(im, window_size=15, k=0.1)
-    dst = os.path.join(DATA_PATH, f'whiskers_images_filtered/{label}/{idx}.jpg')
+    dst = datapath(['whiskers_images_filtered', f'{label}/{idx}.jpg'])
     os.makedirs(os.path.dirname(dst), exist_ok=True)
     imsave(dst, im * 255)
     sys.stdout.write('.')
@@ -34,10 +34,10 @@ def process(whisker_image_path):
 if __name__ == '__main__':
     import shutil
 
-    shutil.rmtree(os.path.join(DATA_PATH, 'whiskers_images_filtered'))
+    shutil.rmtree(datapath(['whiskers_images_filtered']))
 
     whisker_image_paths = []
-    for root, dirs, files in os.walk(os.path.join(DATA_PATH, 'whiskers_images')):
+    for root, dirs, files in os.walk(datapath(['whiskers_images'])):
         for f in files:
             path = os.path.join(root, f)
             whisker_image_paths.append(path)
