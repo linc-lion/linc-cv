@@ -1,32 +1,32 @@
 import json
-import tempfile
-import shutil
 import multiprocessing
+import shutil
+import sys
+import tempfile
 from collections import defaultdict
 from operator import itemgetter
-import sys
 
-import tables as tb
-from keras.applications.mobilenet import MobileNet, preprocess_input
-from keras.layers import GlobalAveragePooling2D, \
-    Dropout, Reshape, Activation, Conv2D, BatchNormalization
-from keras.preprocessing import image
-from keras import metrics
-from keras.utils.np_utils import to_categorical
-from keras.models import Sequential
-from keras.callbacks import EarlyStopping
-from keras.optimizers import SGD
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
-import skimage.color
-import skimage.exposure
-import skimage.util
-import skimage.transform
-import skimage.feature
-import skimage.draw
-import scipy.cluster.hierarchy
 import numpy as np
 import requests
+import scipy.cluster.hierarchy
+import skimage.color
+import skimage.draw
+import skimage.exposure
+import skimage.feature
+import skimage.transform
+import skimage.util
+import tables as tb
+from keras import metrics
+from keras.applications.mobilenet import MobileNet, preprocess_input
+from keras.callbacks import EarlyStopping
+from keras.layers import GlobalAveragePooling2D, \
+    Dropout, Reshape, Activation, Conv2D, BatchNormalization
+from keras.models import Sequential
+from keras.optimizers import SGD
+from keras.preprocessing import image
+from keras.utils.np_utils import to_categorical
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
 
 linc_features = None
 features_lut = None
@@ -48,7 +48,7 @@ def download_image(image_url):
         try:
             from PIL import Image
             with Image.open(t.name) as im:
-                img = im.resize((224, 224,), resample=Image.LANCZOS)
+                img = im.resize((224, 224,), resample=Image.LANCZOS).convert('RGB')
             return img
         except OSError:
             raise ClassifierError(f'unable to open image: {image_url}')

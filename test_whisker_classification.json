@@ -1,0 +1,21 @@
+{
+  "identification": {
+    "images": [
+      {
+        "type": "whisker",
+        "url": "https://linc-media.linclion.org/linc-api-lions/imageset_15_569b0b5a0640fd7dcb51fa03/2016-04-27_image_4527_5720af6bdc5b3200035c11ec_thumbnail.jpg"
+      }
+    ],
+    "lions": [
+      {
+        "id": 98
+      },
+      {
+        "id": 99
+      },
+      {
+        "id": 100
+      }
+    ]
+  }
+}

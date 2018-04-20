@@ -16,7 +16,7 @@ def download_image(image_url, lion_id, idx):
 
 
 if __name__ == '__main__':
-    with open('images_lut.json') as f:
+    with open('../images_lut.json') as f:
         images_lut = json.load(f)
 
     data = []

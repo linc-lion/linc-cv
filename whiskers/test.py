@@ -1,28 +1,42 @@
-import time
 import json
 import os
+import time
 from operator import itemgetter
+from typing import Iterable
 
 import numpy as np
 from PIL import Image
 from keras.models import load_model
-from toolz.itertoolz import partition_all
 from keras.preprocessing.image import ImageDataGenerator, img_to_array
 
+from classify import download_image, ClassifierError
 
-with open('class_indicies.json') as f:
+with open('whiskers/class_indicies.json') as f:
     class_indicies = json.load(f)
-model = load_model('whiskers.h5')
+model = None
 labels = [x[0] for x in sorted(class_indicies.items(), key=itemgetter(1))]
 num_classes = len(labels)
 print(f'num_classes -> {num_classes}')
-test_datagen = ImageDataGenerator(
-    rescale=1. / 255,
-    samplewise_center=True,
-    samplewise_std_normalization=True,)
+test_datagen = None
 
 
-def process(path):
+def initialize():
+    global model
+    global test_datagen
+    if model is None:
+        model = load_model('whiskers/whiskers.h5')
+    if test_datagen is None:
+        test_datagen = ImageDataGenerator(
+            rescale=1. / 255,
+            samplewise_center=True,
+            samplewise_std_normalization=True, )
+    return model, test_datagen
+
+
+def test_whisker_path(path):
+    global model
+    global test_datagen
+    model, test_datagen = initialize()
     start_time = time.time()
     im = Image.open(path).convert('RGB')
     im = im.resize((299, 299,))
@@ -30,28 +44,46 @@ def process(path):
     im = np.expand_dims(im, 0)
     assert im.shape == (1, 299, 299, 3,), im.shape
     gt_label = path.split('/')[-2]
-
     y = np.zeros((1, num_classes,))
     y[0][class_indicies[gt_label]] = 1
-
     X = next(test_datagen.flow(im, shuffle=False, batch_size=1))
     p = model.predict(X)
-
     pred_label = labels[np.argmax(p, axis=1)[0]]
     correct = pred_label == gt_label
     total_time = time.time() - start_time
     return gt_label, pred_label, correct, total_time
 
 
+def test_whisker_url(image_url: str, lion_ids: Iterable[str]) -> dict:
+    global model, test_datagen
+    model, test_datagen = initialize()
+
+    # lion_id, probability
+    im = download_image(image_url).convert('RGB')
+    im = im.resize((299, 299,), resample=Image.LANCZOS)
+    im = img_to_array(im)
+    im = np.expand_dims(im, 0)
+    if im.shape != (1, 299, 299, 3,):
+        raise ClassifierError(f'failed processing image for whisker url {image_url} ')
+    X = next(test_datagen.flow(im, shuffle=False, batch_size=1))
+    p = model.predict(X)
+    predictions = {}
+    for i, prob in enumerate(p[0]):
+        if labels[i] in lion_ids:
+            predictions[labels[i]] = prob
+    return predictions
+
+
 if __name__ == '__main__':
     from collections import defaultdict
+
     classifications = defaultdict(list)
     all_times = []
     all_scores = []
     for root, dirs, files in os.walk('whiskers_traintest/test'):
         for f in files:
             path = os.path.join(root, f)
-            gt_label, pred_label, correct, total_time = process(path)
+            gt_label, pred_label, correct, total_time = test_whisker_path(path)
             all_scores.append(correct)
             all_times.append(total_time)
             classifications[gt_label].append(pred_label)

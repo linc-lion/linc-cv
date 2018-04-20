@@ -13,3 +13,5 @@ h5py
 Pillow
 imgaug
 toolz
+tables
+flower

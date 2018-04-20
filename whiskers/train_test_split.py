@@ -3,6 +3,7 @@ from collections import Counter
 from sklearn.model_selection import train_test_split
 import shutil
 
+
 def process(xs, ys, mode):
     for xt, yt in zip(xs, ys):
         _, label, f = xt.split('/')
@@ -12,13 +13,14 @@ def process(xs, ys, mode):
         os.makedirs(os.path.dirname(dst), exist_ok=True)
         shutil.copyfile(src, dst)
 
+
 if __name__ == '__main__':
-    
+
     try:
         shutil.rmtree('whiskers_traintest')
     except FileNotFoundError:
         pass
-    
+
     X = []
     y = []
 

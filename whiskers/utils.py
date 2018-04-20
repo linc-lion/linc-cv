@@ -1,5 +1,6 @@
 from collections import Counter
 
+
 def get_class_weights(y, smooth_factor=0.1):
     """
     Returns the weights for each class based on the frequencies of the samples
@@ -16,3 +17,5 @@ def get_class_weights(y, smooth_factor=0.1):
 
     majority = max(counter.values())
     return {cls: float(majority) / count for cls, count in counter.items()}
+
+
