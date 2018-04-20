@@ -8,7 +8,7 @@ import numpy as np
 from linc_cv.ml import initialize, ClassifierError, predict_lion
 
 
-def get_test_lion(lion_id_count=5):
+def new_test_lion(lion_id_count=5):
     global linc_features, features_lut, model
     linc_features, features_lut, model = initialize()
     feature_types = list(features_lut.keys())
@@ -25,28 +25,26 @@ def get_test_lion(lion_id_count=5):
         return gt_class, test_feature_idx, feature_type, selected_lion_ids
 
 
-class InfiniteList():
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        return None
-
-
-def test_random_lion(*args):
+def validate_random_lion(*args):
     try:
-        gt_class, test_feature_idx, feature_type, lion_ids = get_test_lion()
+        gt_class, test_feature_idx, feature_type, lion_ids = new_test_lion()
         return predict_lion(feature_type, lion_ids, gt_class=gt_class, test_feature_idx=test_feature_idx)
     except ClassifierError as e:
         print(e.message)
 
 
-def test_random_lions():
+def validate_random_lions():
+    """
+    Continuously pick a lion at random, pick a feature at random, then
+    generate a holdout test set for that particular lion and measure
+    the performance of the classifier for that lion
+    """
+
     scores = defaultdict(list)
     val_accs = defaultdict(list)
     while True:
         try:
-            feature_type, correct, val_acc, probas, labels = test_random_lion()
+            feature_type, correct, val_acc, probas, labels = validate_random_lion()
         except TypeError:
             continue
         scores[feature_type].append(correct)
@@ -62,7 +60,7 @@ def test_random_lions():
         print('~' * 100)
 
 
-if __name__ == '__main__':
+def validate_test_lion():
     test_image_url = 'http://pixdaus.com/files/items/pics/7/84/542784_81cef138c75698faddafee92d42c0cc5_large.jpg'
     feature_type = 'main-id'
     lion_ids = ['131', '234', '142', '97', '163']
