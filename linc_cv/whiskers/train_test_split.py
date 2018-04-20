@@ -6,28 +6,33 @@ from collections import Counter
 
 from sklearn.model_selection import train_test_split
 
+from linc_cv import datapath
+
 
 def process(xs, ys, mode):
     for xt, yt in zip(xs, ys):
-        _, label, f = xt.split('/')
+        *base, label, f = xt.split('/')
         src = xt
-        dst = f'data/whiskers_images_traintest/{mode}/{label}/{f}'
+        dst = datapath(['whiskers_images_traintest', f'{mode}/{label}/{f}'])
         print(src, dst)
         os.makedirs(os.path.dirname(dst), exist_ok=True)
         shutil.copyfile(src, dst)
 
 
-if __name__ == '__main__':
-
+def whiskers_train_test_split():
+    """
+    Convert preprocessed lion images into to a training set and a validation set
+    for neural network training
+    """
     try:
-        shutil.rmtree('whiskers_images_traintest')
+        shutil.rmtree(datapath(['whiskers_images_traintest']))
     except FileNotFoundError:
         pass
 
     X = []
     y = []
 
-    for root, dirs, files in os.walk('whiskers_images_filtered'):
+    for root, dirs, files in os.walk(datapath(['whiskers_images_filtered'])):
         for f in files:
             path = os.path.join(root, f)
             label = path.split('/')[-2]

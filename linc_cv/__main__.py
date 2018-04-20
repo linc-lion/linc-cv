@@ -8,6 +8,8 @@ from linc_cv.scrape_lion_db import scrape_lion_database
 from linc_cv.validation_ml import validate_random_lions
 from linc_cv.whiskers.download import download_whisker_images
 from linc_cv.whiskers.process import process_whisker_images
+from linc_cv.whiskers.train_test_split import whiskers_train_test_split
+
 
 def main():
     """
@@ -37,6 +39,9 @@ def main():
     parser.add_argument(
         '--process-whisker-images', action='store_true',
         help=inspect.getdoc(process_whisker_images))
+    parser.add_argument(
+        '--whiskers-train-test-split', action='store_true',
+        help=inspect.getdoc(whiskers_train_test_split))
 
     args = parser.parse_args()
     if args.scrape_lion_database:
@@ -57,3 +62,6 @@ def main():
 
     if args.process_whisker_images:
         process_whisker_images()
+
+    if args.whiskers_train_test_split:
+        whiskers_train_test_split()
