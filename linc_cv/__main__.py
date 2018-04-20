@@ -5,6 +5,7 @@ import json
 import multiprocessing
 import os
 
+from linc_cv.ml import generate_linc_lut
 from linc_cv.parse_lion_db import linc_db_to_image_lut
 from linc_cv.scrape_lion_db import scrape_lion_idx
 from . import BASE_DIR
@@ -48,6 +49,9 @@ def main():
     parser.add_argument(
         '--parse-lion-database', action='store_true',
         help=inspect.getdoc(linc_db_to_image_lut))
+    parser.add_argument(
+        '--extract-lion-features', action='store_true',
+        help=inspect.getdoc(generate_linc_lut))
 
     args = parser.parse_args()
     if args.scrape_lion_database:
@@ -56,3 +60,6 @@ def main():
 
     if args.parse_lion_database:
         linc_db_to_image_lut()
+
+    if args.extract_lion_features:
+        generate_linc_lut()

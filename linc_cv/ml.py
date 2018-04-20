@@ -1,8 +1,6 @@
+# coding=utf-8
 import json
-import multiprocessing
-import os
 import shutil
-import sys
 import tempfile
 from collections import defaultdict
 from operator import itemgetter
@@ -28,6 +26,8 @@ from keras.preprocessing import image
 from keras.utils.np_utils import to_categorical
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
+
+from . import *
 
 linc_features = None
 features_lut = None
@@ -63,10 +63,10 @@ def initialize():
         model = MobileNet(weights='imagenet', include_top=False, input_shape=(224, 224, 3,))
         print('initialized model')
     if linc_features is None:
-        linc_features = tb.open_file('data/linc_features.h5').root._v_children
+        linc_features = tb.open_file(LINC_FEATURES_PATH).root._v_children
         print('initialized linc_features')
     if features_lut is None:
-        with open('data/features_lut.json') as f:
+        with open(FEATURES_LUT_PATH) as f:
             features_lut = json.load(f)
         print('initialized features_lut')
     return linc_features, features_lut, model
@@ -106,47 +106,44 @@ def extract_general_image_features(img):
     return features
 
 
-def image_urls_to_features(data):
-    image_index, image_url, feature_type = data
-    img = download_image(image_url)
-    features = extract_general_image_features(img)
-    return image_index, features, feature_type
-
-
-from . import BASE_DIR
-
-
 def generate_linc_lut():
+    """
+    Extracts features from lion images and saves them into an HDF5 data store.
+
+    Only the last few layers of the lion neural network will be trained, so we will
+    extract the output of the first layers and save them for future quick access.
+    """
+
     global linc_features
-    with open(os.path.join(BASE_DIR, 'data', 'images_lut.json')) as f:
+
+    with open(IMAGES_LUT_PATH) as f:
         linc_images_lut = json.load(f)
     features_lut = defaultdict(lambda: defaultdict(list))
     image_index = defaultdict(lambda: 0)
-    d = []
+    db_data = []
     for lion_id, feature_types in linc_images_lut.items():
         for feature_type, image_urls in feature_types.items():
+            if feature_type == 'whisker':
+                continue  # use separate classifier for whiskers
             for image_url in image_urls:
-                d.append((image_index[feature_type], image_url, feature_type,))
+                db_data.append((image_index[feature_type], image_url, feature_type,))
                 features_lut[feature_type][lion_id].append(image_index[feature_type])
                 image_index[feature_type] += 1
-    with open('data/features_lut.json', 'w') as f:
+    with open(FEATURES_LUT_PATH, 'w') as f:
         json.dump(features_lut, f)
     cmp = tb.Filters(complib='blosc', complevel=9, fletcher32=True, bitshuffle=True, least_significant_digit=3)
-    f = tb.open_file('linc_features.h5', mode='w', title="LINC Neural Network Extracted Features", filters=cmp)
+    f = tb.open_file(LINC_FEATURES_PATH, mode='w', title="LINC Neural Network Extracted Features", filters=cmp)
     linc_features = f.root._v_children
     for feature_type in features_lut:
         shape = (image_index[feature_type], 7, 7, 1024,)
         f.create_carray(f.root, feature_type, tb.Float32Atom(), shape=shape)
-    processes = multiprocessing.cpu_count()
-    with multiprocessing.Pool(
-            processes=processes) as pool:
-        for image_index, image_features, feature_type in pool.imap_unordered(image_urls_to_features, d):
-            if image_features is None:
-                continue
-            linc_features[feature_type][image_index] = image_features
-            sys.stdout.write('.')
-            sys.stdout.flush()
-    f.close()
+    for i, (image_index, image_url, feature_type,) in enumerate(db_data):
+        print(f'{i} of {len(db_data)}: {image_index}, feature type: {feature_type}')
+        img = download_image(image_url)
+        image_features = extract_general_image_features(img)
+        if image_features is None:
+            continue
+        linc_features[feature_type][image_index] = image_features
 
 
 def sort_lion_xy(x, y):
@@ -307,7 +304,3 @@ def test_lion(feature_type, lion_ids, gt_class=None, test_feature_idx=None, test
         correct = str(majority_vote_label) == str(gt_class)
         print(f'correct? {correct}, pred_class == gt_class: {majority_vote_label} == {gt_class}')
     return feature_type, correct, val_acc, probas, labels
-
-
-if __name__ == '__main__':
-    generate_linc_lut()
