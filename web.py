@@ -1,5 +1,5 @@
-from flask import request
 from flask import Flask
+from flask import request
 from flask_restful import Resource, Api
 
 from tasks import c, classify_image_url_against_lion_ids
@@ -7,20 +7,6 @@ from tasks import c, classify_image_url_against_lion_ids
 
 class LincResultAPI(Resource):
     def get(self, celery_id):
-        """
-        {
-          identification: {
-            id: "e3464fc5-54d5-48db-bc05-761cad999cd8",
-            status: "finished",
-            lions: [                           #  Each lion object in the array will include an id and confidence
-                                                         # (in the range 0-1.0)
-              {id: 35, confidence: 0.8},
-              {id: 23, confidence: 0.6}
-            ]
-          }
-        }
-        """
-
         t = c.AsyncResult(id=celery_id)
         if t.ready():
             return t.get()
@@ -32,29 +18,6 @@ class LincResultAPI(Resource):
 
 class LincClassifyAPI(Resource):
     def post(self):
-        """
-        {
-            "identification": {
-                "images": [
-                    {
-                        "id": 123,
-                        "type": "whisker",
-                        "url": "https://s3.amazonaws.com/semanticmd-api-testing/api/cbc90b5705d51e9e218b0a7e518aa6d3506c1"
-                    }
-                ],
-            "gender": "m",
-            "age": 5,
-            "lions": [
-                {
-                    "id": 456,
-                    "url": "http://lg-api.com/lions/456",
-                    "updated_at": "timestamp"
-                }
-            ]
-            }
-        }
-        """
-
         try:
             json_request = request.get_json()
             if json_request is None:

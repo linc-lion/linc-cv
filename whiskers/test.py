@@ -8,6 +8,8 @@ import numpy as np
 from PIL import Image
 from keras.models import load_model
 from keras.preprocessing.image import ImageDataGenerator, img_to_array
+from skimage.color import rgb2gray
+from skimage.filters import threshold_sauvola, gaussian
 
 from classify import download_image, ClassifierError
 
@@ -54,14 +56,21 @@ def test_whisker_path(path):
     return gt_label, pred_label, correct, total_time
 
 
-def test_whisker_url(image_url: str, lion_ids: Iterable[str]) -> dict:
+def preprocess_whisker_im_to_arr(im):
+    im = rgb2gray(np.array(im))
+    im = gaussian(im, sigma=2)
+    im = im > threshold_sauvola(im, k=0.1)
+    return im
+
+
+def test_unprocessed_whisker_url(image_url: str, lion_ids: Iterable[str]) -> dict:
     global model, test_datagen
     model, test_datagen = initialize()
 
     # lion_id, probability
     im = download_image(image_url).convert('RGB')
     im = im.resize((299, 299,), resample=Image.LANCZOS)
-    im = img_to_array(im)
+    im = preprocess_whisker_im_to_arr(im)
     im = np.expand_dims(im, 0)
     if im.shape != (1, 299, 299, 3,):
         raise ClassifierError(f'failed processing image for whisker url {image_url} ')

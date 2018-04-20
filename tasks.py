@@ -1,7 +1,7 @@
 from celery import Celery
 
 from test_classify import test_lion, ClassifierError
-from whiskers.test import test_whisker_url
+from whiskers.test import test_unprocessed_whisker_url
 
 c = Celery()
 c.conf.broker_url = 'redis://localhost:6379/0'
@@ -14,7 +14,7 @@ def classify_image_url_against_lion_ids(test_image_url, feature_type, lion_ids):
     try:
         if feature_type == 'whisker':
             whisker_classifier_val_acc = 0.63
-            predictions = test_whisker_url(test_image_url, lion_ids)
+            predictions = test_unprocessed_whisker_url(test_image_url, lion_ids)
             for lion_id, probability in predictions.items():
                 results.append(
                     {'classifier': round(float(whisker_classifier_val_acc), 3),
