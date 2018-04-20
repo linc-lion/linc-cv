@@ -1,8 +1,0 @@
-- install deadsnakes python 3.6
-- make a virtualenv
-
-sudo apt install python3.6-dev
-sudo apt install liblz4-dev zlib1g-dev libzstd-dev libhdf5-dev pkg-config
-pip install -U pip setuptools wheel
-pip install -U numpy cython h5py numexpr
-pip install -U -r requirements.txt
