@@ -22,7 +22,7 @@ from sklearn.preprocessing import LabelEncoder
 
 from . import LION_FEATURES_PATH, FEATURES_LUT_PATH, IMAGES_LUT_PATH
 
-linc_features = None
+lion_features = None
 features_lut = None
 model = None
 
@@ -49,25 +49,25 @@ def download_image(image_url):
 
 
 def initialize():
-    global linc_features
+    global lion_features
     global features_lut
     global model
     if model is None:
         model = MobileNet(weights='imagenet', include_top=False, input_shape=(224, 224, 3,))
         print('initialized model')
-    if linc_features is None:
-        linc_features = tb.open_file(LION_FEATURES_PATH).root._v_children
-        print('initialized linc_features')
+    if lion_features is None:
+        lion_features = tb.open_file(LION_FEATURES_PATH).root._v_children
+        print('initialized lion_features')
     if features_lut is None:
         with open(FEATURES_LUT_PATH) as f:
             features_lut = json.load(f)
         print('initialized features_lut')
-    return linc_features, features_lut, model
+    return lion_features, features_lut, model
 
 
 def extract_general_image_features(img):
-    global linc_features, features_lut, model
-    linc_features, features_lut, model = initialize()
+    global lion_features, features_lut, model
+    lion_features, features_lut, model = initialize()
     try:
         x = image.img_to_array(img)
     except ValueError:
@@ -88,7 +88,7 @@ def generate_linc_lut():
     extract the output of the first layers and save them for future quick access.
     """
 
-    global linc_features
+    global lion_features
 
     with open(IMAGES_LUT_PATH) as f:
         linc_images_lut = json.load(f)
@@ -107,7 +107,7 @@ def generate_linc_lut():
         json.dump(features_lut, f)
     cmp = tb.Filters(complib='blosc', complevel=9, fletcher32=True, bitshuffle=True, least_significant_digit=3)
     f = tb.open_file(LION_FEATURES_PATH, mode='w', title="LINC Neural Network Extracted Features", filters=cmp)
-    linc_features = f.root._v_children
+    lion_features = f.root._v_children
     for feature_type in features_lut:
         shape = (image_index[feature_type], 7, 7, 1024,)
         f.create_carray(f.root, feature_type, tb.Float32Atom(), shape=shape)
@@ -119,7 +119,7 @@ def generate_linc_lut():
         except ClassifierError as e:
             print(f'skipping image, feature extraction error -> {e.message}')
             continue
-        linc_features[feature_type][image_index] = image_features
+        lion_features[feature_type][image_index] = image_features
 
 
 def sort_lion_xy(x, y):
@@ -143,8 +143,8 @@ def lions_to_xy_val(feature_type, lion_ids,
                     test_split_factor=0.8,
                     test_feature_idx=None,
                     gt_class=None):
-    global linc_features, features_lut, model
-    linc_features, features_lut, model = initialize()
+    global lion_features, features_lut, model
+    lion_features, features_lut, model = initialize()
     X_train = []
     y_train = []
     X_test = []
@@ -190,8 +190,8 @@ def lions_to_xy_val(feature_type, lion_ids,
     X_test, y_test = sort_lion_xy(X_test, y_test)
     if set(X_train).intersection(X_test) != set():
         raise ClassifierError('elements of the training dataset exist in the testing dataset')
-    X_train = linc_features[feature_type][X_train, :]
-    X_test = linc_features[feature_type][X_test, :]
+    X_train = lion_features[feature_type][X_train, :]
+    X_test = lion_features[feature_type][X_test, :]
     lb = LabelEncoder().fit(y_train + y_test)
     labels = lb.classes_
     y_train = lb.transform(y_train)
@@ -250,8 +250,8 @@ def classify_val(test_features, nb_classes,
 
 
 def predict_lion(feature_type, lion_ids, gt_class=None, test_feature_idx=None, test_image_url=None):
-    global linc_features, features_lut, model
-    linc_features, features_lut, model = initialize()
+    global lion_features, features_lut, model
+    lion_features, features_lut, model = initialize()
     if test_feature_idx and test_image_url:
         raise ClassifierError('cannot simultaneously process both '
                               'test_feature_idx and test_image_url')
@@ -263,7 +263,7 @@ def predict_lion(feature_type, lion_ids, gt_class=None, test_feature_idx=None, t
         img = download_image(test_image_url)
         test_features = extract_general_image_features(img)
     else:
-        test_features = linc_features[feature_type][test_feature_idx]
+        test_features = lion_features[feature_type][test_feature_idx]
         test_features = np.expand_dims(test_features, 0)
     if test_features is None:
         raise ClassifierError('could not extract test features '

@@ -9,8 +9,8 @@ from linc_cv.ml import initialize, ClassifierError, predict_lion
 
 
 def get_test_lion(lion_id_count=5):
-    global linc_features, features_lut, model
-    linc_features, features_lut, model = initialize()
+    global lion_features, features_lut, model
+    lion_features, features_lut, model = initialize()
     feature_types = list(features_lut.keys())
     while True:
         feature_type = random.choice(feature_types)
