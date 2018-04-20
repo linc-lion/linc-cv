@@ -8,8 +8,8 @@ from keras.models import load_model
 from keras.optimizers import SGD
 from keras.preprocessing.image import ImageDataGenerator
 
-from whiskers.sgdr import SGDRScheduler
-from whiskers.utils import get_class_weights
+from linc_cv.whiskers.sgdr import SGDRScheduler
+from linc_cv.whiskers.utils import get_class_weights
 
 train_datagen = ImageDataGenerator(
     rescale=1. / 255,
@@ -31,20 +31,20 @@ epoch_size = 300
 batch_size = 28
 
 train_generator = train_datagen.flow_from_directory(
-    'whiskers_traintest/train',
+    'whiskers_images_traintest/train',
     target_size=(299, 299),
     batch_size=batch_size,
     class_mode='categorical')
 
 validation_generator = test_datagen.flow_from_directory(
-    'whiskers_traintest/test',
+    'whiskers_images_traintest/test',
     target_size=(299, 299,),
     batch_size=batch_size,
     class_mode='categorical')
 
 assert train_generator.num_classes == validation_generator.num_classes, (
     train_generator.num_classes, validation_generator.num_classes,)
-with open('whiskers/class_indicies.json', 'w') as f:
+with open('data/whiskers/class_indicies.json', 'w') as f:
     json.dump(validation_generator.class_indices, f)
 num_classes = train_generator.num_classes
 

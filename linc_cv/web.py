@@ -2,7 +2,7 @@ from flask import Flask
 from flask import request
 from flask_restful import Resource, Api
 
-from tasks import c, classify_image_url_against_lion_ids
+from linc_cv.tasks import c, classify_image_url_against_lion_ids
 
 
 class LincResultAPI(Resource):

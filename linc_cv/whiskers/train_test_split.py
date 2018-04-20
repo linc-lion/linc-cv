@@ -1,14 +1,17 @@
+# coding=utf-8
+
 import os
-from collections import Counter
-from sklearn.model_selection import train_test_split
 import shutil
+from collections import Counter
+
+from sklearn.model_selection import train_test_split
 
 
 def process(xs, ys, mode):
     for xt, yt in zip(xs, ys):
         _, label, f = xt.split('/')
         src = xt
-        dst = f'whiskers_traintest/{mode}/{label}/{f}'
+        dst = f'data/whiskers_images_traintest/{mode}/{label}/{f}'
         print(src, dst)
         os.makedirs(os.path.dirname(dst), exist_ok=True)
         shutil.copyfile(src, dst)
@@ -17,14 +20,14 @@ def process(xs, ys, mode):
 if __name__ == '__main__':
 
     try:
-        shutil.rmtree('whiskers_traintest')
+        shutil.rmtree('whiskers_images_traintest')
     except FileNotFoundError:
         pass
 
     X = []
     y = []
 
-    for root, dirs, files in os.walk('whiskers_filtered'):
+    for root, dirs, files in os.walk('whiskers_images_filtered'):
         for f in files:
             path = os.path.join(root, f)
             label = path.split('/')[-2]

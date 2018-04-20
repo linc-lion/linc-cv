@@ -1,3 +1,3 @@
 #!/bin/sh
 
-celery flower -A tasks -E
+celery flower -A linc_cv.tasks -E

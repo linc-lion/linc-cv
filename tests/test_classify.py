@@ -1,10 +1,12 @@
+# coding=utf-8
+
 import multiprocessing
 import random
 from collections import defaultdict
 
 import numpy as np
 
-from classify import initialize, ClassifierError, test_lion
+from linc_cv.classify import initialize, ClassifierError, test_lion
 
 
 def get_test_lion(lion_id_count=5):

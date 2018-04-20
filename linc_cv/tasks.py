@@ -1,7 +1,7 @@
 from celery import Celery
 
-from test_classify import test_lion, ClassifierError
-from whiskers.test import test_unprocessed_whisker_url
+from tests.test_classify import test_lion, ClassifierError
+from linc_cv.whiskers.test import test_unprocessed_whisker_url
 
 c = Celery()
 c.conf.broker_url = 'redis://localhost:6379/0'

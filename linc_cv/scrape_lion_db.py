@@ -19,5 +19,5 @@ if __name__ == '__main__':
         for result in pool.imap_unordered(process, list(range(1500))):
             data.append(result)
 
-    with open('linc_db.json', 'w') as f:
+    with open('data/linc_db.json', 'w') as f:
         json.dump(data, f)

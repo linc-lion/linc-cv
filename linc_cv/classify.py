@@ -62,10 +62,10 @@ def initialize():
         model = MobileNet(weights='imagenet', include_top=False, input_shape=(224, 224, 3,))
         print('initialized model')
     if linc_features is None:
-        linc_features = tb.open_file('linc_features.h5').root._v_children
+        linc_features = tb.open_file('data/linc_features.h5').root._v_children
         print('initialized linc_features')
     if features_lut is None:
-        with open('features_lut.json') as f:
+        with open('data/features_lut.json') as f:
             features_lut = json.load(f)
         print('initialized features_lut')
     return linc_features, features_lut, model
@@ -114,7 +114,7 @@ def image_urls_to_features(data):
 
 def generate_linc_lut():
     global linc_features
-    with open('images_lut.json') as f:
+    with open('data/images_lut.json') as f:
         linc_images_lut = json.load(f)
     features_lut = defaultdict(lambda: defaultdict(list))
     image_index = defaultdict(lambda: 0)
@@ -125,7 +125,7 @@ def generate_linc_lut():
                 d.append((image_index[feature_type], image_url, feature_type,))
                 features_lut[feature_type][lion_id].append(image_index[feature_type])
                 image_index[feature_type] += 1
-    with open('features_lut.json', 'w') as f:
+    with open('data/features_lut.json', 'w') as f:
         json.dump(features_lut, f)
     cmp = tb.Filters(complib='blosc', complevel=9, fletcher32=True, bitshuffle=True, least_significant_digit=3)
     f = tb.open_file('linc_features.h5', mode='w', title="LINC Neural Network Extracted Features", filters=cmp)

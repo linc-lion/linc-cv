@@ -1,14 +1,18 @@
-import multiprocessing
-import shutil
+# coding=utf-8
+
 import json
-import requests
+import multiprocessing
 import os
+import shutil
 import sys
 
+import requests
 
-def download_image(image_url, lion_id, idx):
-    os.makedirs(f'whiskers/{lion_id}', exist_ok=True)
-    with open(f'whiskers/{lion_id}/{idx}', 'wb') as f:
+
+def download_whisker_image(image_url, lion_id, idx):
+    filepath = f'data/whisker_images/{lion_id}/{idx}'
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    with open(filepath, 'wb') as f:
         r = requests.get(image_url, stream=True)
         shutil.copyfileobj(r.raw, f)
     sys.stdout.write('.')
@@ -16,7 +20,7 @@ def download_image(image_url, lion_id, idx):
 
 
 if __name__ == '__main__':
-    with open('../images_lut.json') as f:
+    with open('data/images_lut.json') as f:
         images_lut = json.load(f)
 
     data = []
@@ -30,4 +34,4 @@ if __name__ == '__main__':
             continue
 
     with multiprocessing.Pool(processes=32) as pool:
-        pool.starmap(download_image, data)
+        pool.starmap(download_whisker_image, data)

@@ -1,3 +1,3 @@
 #!/bin/sh
 
-python web.py
+PYTHONPATH=. python linc_cv/web.py

@@ -2,7 +2,7 @@ import json
 
 linc_images_lut = {}
 
-with open('linc_db.json') as f:
+with open('data/linc_db.json') as f:
     j = json.load(f)
 
 cnt = 0
@@ -20,5 +20,5 @@ for i, k in enumerate(j):
     except KeyError:
         continue
 
-with open('images_lut.json', 'w') as f:
+with open('data/images_lut.json', 'w') as f:
     json.dump(linc_images_lut, f)

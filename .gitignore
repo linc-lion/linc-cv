@@ -1,5 +1,5 @@
-*.h5
+linc_cv/data/*
 .idea
-*.egg
+*.egg*
 __pycache__
 .envrc

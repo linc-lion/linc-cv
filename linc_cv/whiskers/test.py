@@ -11,9 +11,9 @@ from keras.preprocessing.image import ImageDataGenerator, img_to_array
 from skimage.color import rgb2gray, gray2rgb
 from skimage.filters import threshold_sauvola, gaussian
 
-from classify import download_image, ClassifierError
+from linc_cv.classify import download_image, ClassifierError
 
-with open('whiskers/class_indicies.json') as f:
+with open('data/whiskers/class_indicies.json') as f:
     class_indicies = json.load(f)
 model = None
 labels = [x[0] for x in sorted(class_indicies.items(), key=itemgetter(1))]
@@ -90,7 +90,7 @@ if __name__ == '__main__':
     classifications = defaultdict(list)
     all_times = []
     all_scores = []
-    for root, dirs, files in os.walk('whiskers_traintest/test'):
+    for root, dirs, files in os.walk('whiskers_images_traintest/test'):
         for f in files:
             path = os.path.join(root, f)
             gt_label, pred_label, correct, total_time = test_whisker_path(path)
