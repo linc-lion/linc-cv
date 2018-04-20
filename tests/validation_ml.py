@@ -51,24 +51,10 @@ def validate_random_lions():
         val_accs[feature_type].append(val_acc)
         print('~' * 100)
         for feature_type in scores:
+            val_mean = np.round(np.mean(val_accs[feature_type]), 3)
+            num_tests = len(scores[feature_type])
             score = np.round(np.mean(scores[feature_type]), 3)
-            print(f'feature {feature_type}: score -> {score}, '
-                  f'score std -> {np.round(np.std(scores[feature_type]), 3)}, '
-                  f'n_scores -> {len(scores[feature_type])}, '
-                  f'val_acc mean -> {np.round(np.mean(val_accs[feature_type]), 3)}, '
-                  f'val_acc std -> {np.round(np.std(val_accs[feature_type]), 3)}')
-        print('~' * 100)
-
-
-def validate_test_lion():
-    test_image_url = 'http://pixdaus.com/files/items/pics/7/84/542784_81cef138c75698faddafee92d42c0cc5_large.jpg'
-    feature_type = 'main-id'
-    lion_ids = ['131', '234', '142', '97', '163']
-    try:
-        feature_type, correct, val_acc, probas, labels = predict_lion(
-            feature_type=feature_type, lion_ids=lion_ids, test_image_url=test_image_url)
-    except ClassifierError as e:
-        print(e.message)
-
-    # test_random_lion()
-    # test_random_lions()
+            print(f'feature {feature_type}: test accuracy mean -> {score}, '
+                  f'number of tests -> {num_tests}, '
+                  f'validation set holdout accuracy mean -> {val_mean}')
+        print('~' * 120)

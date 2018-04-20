@@ -35,13 +35,12 @@ def initialize():
     return model, test_datagen
 
 
-def predict_on_whisker_path(path):
+def predict_whisker_from_preprocessed_image(path):
     global model
     global test_datagen
     model, test_datagen = initialize()
     start_time = time.time()
     im = Image.open(path).convert('RGB')
-    im = im.resize((299, 299,))
     im = img_to_array(im)
     im = np.expand_dims(im, 0)
     assert im.shape == (1, 299, 299, 3,), im.shape

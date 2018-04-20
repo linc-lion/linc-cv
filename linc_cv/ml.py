@@ -7,13 +7,6 @@ from operator import itemgetter
 
 import numpy as np
 import requests
-import scipy.cluster.hierarchy
-import skimage.color
-import skimage.draw
-import skimage.exposure
-import skimage.feature
-import skimage.transform
-import skimage.util
 import tables as tb
 from keras import metrics
 from keras.applications.mobilenet import MobileNet, preprocess_input
@@ -70,27 +63,6 @@ def initialize():
             features_lut = json.load(f)
         print('initialized features_lut')
     return linc_features, features_lut, model
-
-
-def whisker_image_to_mask(img):
-    img_arr = np.array(img)
-    img = skimage.color.rgb2gray(img_arr)
-    img = skimage.exposure.equalize_adapthist(img)
-    img = skimage.util.invert(img)
-    blobs = skimage.feature.blob_log(img, min_sigma=3, max_sigma=6, num_sigma=50)
-    try:
-        clusters = scipy.cluster.hierarchy.fclusterdata(blobs[:, :-1], 40, criterion='distance')
-    except ValueError:
-        raise ClassifierError('unable to cluster whisker point data')
-    major_cluster = np.bincount(clusters).argmax()
-    blobs = blobs[np.where(clusters == major_cluster)]
-    mask = np.zeros(img_arr.shape)
-    if mask.shape != (224, 224, 3,):
-        raise ClassifierError('mask shape is invalid')
-    for r, c, sigma in blobs:
-        rr, cc = skimage.draw.circle(r, c, sigma, shape=img.shape)
-        mask[rr, cc] = 1
-    return mask
 
 
 def extract_general_image_features(img):
@@ -301,7 +273,7 @@ def predict_lion(feature_type, lion_ids, gt_class=None, test_feature_idx=None, t
     votes = np.argmax(probas, axis=1)
     majority_vote_label = labels[np.bincount(votes).argmax()]
     print(f'majority vote: {majority_vote_label}, votes: {labels[np.argmax(probas, axis=1)]}')
-
+    val_acc = np.around(val_acc, 3)
     print(f'feature: {feature_type}, classifier: {val_acc}')
     correct = None
     if gt_class is not None:

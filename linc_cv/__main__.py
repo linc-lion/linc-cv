@@ -7,6 +7,7 @@ from linc_cv.parse_lion_db import linc_db_to_image_lut
 from linc_cv.scrape_lion_db import scrape_lion_database
 from tests.validation_ml import validate_random_lions
 
+
 def main():
     """
     linc_cv command line interface entry point
@@ -27,7 +28,7 @@ def main():
         '--extract-lion-features', action='store_true',
         help=inspect.getdoc(generate_linc_lut))
     parser.add_argument(
-        '--validation-random-lions', action='store_true',
+        '--validate-random-lions', action='store_true',
         help=inspect.getdoc(validate_random_lions))
 
     args = parser.parse_args()
@@ -41,5 +42,5 @@ def main():
     if args.extract_lion_features:
         generate_linc_lut()
 
-    if args.validation_all_test_lions:
+    if args.validate_random_lions:
         validate_random_lions()
