@@ -8,7 +8,7 @@ import numpy as np
 from PIL import Image
 from keras.models import load_model
 from keras.preprocessing.image import ImageDataGenerator, img_to_array
-from skimage.color import rgb2gray
+from skimage.color import rgb2gray, gray2rgb
 from skimage.filters import threshold_sauvola, gaussian
 
 from classify import download_image, ClassifierError
@@ -60,6 +60,7 @@ def preprocess_whisker_im_to_arr(im):
     im = rgb2gray(np.array(im))
     im = gaussian(im, sigma=2)
     im = im > threshold_sauvola(im, k=0.1)
+    im = gray2rgb(im)
     return im
 
 
