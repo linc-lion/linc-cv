@@ -4,15 +4,18 @@ import warnings
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
+BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+
 
 def _p(filename):
     return os.path.join(BASE_DIR, 'data', filename)
 
 
-BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+DATA_PATH = os.path.join(BASE_DIR, 'data')
 IMAGES_LUT_PATH = _p('images_lut.json')
 FEATURES_LUT_PATH = _p('features_lut.json')
 LINC_DB_PATH = _p('linc_db.json')
+
 CLASS_INDICIES_PATH = _p('class_indicies.json')
 
 LION_FEATURES_PATH = _p('lion_features.h5')
