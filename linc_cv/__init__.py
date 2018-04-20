@@ -19,6 +19,6 @@ LINC_DB_PATH = datapath(['linc_db.json'])
 CLASS_INDICIES_PATH = datapath(['class_indicies.json'])
 
 LION_FEATURES_PATH = datapath(['lion_features.h5'])
-WHISKER_FEATURES_PATH = datapath(['whisker_features.h5'])
 
 WHISKER_IMAGES_TRAINTEST_PATH = datapath(['whiskers_images_traintest', 'test'])
+WHISKER_MODEL_PATH = datapath(['whisker_model.h5'])

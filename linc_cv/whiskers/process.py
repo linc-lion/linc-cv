@@ -1,14 +1,13 @@
 import multiprocessing
 import os
+import shutil
 import sys
 
-import numpy as np
 from PIL import Image
-from skimage.color import rgb2gray
-from skimage.filters import threshold_sauvola, gaussian
 from skimage.io import imsave
 
 from linc_cv import datapath
+from linc_cv.whiskers.predict import preprocess_whisker_im_to_arr
 
 
 def imshow(im):
@@ -19,20 +18,21 @@ def process(whisker_image_path):
     *basepath, label, idx = whisker_image_path.split('/')
     try:
         with Image.open(whisker_image_path) as im:
-            im = rgb2gray(np.array(im))
+            arr = preprocess_whisker_im_to_arr(im)
     except OSError:
         return None
-    im = gaussian(im, sigma=2)
-    im = im > threshold_sauvola(im, window_size=15, k=0.1)
     dst = datapath(['whiskers_images_filtered', f'{label}/{idx}.jpg'])
     os.makedirs(os.path.dirname(dst), exist_ok=True)
-    imsave(dst, im * 255)
+    imsave(dst, arr * 255)
     sys.stdout.write('.')
     sys.stdout.flush()
 
 
-if __name__ == '__main__':
-    import shutil
+def process_whisker_images():
+    """
+    Convert downloaded whisker images to normalized images ready for
+    neural network training
+    """
 
     shutil.rmtree(datapath(['whiskers_images_filtered']))
 

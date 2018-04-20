@@ -1,3 +1,4 @@
+# coding=utf-8
 import json
 import time
 from operator import itemgetter
@@ -10,42 +11,48 @@ from keras.preprocessing.image import ImageDataGenerator, img_to_array
 from skimage.color import rgb2gray, gray2rgb
 from skimage.filters import threshold_sauvola, gaussian
 
-from linc_cv import CLASS_INDICIES_PATH, WHISKER_FEATURES_PATH
+from linc_cv import CLASS_INDICIES_PATH, WHISKER_MODEL_PATH
 from linc_cv.ml import download_image, ClassifierError
 
-with open(CLASS_INDICIES_PATH) as f:
-    class_indicies = json.load(f)
 model = None
-labels = [x[0] for x in sorted(class_indicies.items(), key=itemgetter(1))]
-num_classes = len(labels)
-print(f'num_classes -> {num_classes}')
+class_indicies = None
+labels = None
 test_datagen = None
 
 
 def initialize():
     global model
     global test_datagen
+    global class_indicies
+    global labels
+    if class_indicies is None:
+        try:
+            with open(CLASS_INDICIES_PATH) as f:
+                class_indicies = json.load(f)
+            labels = [x[0] for x in sorted(class_indicies.items(), key=itemgetter(1))]
+        except FileNotFoundError:
+            pass
     if model is None:
-        model = load_model(WHISKER_FEATURES_PATH)
+        model = load_model(WHISKER_MODEL_PATH)
     if test_datagen is None:
         test_datagen = ImageDataGenerator(
             rescale=1. / 255,
             samplewise_center=True,
             samplewise_std_normalization=True, )
-    return model, test_datagen
+    return model, test_datagen, class_indicies, labels
 
 
 def predict_whisker_from_preprocessed_image(path):
-    global model
-    global test_datagen
-    model, test_datagen = initialize()
+    model, test_datagen, class_indicies, labels = initialize()
+    if class_indicies is None:
+        raise ClassifierError('is whisker network trained? could not find class indicies json')
     start_time = time.time()
     im = Image.open(path).convert('RGB')
     im = img_to_array(im)
     im = np.expand_dims(im, 0)
     assert im.shape == (1, 299, 299, 3,), im.shape
     gt_label = path.split('/')[-2]
-    y = np.zeros((1, num_classes,))
+    y = np.zeros((1, len(labels),))
     y[0][class_indicies[gt_label]] = 1
     X = next(test_datagen.flow(im, shuffle=False, batch_size=1))
     p = model.predict(X)
@@ -64,10 +71,7 @@ def preprocess_whisker_im_to_arr(im):
 
 
 def predict_unprocessed_whisker_url(image_url: str, lion_ids: Iterable[str]) -> dict:
-    global model, test_datagen
-    model, test_datagen = initialize()
-
-    # lion_id, probability
+    model, test_datagen, class_indicies, labels = initialize()
     im = download_image(image_url).convert('RGB')
     im = im.resize((299, 299,), resample=Image.LANCZOS)
     im = preprocess_whisker_im_to_arr(im)
