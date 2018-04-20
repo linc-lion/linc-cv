@@ -15,6 +15,10 @@ from linc_cv.whiskers.utils import get_class_weights
 
 
 def train_whiskers():
+    """
+    Train a neural network to perform unique whisker pattern identification.
+    """
+
     train_datagen = ImageDataGenerator(
         rescale=1. / 255,
         shear_range=0.,

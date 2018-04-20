@@ -8,12 +8,13 @@ from linc_cv.scrape_lion_db import scrape_lion_database
 from linc_cv.validation_ml import validate_random_lions
 from linc_cv.whiskers.download import download_whisker_images
 from linc_cv.whiskers.process import process_whisker_images
+from linc_cv.whiskers.train import train_whiskers
 from linc_cv.whiskers.train_test_split import whiskers_train_test_split
 
 
 def main():
     """
-    linc_cv command line interface entry point
+    linc_cv: command line interface entry point
     """
     parser = argparse.ArgumentParser(
         description='LINC Lion Recognition System',
@@ -42,6 +43,9 @@ def main():
     parser.add_argument(
         '--whiskers-train-test-split', action='store_true',
         help=inspect.getdoc(whiskers_train_test_split))
+    parser.add_argument(
+        '--train_whiskers', action='store_true',
+        help=inspect.getdoc(train_whiskers))
 
     args = parser.parse_args()
     if args.scrape_lion_database:
@@ -65,3 +69,6 @@ def main():
 
     if args.whiskers_train_test_split:
         whiskers_train_test_split()
+
+    if args.train_whiskers:
+        train_whiskers()
