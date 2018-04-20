@@ -12,7 +12,7 @@ def main():
     linc_cv command line interface entry point
     """
     parser = argparse.ArgumentParser(
-        description='LINC Computer Vision System',
+        description='LINC Lion Recognition System',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument(
         '--scrape-lion-database', action='store_true',
