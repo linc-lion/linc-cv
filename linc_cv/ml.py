@@ -63,7 +63,7 @@ def initialize():
         model = MobileNet(weights='imagenet', include_top=False, input_shape=(224, 224, 3,))
         print('initialized model')
     if linc_features is None:
-        linc_features = tb.open_file(LINC_FEATURES_PATH).root._v_children
+        linc_features = tb.open_file(LION_FEATURES_PATH).root._v_children
         print('initialized linc_features')
     if features_lut is None:
         with open(FEATURES_LUT_PATH) as f:
@@ -103,6 +103,8 @@ def extract_general_image_features(img):
     x = np.expand_dims(x, axis=0)
     x = preprocess_input(x)
     features = model.predict(x)
+    if features is None:
+        raise ClassifierError('unable to predict on image')
     return features
 
 
@@ -132,16 +134,18 @@ def generate_linc_lut():
     with open(FEATURES_LUT_PATH, 'w') as f:
         json.dump(features_lut, f)
     cmp = tb.Filters(complib='blosc', complevel=9, fletcher32=True, bitshuffle=True, least_significant_digit=3)
-    f = tb.open_file(LINC_FEATURES_PATH, mode='w', title="LINC Neural Network Extracted Features", filters=cmp)
+    f = tb.open_file(LION_FEATURES_PATH, mode='w', title="LINC Neural Network Extracted Features", filters=cmp)
     linc_features = f.root._v_children
     for feature_type in features_lut:
         shape = (image_index[feature_type], 7, 7, 1024,)
         f.create_carray(f.root, feature_type, tb.Float32Atom(), shape=shape)
     for i, (image_index, image_url, feature_type,) in enumerate(db_data):
-        print(f'{i} of {len(db_data)}: {image_index}, feature type: {feature_type}')
-        img = download_image(image_url)
-        image_features = extract_general_image_features(img)
-        if image_features is None:
+        print(f'extracted {i} of {len(db_data)}: {image_index}, feature type: {feature_type}')
+        try:
+            img = download_image(image_url)
+            image_features = extract_general_image_features(img)
+        except ClassifierError as e:
+            print(f'skipping image, feature extraction error -> {e.message}')
             continue
         linc_features[feature_type][image_index] = image_features
 
@@ -273,7 +277,7 @@ def classify_val(test_features, nb_classes,
     return val_acc, probas
 
 
-def test_lion(feature_type, lion_ids, gt_class=None, test_feature_idx=None, test_image_url=None):
+def predict_lion(feature_type, lion_ids, gt_class=None, test_feature_idx=None, test_image_url=None):
     global linc_features, features_lut, model
     linc_features, features_lut, model = initialize()
     if test_feature_idx and test_image_url:

@@ -1,5 +1,4 @@
 import json
-import os
 import time
 from operator import itemgetter
 from typing import Iterable
@@ -11,9 +10,10 @@ from keras.preprocessing.image import ImageDataGenerator, img_to_array
 from skimage.color import rgb2gray, gray2rgb
 from skimage.filters import threshold_sauvola, gaussian
 
-from linc_cv.classify import download_image, ClassifierError
+from linc_cv import *
+from linc_cv.ml import download_image, ClassifierError
 
-with open('data/whiskers/class_indicies.json') as f:
+with open(CLASS_INDICIES_PATH) as f:
     class_indicies = json.load(f)
 model = None
 labels = [x[0] for x in sorted(class_indicies.items(), key=itemgetter(1))]
@@ -26,7 +26,7 @@ def initialize():
     global model
     global test_datagen
     if model is None:
-        model = load_model('whiskers/whiskers.h5')
+        model = load_model(WHISKER_FEATURES_PATH)
     if test_datagen is None:
         test_datagen = ImageDataGenerator(
             rescale=1. / 255,
@@ -35,7 +35,7 @@ def initialize():
     return model, test_datagen
 
 
-def test_whisker_path(path):
+def predict_on_whisker_path(path):
     global model
     global test_datagen
     model, test_datagen = initialize()
@@ -64,7 +64,7 @@ def preprocess_whisker_im_to_arr(im):
     return im
 
 
-def test_unprocessed_whisker_url(image_url: str, lion_ids: Iterable[str]) -> dict:
+def predict_unprocessed_whisker_url(image_url: str, lion_ids: Iterable[str]) -> dict:
     global model, test_datagen
     model, test_datagen = initialize()
 
@@ -82,28 +82,3 @@ def test_unprocessed_whisker_url(image_url: str, lion_ids: Iterable[str]) -> dic
         if labels[i] in lion_ids:
             predictions[labels[i]] = prob
     return predictions
-
-
-if __name__ == '__main__':
-    from collections import defaultdict
-
-    classifications = defaultdict(list)
-    all_times = []
-    all_scores = []
-    for root, dirs, files in os.walk('whiskers_images_traintest/test'):
-        for f in files:
-            path = os.path.join(root, f)
-            gt_label, pred_label, correct, total_time = test_whisker_path(path)
-            all_scores.append(correct)
-            all_times.append(total_time)
-            classifications[gt_label].append(pred_label)
-
-    for gt_label, pred_labels in classifications.items():
-        scores = []
-        for pred_label in pred_labels:
-            scores.append(pred_label == gt_label)
-        print(f'label: {gt_label}, accuracy: {np.around(np.mean(scores), 3)}')
-    print(f'OVERALL, number of test samples: {len(all_scores)}, '
-          f'accuracy: {np.around(np.mean(all_scores), 3)}')
-    print(f'OVERALL, mean time to perform one '
-          f'prediction: {np.around(np.mean(all_times), 3)}')
