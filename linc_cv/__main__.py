@@ -53,3 +53,6 @@ def main():
     if args.scrape_lion_database:
         scrape_lion_database(
             max_lion_id=args.max_lion_id)
+
+    if args.parse_lion_database:
+        linc_db_to_image_lut()

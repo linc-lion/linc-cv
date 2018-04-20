@@ -1,5 +1,6 @@
 import json
 import multiprocessing
+import os
 import shutil
 import sys
 import tempfile
@@ -112,9 +113,12 @@ def image_urls_to_features(data):
     return image_index, features, feature_type
 
 
+from . import BASE_DIR
+
+
 def generate_linc_lut():
     global linc_features
-    with open('data/images_lut.json') as f:
+    with open(os.path.join(BASE_DIR, 'data', 'images_lut.json')) as f:
         linc_images_lut = json.load(f)
     features_lut = defaultdict(lambda: defaultdict(list))
     image_index = defaultdict(lambda: 0)

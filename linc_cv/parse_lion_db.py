@@ -27,7 +27,6 @@ def linc_db_to_image_lut():
                     linc_images_lut.setdefault(i, {})
                     linc_images_lut[i].setdefault(t, [])
                     linc_images_lut[i][t].append(tn)
-                    print(cnt, str(i), t, tn)
                     cnt += 1
         except KeyError:
             continue
