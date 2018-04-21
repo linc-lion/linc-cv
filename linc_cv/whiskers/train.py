@@ -115,7 +115,7 @@ def train_whiskers(validation, epochs):
     else:
         model.fit_generator(
             train_generator,
-            steps_per_epoch=epochs,
+            steps_per_epoch=epoch_size,
             epochs=epochs,
             max_queue_size=512,
             use_multiprocessing=True,
