@@ -3,3 +3,4 @@ linc_cv/data/*
 *.egg*
 __pycache__
 .envrc
+linc_cv/keys.py

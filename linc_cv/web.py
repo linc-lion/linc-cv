@@ -2,11 +2,14 @@ from flask import Flask
 from flask import request
 from flask_restful import Resource, Api
 
+from linc_cv.keys import API_KEY
 from linc_cv.tasks import c, classify_image_url_against_lion_ids
 
 
 class LincResultAPI(Resource):
     def get(self, celery_id):
+        if request.headers.get('ApiKey') != API_KEY:
+            return {'status': 'error', 'info': 'authentication failure'}, 400
         t = c.AsyncResult(id=celery_id)
         if t.ready():
             return t.get()
@@ -18,6 +21,8 @@ class LincResultAPI(Resource):
 
 class LincClassifyAPI(Resource):
     def post(self):
+        if request.headers.get('ApiKey') != API_KEY:
+            return {'status': 'error', 'info': 'authentication failure'}, 400
         try:
             json_request = request.get_json()
             if json_request is None:

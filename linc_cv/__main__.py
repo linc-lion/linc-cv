@@ -55,7 +55,10 @@ def main():
     parser.add_argument(
         '--epochs', type=int, default=200,
         help="Upper bound on training epochs.")
-
+    parser.add_argument(
+        '--class-weight-smoothing-factor', type=float, default=0.1,
+        help="Factor that smooths extremely uneven weights computed for "
+             "balanced class weights.")
     args = parser.parse_args()
     if args.scrape_lion_database:
         scrape_lion_database(
@@ -83,4 +86,4 @@ def main():
         whiskers_train_test_split()
 
     if args.train_whiskers:
-        train_whiskers(args.no_validation, args.epochs)
+        train_whiskers(args.no_validation, args.epochs, args.class_weight_smoothing_factor)

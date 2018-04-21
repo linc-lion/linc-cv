@@ -15,7 +15,7 @@ from linc_cv.whiskers.sgdr import SGDRScheduler
 from linc_cv.whiskers.utils import get_class_weights
 
 
-def train_whiskers(validation, epochs):
+def train_whiskers(validation, epochs, class_weight_smoothing_factor):
     """
     Train a neural network to perform unique whisker pattern identification.
     If validation is False, epochs must be set to avoid overtraining.
@@ -80,7 +80,7 @@ def train_whiskers(validation, epochs):
     max_lr = 1e-1
     min_lr = 1e-6
     epoch_size = 300
-    class_weight = get_class_weights(y)
+    class_weight = get_class_weights(y, smooth_factor=class_weight_smoothing_factor)
     model = InceptionResNetV2(weights=None, classes=num_classes)
     optimizer = SGD(lr=max_lr, momentum=0.9)
     model.compile(loss='categorical_crossentropy',
@@ -90,9 +90,9 @@ def train_whiskers(validation, epochs):
         min_lr=min_lr,
         max_lr=max_lr,
         steps_per_epoch=epoch_size,
-        lr_decay=0.8,
+        lr_decay=0.9,
         cycle_length=1,
-        mult_factor=1.0)
+        mult_factor=1.5)
     if validation:
         save_best_only = True
     else:
