@@ -64,8 +64,8 @@ def predict_whisker_from_preprocessed_image(path):
 
 def preprocess_whisker_im_to_arr(im):
     im = rgb2gray(np.array(im))
-    im = gaussian(im, sigma=2)
-    im = im > threshold_sauvola(im, k=0.1)
+    im = gaussian(im)
+    im = im > threshold_sauvola(im, window_size=9, k=0.05)
     im = gray2rgb(im)
     return im
 

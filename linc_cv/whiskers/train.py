@@ -23,10 +23,10 @@ def train_whiskers():
     train_datagen = ImageDataGenerator(
         rescale=1. / 255,
         shear_range=0.,
-        rotation_range=15,
-        zoom_range=0.1,
-        height_shift_range=0.1,
-        width_shift_range=0.1,
+        rotation_range=25,
+        zoom_range=0.15,
+        height_shift_range=0.15,
+        width_shift_range=0.15,
         fill_mode='nearest',
         samplewise_center=True,
         samplewise_std_normalization=True, )
@@ -67,7 +67,7 @@ def train_whiskers():
         model = load_model(WHISKER_MODEL_PATH)
     except OSError:
         model = InceptionResNetV2(weights=None, classes=num_classes)
-        optimizer = SGD(lr=max_lr, momentum=0.5)
+        optimizer = SGD(lr=max_lr, momentum=0.9)
         model.compile(loss='categorical_crossentropy',
                       optimizer=optimizer,
                       metrics=[metrics.categorical_accuracy])
