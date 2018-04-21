@@ -49,6 +49,12 @@ def main():
     parser.add_argument(
         '--train_whiskers', action='store_true',
         help=inspect.getdoc(train_whiskers))
+    parser.add_argument(
+        '--no-validation', action='store_false',
+        help="Do not perform cross-validation. Useful for final training.")
+    parser.add_argument(
+        '--epochs', type=int, default=200,
+        help="Upper bound on training epochs.")
 
     args = parser.parse_args()
     if args.scrape_lion_database:
@@ -77,4 +83,4 @@ def main():
         whiskers_train_test_split()
 
     if args.train_whiskers:
-        train_whiskers()
+        train_whiskers(args.no_validation, args.epochs)
