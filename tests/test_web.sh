@@ -1,10 +1,19 @@
 #!/bin/sh
 
-curl -H "Content-Type: application/json" --data @test_whisker_classification.json \
+# replace ${API_KEY} with an actual API key
+# replace ${RESULT_ID} with the job id
+
+curl \
+    -H "Content-Type: application/json" \
+    -H "ApiKey: ${API_KEY}" \
+    --data @test_whisker_classification.json \
     http://localhost:5000/linc/v1/classify
 
-curl -H "Content-Type: application/json" --data @test_lion_classification.json \
+curl \
+    -H "Content-Type: application/json" \
+    -H "ApiKey: ${API_KEY}" \
+    --data @test_lion_classification.json \
     http://localhost:5000/linc/v1/classify
 
-# curl http://localhost:5000/linc/v1/results/<<< result id >>>
+curl -H "ApiKey: ${API_KEY}" http://localhost:5000/linc/v1/results/${RESULT_ID}
 
