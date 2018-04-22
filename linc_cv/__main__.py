@@ -68,6 +68,9 @@ def main():
         '--worker', action='store_true',
         help="Start API task worker (at least one must always "
              "be present for HTTP REST API to function properly.")
+    parser.add_argument(
+        '--flower', action='store_true',
+        help="Start API task worker monitor (Celery Flower)")
 
     args = parser.parse_args()
     if args.scrape_lion_database:
@@ -98,8 +101,6 @@ def main():
     if args.train_whiskers:
         train_whiskers(args.no_validation, args.epochs, args.class_weight_smoothing_factor)
 
-    assert not (args.web and args.worker)
-
     if args.web:
         app.run(host='0.0.0.0', port=5000, debug=False)
 
@@ -109,4 +110,11 @@ def main():
             '--concurrency=1',
             '--max-tasks-per-child=4',
             '-E', ]
+        c.worker_main(argv=argv)
+
+    if args.flower:
+        argv = [
+            'flower',
+            '--address=0.0.0.0',
+            '--port=5555', ]
         c.worker_main(argv=argv)
