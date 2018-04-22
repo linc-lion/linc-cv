@@ -4,3 +4,4 @@ linc_cv/data/*
 __pycache__
 .envrc
 linc_cv/keys.py
+.DS_Store
