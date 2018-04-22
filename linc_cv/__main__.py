@@ -5,7 +5,9 @@ import inspect
 from linc_cv.ml import generate_linc_lut
 from linc_cv.parse_lion_db import linc_db_to_image_lut
 from linc_cv.scrape_lion_db import scrape_lion_database
+from linc_cv.tasks import c
 from linc_cv.validation_ml import validate_random_lions
+from linc_cv.web import app
 from linc_cv.whiskers.download import download_whisker_images
 from linc_cv.whiskers.process import process_whisker_images, show_random_processed_whisker_image
 from linc_cv.whiskers.train import train_whiskers
@@ -59,6 +61,14 @@ def main():
         '--class-weight-smoothing-factor', type=float, default=0.1,
         help="Factor that smooths extremely uneven weights computed for "
              "balanced class weights.")
+    parser.add_argument(
+        '--web', action='store_true',
+        help="Start HTTP REST API")
+    parser.add_argument(
+        '--worker', action='store_true',
+        help="Start API task worker (at least one must always "
+             "be present for HTTP REST API to function properly.")
+
     args = parser.parse_args()
     if args.scrape_lion_database:
         scrape_lion_database(
@@ -87,3 +97,16 @@ def main():
 
     if args.train_whiskers:
         train_whiskers(args.no_validation, args.epochs, args.class_weight_smoothing_factor)
+
+    assert not (args.web and args.worker)
+
+    if args.web:
+        app.run(host='0.0.0.0', port=5000, debug=False)
+
+    if args.worker:
+        argv = [
+            'worker',
+            '--concurrency=1',
+            '--max-tasks-per-child=4',
+            '-E', ]
+        c.worker_main(argv=argv)
