@@ -12,6 +12,14 @@ from linc_cv.whiskers.download import download_whisker_images
 from linc_cv.whiskers.process import process_whisker_images, show_random_processed_whisker_image
 from linc_cv.whiskers.train import train_whiskers
 from linc_cv.whiskers.train_test_split import whiskers_train_test_split
+from linc_cv.whiskers.validation import validate_whiskers
+
+
+def validate_whiskers_test_set():
+    """
+    Validate whiskers on entire dataset, including training data.
+    """
+    return validate_whiskers(all_whiskers=True)
 
 
 def main():
@@ -49,8 +57,14 @@ def main():
         '--whiskers-train-test-split', action='store_true',
         help=inspect.getdoc(whiskers_train_test_split))
     parser.add_argument(
-        '--train_whiskers', action='store_true',
+        '--train-whiskers', action='store_true',
         help=inspect.getdoc(train_whiskers))
+    parser.add_argument(
+        '--validate-whiskers-test-set', action='store_true',
+        help=inspect.getdoc(validate_whiskers_test_set))
+    parser.add_argument(
+        '--validate-whiskers-all', action='store_true',
+        help=inspect.getdoc(validate_whiskers))
     parser.add_argument(
         '--no-validation', action='store_false',
         help="Do not perform cross-validation. Useful for final training.")
@@ -100,6 +114,9 @@ def main():
 
     if args.train_whiskers:
         train_whiskers(args.no_validation, args.epochs, args.class_weight_smoothing_factor)
+
+    if args.validate_whiskers_all:
+        validate_whiskers()
 
     if args.web:
         app.run(host='0.0.0.0', port=5000, debug=False)

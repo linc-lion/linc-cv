@@ -47,7 +47,7 @@ def train_whiskers(validation, epochs, class_weight_smoothing_factor):
         trainpath = ['whiskers_images_traintest', 'train']
     else:
         # train on all whisker images
-        trainpath = ['whiskers_images_filtered']
+        trainpath = ['whiskers_images_normalized']
 
     train_generator = train_datagen.flow_from_directory(
         datapath(trainpath),

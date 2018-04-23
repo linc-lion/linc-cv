@@ -32,7 +32,7 @@ def whiskers_train_test_split():
     X = []
     y = []
 
-    for root, dirs, files in os.walk(datapath(['whiskers_images_filtered'])):
+    for root, dirs, files in os.walk(datapath(['whiskers_images_normalized'])):
         for f in files:
             path = os.path.join(root, f)
             label = path.split('/')[-2]

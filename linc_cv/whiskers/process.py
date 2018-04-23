@@ -21,7 +21,7 @@ def process(whisker_image_path, save=True):
         print(f'failed to process whisker image {whisker_image_path}')
         return
     if save:
-        dst = datapath(['whiskers_images_filtered', f'{label}/{idx}.jpg'])
+        dst = datapath(['whiskers_images_normalized', f'{label}/{idx}.jpg'])
         os.makedirs(os.path.dirname(dst), exist_ok=True)
         imsave(dst, arr)
     else:
@@ -55,7 +55,7 @@ def process_whisker_images():
     """
 
     try:
-        shutil.rmtree(datapath(['whiskers_images_filtered']))
+        shutil.rmtree(datapath(['whiskers_images_normalized']))
     except FileNotFoundError:
         pass
 

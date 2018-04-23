@@ -81,7 +81,11 @@ def predict_unprocessed_whisker_url(image_url: str, lion_ids: Iterable[str]) -> 
     X = next(test_datagen.flow(im, shuffle=False, batch_size=1))
     p = model.predict(X)
     predictions = {}
-    for i, prob in enumerate(p[0]):
-        if labels[i] in lion_ids:
+    if lion_ids:
+        for i, prob in enumerate(p[0]):
+            if labels[i] in lion_ids:
+                predictions[labels[i]] = prob
+    else:
+        for i, prob in enumerate(p[0]):
             predictions[labels[i]] = prob
     return predictions
