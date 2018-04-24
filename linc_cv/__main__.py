@@ -1,11 +1,13 @@
 # coding=utf-8
 import argparse
 import inspect
+import os
+import sys
+from subprocess import run
 
 from linc_cv.ml import generate_linc_lut
 from linc_cv.parse_lion_db import linc_db_to_image_lut
 from linc_cv.scrape_lion_db import scrape_lion_database
-from linc_cv.tasks import c
 from linc_cv.validation_ml import validate_random_lions
 from linc_cv.web import app
 from linc_cv.whiskers.download import download_whisker_images
@@ -13,6 +15,9 @@ from linc_cv.whiskers.process import process_whisker_images, show_random_process
 from linc_cv.whiskers.train import train_whiskers
 from linc_cv.whiskers.train_test_split import whiskers_train_test_split
 from linc_cv.whiskers.validation import validate_whiskers
+
+CELERY_EXE_PATH = os.path.join(os.path.dirname(sys.argv[0]), 'celery')
+FLOWER_EXE_PATH = os.path.join(os.path.dirname(sys.argv[0]), 'flower')
 
 
 def validate_whiskers_test_set():
@@ -121,17 +126,11 @@ def main():
     if args.web:
         app.run(host='0.0.0.0', port=5000, debug=False)
 
+    from linc_cv import BASE_DIR
     if args.worker:
-        argv = [
-            'worker',
-            '--concurrency=1',
-            '--max-tasks-per-child=4',
-            '-E', ]
-        c.worker_main(argv=argv)
+        cmd = f'{CELERY_EXE_PATH} worker -A linc_cv.tasks --concurrency=1 --max-tasks-per-child=4 -E'.split(' ')
+        run(cmd, check=True, cwd=BASE_DIR)
 
     if args.flower:
-        argv = [
-            'flower',
-            '--address=0.0.0.0',
-            '--port=5555', ]
-        c.worker_main(argv=argv)
+        cmd = f'{FLOWER_EXE_PATH} flower -A linc_cv.tasks --address=0.0.0.0 --port=5555'.split(' ')
+        run(cmd, check=True, cwd=BASE_DIR)
