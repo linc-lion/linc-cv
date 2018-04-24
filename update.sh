@@ -1,4 +1,4 @@
-rsync -rtv --dry-run \
+rsync -rtv --stats \
     --exclude "linc_cv/data/" \
     --exclude ".git" \
     --exclude ".DS_Store" \

@@ -48,6 +48,7 @@ def predict_whisker_from_preprocessed_image(path):
         raise ClassifierError('is whisker network trained? could not find class indicies json')
     start_time = time.time()
     im = Image.open(path).convert('RGB')
+    im = im.resize((299, 299,), resample=Image.LANCZOS)
     im = img_to_array(im)
     im = np.expand_dims(im, 0)
     assert im.shape == (1, 299, 299, 3,), im.shape
