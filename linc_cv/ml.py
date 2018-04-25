@@ -202,7 +202,7 @@ def lions_to_xy_val(feature_type, lion_ids,
         raise ClassifierError('labels of the training dataset have a different shape than that of the testing dataset')
     nb_classes = y_train.shape[-1]
     if nb_classes < 2:
-        return ClassifierError('cannot train a classifier to discriminate between < 2 classes')
+        raise ClassifierError('cannot train a classifier to discriminate between < 2 classes')
     return labels, nb_classes, X_train, X_test, y_train, y_test
 
 

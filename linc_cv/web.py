@@ -13,7 +13,7 @@ class LincResultAPI(Resource):
             return {'status': 'error', 'info': 'authentication failure'}, 401
         t = c.AsyncResult(id=celery_id)
         if t.ready():
-            return t.get()
+            return t.get(propagate=True)
         return {
             'status': 'pending',
             'match_probability': []
