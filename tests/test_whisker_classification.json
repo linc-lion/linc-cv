@@ -1,21 +1,9 @@
 {
-  "identification": {
-    "images": [
-      {
-        "type": "whisker",
-        "url": "https://linc-media.linclion.org/linc-api-lions/imageset_150_570e495f3186bb0003514633/2016-10-06_image_6694_57f60a0762078100033d8b99_thumbnail.jpg"
-      }
-    ],
-    "lions": [
-      {
-        "id": 98
-      },
-      {
-        "id": 99
-      },
-      {
-        "id": 100
-      }
-    ]
-  }
+  "type": "whisker",
+  "url": "https://linc-media.linclion.org/linc-api-lions/imageset_150_570e495f3186bb0003514633/2016-10-06_image_6694_57f60a0762078100033d8b99_thumbnail.jpg",
+  "lions": [
+    98,
+    99,
+    100
+  ]
 }
