@@ -13,8 +13,8 @@ c.conf.result_backend = 'redis://localhost:6379/0'
 def classify_image_url_against_lion_ids(test_image_url, feature_type, lion_ids):
     results = []
     try:
-        if feature_type == 'whisker':
-            whisker_classifier_val_acc = 0.63
+        if 'whisker' in feature_type:
+            whisker_classifier_val_acc = 0.78
             predictions = predict_unprocessed_whisker_url(test_image_url, lion_ids)
             for lion_id, probability in predictions.items():
                 results.append(
