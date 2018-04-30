@@ -1,9 +1,11 @@
 # coding=utf-8
 import keras.backend as K
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 def get_activations(model, model_inputs, print_shape_only=False, layer_name=None):
-    print('----- activations -----')
+    print('computing activations...')
     activations = []
     inp = model.input
 
@@ -38,18 +40,7 @@ def get_activations(model, model_inputs, print_shape_only=False, layer_name=None
 
 
 def display_activations(activation_maps):
-    import numpy as np
-    import matplotlib.pyplot as plt
-    """
-    (1, 26, 26, 32)
-    (1, 24, 24, 64)
-    (1, 12, 12, 64)
-    (1, 12, 12, 64)
-    (1, 9216)
-    (1, 128)
-    (1, 128)
-    (1, 10)
-    """
+    print('displaying activations...')
     batch_size = activation_maps[0].shape[0]
     assert batch_size == 1, 'One image at a time to visualize.'
     for i, activation_map in enumerate(activation_maps):
