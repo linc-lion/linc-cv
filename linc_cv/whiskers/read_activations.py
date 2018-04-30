@@ -4,7 +4,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def get_activations(model, model_inputs, print_shape_only=False, layer_name=None):
+def get_activations(
+        model, model_inputs, print_shape_only=False,
+        layer_name=None, test_mode=True):
     print('computing activations...')
     activations = []
     inp = model.input
@@ -27,9 +29,16 @@ def get_activations(model, model_inputs, print_shape_only=False, layer_name=None
     else:
         list_inputs = [model_inputs, 0.]
 
-    # Learning phase. 0 = Test mode (no dropout or batch normalization)
-    # layer_outputs = [func([model_inputs, 0.])[0] for func in funcs]
-    layer_outputs = [func(list_inputs)[0] for func in funcs]
+    if test_mode:
+        print('entering test mode')
+        # Learning phase.
+        # 0 = Test mode (no dropout or batch normalization)
+        layer_outputs = [func([model_inputs, 0.])[0] for func in funcs]
+    else:
+        print('entering train mode')
+        layer_outputs = [func(list_inputs)[0] for func in funcs]
+
+    print('collating activations')
     for layer_activations in layer_outputs:
         activations.append(layer_activations)
         if print_shape_only:

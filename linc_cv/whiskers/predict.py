@@ -34,6 +34,7 @@ def initialize():
             pass
     if model is None:
         model = load_model(WHISKER_MODEL_PATH)
+        print('loaded existing whisker model')
     if test_datagen is None:
         test_datagen = ImageDataGenerator(
             rescale=1. / 255,
