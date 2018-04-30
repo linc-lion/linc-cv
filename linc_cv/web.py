@@ -6,6 +6,9 @@ from flask_restful import Resource, Api
 from linc_cv.keys import API_KEY
 from linc_cv.tasks import c, classify_image_url_against_lion_ids
 
+VALID_LION_IMAGE_TYPES = [
+    'cv', 'whisker', 'whisker-left', 'whisker-right']
+
 
 class LincResultAPI(Resource):
     def get(self, celery_id):
@@ -13,7 +16,7 @@ class LincResultAPI(Resource):
             return {'status': 'error', 'info': 'authentication failure'}, 401
         t = c.AsyncResult(id=celery_id)
         if t.ready():
-            return t.get(propagate=True)
+            return t.get()
         return {
             'status': 'pending',
             'match_probability': []
@@ -24,33 +27,51 @@ class LincClassifyAPI(Resource):
     def post(self):
         if request.headers.get('ApiKey') != API_KEY:
             return {'status': 'error', 'info': 'authentication failure'}, 401
+
+        errors = []
+        failure = False
+
+        rj = request.get_json()
+        if rj is None:
+            errors.append('could not parse JSON data from request')
+            failure = True
+
+        image_type = None
         try:
-            json_request = request.get_json()
-            if json_request is None:
-                return {'status': 'error', 'info': 'could not parse JSON data from request'}, 400
-            try:
-                image_type = json_request['identification']['images'][0]['type']
-            except KeyError:
-                return {'status': 'error', 'info': 'missing image type in identification'}, 400
-            try:
-                image_url = json_request['identification']['images'][0]['url']
-            except KeyError:
-                return {'status': 'error', 'info': 'missing url in image identification'}, 400
-            try:
-                lions_ids = [str(r['id']) for r in json_request['identification']['lions']]
-            except (TypeError, AttributeError,):
-                return {'status': 'error', 'info': 'could not parse lion ids from identifications'}, 400
-
-            print(image_url, image_type, lions_ids)
-            job_id = classify_image_url_against_lion_ids.delay(image_url, image_type, lions_ids).id
-
-            return {
-                'id': job_id,
-                'status': 'pending',
-                'lions': []
-            }
+            image_type = rj['type']
         except KeyError:
-            return {'status': 'error'}, 400
+            errors.append('missing image type')
+            failure = True
+
+        if image_type not in VALID_LION_IMAGE_TYPES:
+            errors.append(f'invalid type: type must be one of {VALID_LION_IMAGE_TYPES}')
+            failure = True
+
+        image_url = None
+        try:
+            image_url = rj['url']
+        except KeyError:
+            errors.append('missing url')
+            failure = True
+
+        lions_ids = None
+        try:
+            lions_ids = rj['lions']
+        except KeyError:
+            errors.append('could not parse lion ids')
+            failure = True
+
+        job_id = None
+        if failure:
+            status = 'failure'
+            status_code = 400
+        else:
+            job_id = classify_image_url_against_lion_ids.delay(
+                image_url, image_type, lions_ids).id
+            status = 'pending'
+            status_code = 200
+
+        return {'id': job_id, 'status': status, 'errors': errors}, status_code
 
 
 app = Flask(__name__)
