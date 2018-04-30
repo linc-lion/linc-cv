@@ -63,23 +63,28 @@ def predict_whisker_from_preprocessed_image(path):
     return gt_label, pred_label, correct, total_time
 
 
-def preprocess_whisker_im_to_arr(im):
+def preprocess_whisker_im_to_arr(im: Image):
+    if im.size != (299, 299,):
+        im = im.resize((299, 299,), resample=Image.LANCZOS)
     im = rgb2gray(np.array(im))
     im = gaussian(im)
-    im = im > threshold_sauvola(im, window_size=9, k=0.05)
+    im = im > threshold_sauvola(im, window_size=11, k=0.07)
     im = gray2rgb(im)
+    im = np.expand_dims(im, 0)
+    im = im.astype('uint8')
+    im *= 255
     return im
 
 
 def predict_unprocessed_whisker_url(image_url: str, lion_ids: Iterable[str]) -> dict:
     model, test_datagen, class_indicies, labels = initialize()
     im = download_image(image_url).convert('RGB')
-    im = im.resize((299, 299,), resample=Image.LANCZOS)
-    im = preprocess_whisker_im_to_arr(im)
-    im = np.expand_dims(im, 0)
-    if im.shape != (1, 299, 299, 3,):
+    if im.size != (299, 299,):
+        im = im.resize((299, 299,), resample=Image.LANCZOS)
+    arr = preprocess_whisker_im_to_arr(im)
+    if arr.shape != (1, 299, 299, 3,):
         raise ClassifierError(f'failed processing image for whisker url {image_url} ')
-    X = next(test_datagen.flow(im, shuffle=False, batch_size=1))
+    X = next(test_datagen.flow(arr, shuffle=False, batch_size=1))
     p = model.predict(X)
     predictions = {}
     if lion_ids:

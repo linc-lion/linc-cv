@@ -11,7 +11,8 @@ from linc_cv.scrape_lion_db import scrape_lion_database
 from linc_cv.validation_ml import validate_random_lions
 from linc_cv.web import app
 from linc_cv.whiskers.download import download_whisker_images
-from linc_cv.whiskers.process import process_whisker_images, show_random_processed_whisker_image
+from linc_cv.whiskers.process import process_whisker_images, show_random_processed_whisker_image, \
+    show_random_processed_whisker_activations
 from linc_cv.whiskers.train import train_whiskers
 from linc_cv.whiskers.train_test_split import whiskers_train_test_split
 from linc_cv.whiskers.validation import validate_whiskers
@@ -52,6 +53,9 @@ def main():
     parser.add_argument(
         '--download-whisker-images', action='store_true',
         help=inspect.getdoc(download_whisker_images))
+    parser.add_argument(
+        '--show-random-processed-whisker-activations', action='store_true',
+        help=inspect.getdoc(show_random_processed_whisker_activations))
     parser.add_argument(
         '--show-random-processed-whisker-image', action='store_true',
         help=inspect.getdoc(show_random_processed_whisker_image))
@@ -107,6 +111,9 @@ def main():
 
     if args.download_whisker_images:
         download_whisker_images()
+
+    if args.show_random_processed_whisker_activations:
+        show_random_processed_whisker_activations()
 
     if args.show_random_processed_whisker_image:
         show_random_processed_whisker_image()

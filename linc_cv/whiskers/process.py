@@ -1,13 +1,24 @@
+# coding=utf-8
 import multiprocessing
 import os
 import random
 import shutil
+import sys
 
 from PIL import Image
 from skimage.io import imsave
 
 from linc_cv import datapath
+from linc_cv.whiskers.predict import initialize
 from linc_cv.whiskers.predict import preprocess_whisker_im_to_arr
+from linc_cv.whiskers.read_activations import get_activations, display_activations
+
+
+def imshow(arr):
+    assert len(arr.shape) == 3, arr.shape
+    assert arr.dtype == 'uint8', arr.dtype
+    im = Image.fromarray(arr)
+    im.show()
 
 
 def process(whisker_image_path, save=True):
@@ -15,28 +26,19 @@ def process(whisker_image_path, save=True):
     try:
         with Image.open(whisker_image_path) as im:
             arr = preprocess_whisker_im_to_arr(im)
-            arr = arr.astype('uint8')
-            arr *= 255
     except OSError:
-        print(f'failed to process whisker image {whisker_image_path}')
-        return
+        return print(f'failed to process whisker image {whisker_image_path}')
     if save:
         dst = datapath(['whiskers_images_normalized', f'{label}/{idx}.jpg'])
         os.makedirs(os.path.dirname(dst), exist_ok=True)
-        imsave(dst, arr)
+        imsave(dst, arr[0])
     else:
         return arr
 
 
-def imshow(arr):
-    im = Image.fromarray(arr)
-    im.show()
-
-
-def show_random_processed_whisker_image():
+def random_whisker_image_path():
     """
-    Process a whisker image file and display the normalized transformation
-    used to train and test the whisker detection neural network.
+    Display neural network activation map for a random unprocessed lion image
     """
     whisker_image_paths = []
     for root, dirs, files in os.walk(datapath(['whisker_images'])):
@@ -44,8 +46,32 @@ def show_random_processed_whisker_image():
             path = os.path.join(root, f)
             whisker_image_paths.append(path)
     whisker_image_path = random.choice(whisker_image_paths)
-    arr = process(whisker_image_path, save=False)
-    imshow(arr)
+    return whisker_image_path
+
+
+def show_random_processed_whisker_activations():
+    """
+    Process a whisker image file and display the normalized transformation
+    used to train and test the whisker detection neural network.
+    """
+
+    arr = process(random_whisker_image_path(), save=False)
+    model, test_datagen, class_indicies, labels = initialize()
+    imshow(arr[0])
+    model_inputs = next(test_datagen.flow(arr, batch_size=1))
+    imshow(model_inputs[0].astype('uint8'))
+    activations = get_activations(model=model, model_inputs=model_inputs)
+    display_activations(activations)
+
+
+def show_random_processed_whisker_image():
+    """
+    Process a whisker image file and display the normalized transformation
+    used to train and test the whisker detection neural network.
+    """
+
+    arr = process(random_whisker_image_path(), save=False)
+    imshow(arr[0])
 
 
 def process_whisker_images():
