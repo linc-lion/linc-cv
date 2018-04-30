@@ -32,7 +32,7 @@ def optimize_jpeg_inplace(image_path):
     try:
         run(cmd.split(' '), check=True)
     except CalledProcessError:
-        print('Do you have ImageMagick installed?')
+        print('error encountered while calling magick (is ImageMagick installed?)')
         sys.exit(1)
 
 
