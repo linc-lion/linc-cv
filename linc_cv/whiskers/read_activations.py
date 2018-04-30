@@ -1,7 +1,39 @@
 # coding=utf-8
+import os
+import shutil
+import sys
+from subprocess import run, CalledProcessError
+
 import keras.backend as K
 import matplotlib.pyplot as plt
 import numpy as np
+
+from linc_cv import ACTIVATIONS_PATH
+
+font = {'family': 'sans',
+        'weight': 'bold',
+        'size': 6}
+
+plt.rc('font', **font)
+
+try:
+    shutil.rmtree(ACTIVATIONS_PATH)
+except FileNotFoundError:
+    pass
+os.makedirs(ACTIVATIONS_PATH, exist_ok=True)
+print(f'saving activation maps to: {ACTIVATIONS_PATH}')
+
+
+def optimize_jpeg_inplace(image_path):
+    # flatten, fuzz, trim, and repage eliminate white space
+    cmd = f'magick mogrify -flatten -fuzz 1% -trim +repage ' \
+          f'-define jpeg:dct-method=float ' \
+          f'-strip -interlace Plane -sampling-factor 4:2:0 -quality 70% {image_path}'
+    try:
+        run(cmd.split(' '), check=True)
+    except CalledProcessError:
+        print('Do you have ImageMagick installed?')
+        sys.exit(1)
 
 
 def get_activations(
@@ -30,13 +62,17 @@ def get_activations(
         list_inputs = [model_inputs, 0.]
 
     if test_mode:
-        print('entering test mode')
         # Learning phase.
         # 0 = Test mode (no dropout or batch normalization)
-        layer_outputs = [func([model_inputs, 0.])[0] for func in funcs]
+        layer_outputs = []
+        for i, func in enumerate(funcs):
+            print(f'get_activations mode=test: {i}/{len(funcs)}')
+            layer_outputs.append(func([model_inputs, 0.])[0])
     else:
-        print('entering train mode')
-        layer_outputs = [func(list_inputs)[0] for func in funcs]
+        layer_outputs = []
+        for i, func in enumerate(funcs):
+            print(f'get_activations mode=train: {i}/{len(funcs)}')
+            layer_outputs.append(func(list_inputs)[0])
 
     print('collating activations')
     for layer_activations in layer_outputs:
@@ -48,7 +84,7 @@ def get_activations(
     return activations
 
 
-def display_activations(activation_maps):
+def display_activations(activation_maps, save=True):
     print('displaying activations...')
     batch_size = activation_maps[0].shape[0]
     assert batch_size == 1, 'One image at a time to visualize.'
@@ -69,5 +105,13 @@ def display_activations(activation_maps):
                 activations = np.expand_dims(activations, axis=0)
         else:
             raise Exception('len(shape) = 3 has not been implemented.')
+        plt.figure(dpi=2000)
+        plt.tight_layout()
         plt.imshow(activations, interpolation='None', cmap='jet')
-        plt.show()
+        if save:
+            image_path = os.path.join(ACTIVATIONS_PATH, f'{i}.jpg')
+            plt.savefig(image_path, dpi=2000)
+            optimize_jpeg_inplace(image_path)
+        else:
+            plt.show()
+        plt.close()

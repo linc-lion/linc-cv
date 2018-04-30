@@ -5,6 +5,7 @@ import os
 import sys
 from subprocess import run
 
+from linc_cv import BASE_DIR
 from linc_cv.ml import generate_linc_lut
 from linc_cv.parse_lion_db import linc_db_to_image_lut
 from linc_cv.scrape_lion_db import scrape_lion_database
@@ -133,7 +134,6 @@ def main():
     if args.web:
         app.run(host='0.0.0.0', port=5000, debug=False)
 
-    from linc_cv import BASE_DIR
     if args.worker:
         cmd = f'{CELERY_EXE_PATH} worker -A linc_cv.tasks --concurrency=1 --max-tasks-per-child=4 -E'.split(' ')
         run(cmd, check=True, cwd=BASE_DIR)
