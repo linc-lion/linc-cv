@@ -1,27 +1,17 @@
 # coding=utf-8
+import gc
 import os
 import shutil
 import sys
 from subprocess import run, CalledProcessError
 
-import keras.backend as K
-import matplotlib.pyplot as plt
-import numpy as np
-
 from linc_cv import ACTIVATIONS_PATH
-
-font = {'family': 'sans',
-        'weight': 'bold',
-        'size': 6}
-
-plt.rc('font', **font)
 
 try:
     shutil.rmtree(ACTIVATIONS_PATH)
 except FileNotFoundError:
     pass
 os.makedirs(ACTIVATIONS_PATH, exist_ok=True)
-print(f'saving activation maps to: {ACTIVATIONS_PATH}')
 
 
 def optimize_jpeg_inplace(image_path):
@@ -34,13 +24,15 @@ def optimize_jpeg_inplace(image_path):
     except CalledProcessError:
         print('error encountered while calling magick (is ImageMagick installed?)')
         sys.exit(1)
+    except OSError:
+        print(f'skipping optimization of {image_path}')
 
 
-def get_activations(
-        model, model_inputs, print_shape_only=False,
+def compute_activations(
+        model, model_inputs,
         layer_name=None, test_mode=True):
+    import keras.backend as K
     print('computing activations...')
-    activations = []
     inp = model.input
 
     model_multi_inputs_cond = True
@@ -52,8 +44,6 @@ def get_activations(
     outputs = [layer.output for layer in model.layers if
                layer.name == layer_name or layer_name is None]  # all layer outputs
 
-    funcs = [K.function(inp + [K.learning_phase()], [out]) for out in outputs]  # evaluation functions
-
     if model_multi_inputs_cond:
         list_inputs = []
         list_inputs.extend(model_inputs)
@@ -64,54 +54,52 @@ def get_activations(
     if test_mode:
         # Learning phase.
         # 0 = Test mode (no dropout or batch normalization)
-        layer_outputs = []
-        for i, func in enumerate(funcs):
-            print(f'get_activations mode=test: {i}/{len(funcs)}')
-            layer_outputs.append(func([model_inputs, 0.])[0])
+        for i, out in enumerate(outputs):
+            func = K.function(inp + [K.learning_phase()], [out])
+            activation_map = func([model_inputs, 0.])[0]
+            save_activations_to_image(activation_map, i)
+            gc.collect()
+            print(f'get_activations mode=test: {i}/{len(outputs)}')
     else:
-        layer_outputs = []
-        for i, func in enumerate(funcs):
-            print(f'get_activations mode=train: {i}/{len(funcs)}')
-            layer_outputs.append(func(list_inputs)[0])
-
-    print('collating activations')
-    for layer_activations in layer_outputs:
-        activations.append(layer_activations)
-        if print_shape_only:
-            print(layer_activations.shape)
-        else:
-            print(layer_activations)
-    return activations
+        for i, out in enumerate(outputs):
+            func = K.function(inp + [K.learning_phase()], [out])
+            activation_map = func(list_inputs)[0]
+            save_activations_to_image(activation_map, i)
+            gc.collect()
+            print(f'get_activations mode=train: {i}/{len(outputs)}')
 
 
-def display_activations(activation_maps, save=True):
-    print('displaying activations...')
-    batch_size = activation_maps[0].shape[0]
-    assert batch_size == 1, 'One image at a time to visualize.'
-    for i, activation_map in enumerate(activation_maps):
-        print('Displaying activation map {}'.format(i))
-        shape = activation_map.shape
-        if len(shape) == 4:
-            activations = np.hstack(np.transpose(activation_map[0], (2, 0, 1)))
-        elif len(shape) == 2:
-            # try to make it square as much as possible. we can skip some activations.
-            activations = activation_map[0]
-            num_activations = len(activations)
-            if num_activations > 1024:  # too hard to display it on the screen.
-                square_param = int(np.floor(np.sqrt(num_activations)))
-                activations = activations[0: square_param * square_param]
-                activations = np.reshape(activations, (square_param, square_param))
-            else:
-                activations = np.expand_dims(activations, axis=0)
+def save_activations_to_image(activation_map, i):
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    font = {'family': 'sans',
+            'weight': 'bold',
+            'size': 6}
+
+    plt.rc('font', **font)
+
+    shape = activation_map.shape
+    if len(shape) == 4:
+        activations = np.hstack(np.transpose(activation_map[0], (2, 0, 1)))
+    elif len(shape) == 2:
+        # try to make it square as much as possible. we can skip some activations.
+        activations = activation_map[0]
+        num_activations = len(activations)
+        if num_activations > 1024:  # too hard to display it on the screen.
+            square_param = int(np.floor(np.sqrt(num_activations)))
+            activations = activations[0: square_param * square_param]
+            activations = np.reshape(activations, (square_param, square_param))
         else:
-            raise Exception('len(shape) = 3 has not been implemented.')
-        plt.figure(dpi=2000)
-        plt.tight_layout()
-        plt.imshow(activations, interpolation='None', cmap='jet')
-        if save:
-            image_path = os.path.join(ACTIVATIONS_PATH, f'{i}.jpg')
-            plt.savefig(image_path, dpi=2000)
-            optimize_jpeg_inplace(image_path)
-        else:
-            plt.show()
-        plt.close()
+            activations = np.expand_dims(activations, axis=0)
+    else:
+        raise Exception('len(shape) = 3 has not been implemented.')
+    plt.figure(dpi=2000)
+    plt.tight_layout()
+    plt.imshow(activations, interpolation='None', cmap='jet')
+    image_path = os.path.join(ACTIVATIONS_PATH, f'{i}.jpg')
+    plt.savefig(image_path, dpi=2000)
+    optimize_jpeg_inplace(image_path)
+    # plt.show()  # only for debugging
+    plt.clf()
+    plt.close()

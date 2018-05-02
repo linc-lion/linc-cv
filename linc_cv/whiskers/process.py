@@ -3,7 +3,6 @@ import multiprocessing
 import os
 import random
 import shutil
-import sys
 
 from PIL import Image
 from skimage.io import imsave
@@ -11,11 +10,11 @@ from skimage.io import imsave
 from linc_cv import datapath
 from linc_cv.whiskers.predict import initialize
 from linc_cv.whiskers.predict import preprocess_whisker_im_to_arr
-from linc_cv.whiskers.read_activations import get_activations, display_activations
+from linc_cv.whiskers.read_activations import compute_activations
 
 
 def imshow(arr):
-    assert len(arr.shape) == 3, arr.shape
+    assert len(arr.shape) == 3 or len(arr.shape) == 2, arr.shape
     assert arr.dtype == 'uint8', arr.dtype
     im = Image.fromarray(arr)
     im.show()
@@ -51,17 +50,13 @@ def random_whisker_image_path():
 
 def show_random_processed_whisker_activations():
     """
-    Process a whisker image file and display the normalized transformation
-    used to train and test the whisker detection neural network.
+    Process a whisker image file and save activations
+    for each layer in the whisker detection neural network.
     """
-
     arr = process(random_whisker_image_path(), save=False)
     model, test_datagen, class_indicies, labels = initialize()
-    imshow(arr[0])
     model_inputs = next(test_datagen.flow(arr, batch_size=1))
-    imshow(model_inputs[0].astype('uint8'))
-    activations = get_activations(model=model, model_inputs=model_inputs)
-    display_activations(activations)
+    compute_activations(model=model, model_inputs=model_inputs)
 
 
 def show_random_processed_whisker_image():

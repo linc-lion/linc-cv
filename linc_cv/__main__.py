@@ -5,6 +5,9 @@ import os
 import sys
 from subprocess import run
 
+import matplotlib
+
+matplotlib.use('Agg')
 from linc_cv import BASE_DIR
 from linc_cv.ml import generate_linc_lut
 from linc_cv.parse_lion_db import linc_db_to_image_lut

@@ -78,7 +78,7 @@ def train_whiskers(validation, epochs, class_weight_smoothing_factor):
         json.dump(train_generator.class_indices, f)
     num_classes = train_generator.num_classes
     max_lr = 1e-1
-    min_lr = 1e-6
+    min_lr = 1e-5
     epoch_size = 300
     class_weight = get_class_weights(y, smooth_factor=class_weight_smoothing_factor)
     model = InceptionResNetV2(weights=None, classes=num_classes)

@@ -9,6 +9,7 @@ from PIL import Image
 from keras.models import load_model
 from keras.preprocessing.image import ImageDataGenerator, img_to_array
 from skimage.color import rgb2gray, gray2rgb
+from skimage.exposure import equalize_adapthist
 from skimage.filters import threshold_sauvola, gaussian
 
 from linc_cv import CLASS_INDICIES_PATH, WHISKER_MODEL_PATH
@@ -69,7 +70,9 @@ def preprocess_whisker_im_to_arr(im: Image):
         im = im.resize((299, 299,), resample=Image.LANCZOS)
     im = rgb2gray(np.array(im))
     im = gaussian(im)
-    im = im > threshold_sauvola(im, window_size=11, k=0.07)
+    im = equalize_adapthist(im)
+    thresh = threshold_sauvola(im)
+    im = im > thresh
     im = gray2rgb(im)
     im = np.expand_dims(im, 0)
     im = im.astype('uint8')
