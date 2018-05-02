@@ -4,7 +4,7 @@ import json
 import numpy as np
 from keras import metrics
 from keras.applications.inception_resnet_v2 import InceptionResNetV2
-from keras.callbacks import ModelCheckpoint
+from keras.callbacks import ModelCheckpoint, EarlyStopping
 from keras.optimizers import SGD
 from keras.preprocessing.image import ImageDataGenerator
 
@@ -101,6 +101,8 @@ def train_whiskers(validation, epochs, class_weight_smoothing_factor):
         filepath=WHISKER_MODEL_PATH, verbose=1,
         save_best_only=save_best_only)
     if validation:
+        print('training with validation enabled')
+        es = EarlyStopping(patience=20)
         model.fit_generator(
             train_generator,
             steps_per_epoch=epoch_size,
@@ -111,8 +113,9 @@ def train_whiskers(validation, epochs, class_weight_smoothing_factor):
             use_multiprocessing=True,
             workers=8,
             class_weight=class_weight,
-            callbacks=[lrs, mcp])
+            callbacks=[lrs, mcp, es])
     else:
+        print('WARNING!!! training without validation')
         model.fit_generator(
             train_generator,
             steps_per_epoch=epoch_size,
