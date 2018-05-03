@@ -70,6 +70,8 @@ def preprocess_whisker_im_to_arr(im: Image):
     im = gaussian(im)
     im = im > threshold_sauvola(im, window_size=9, k=0.05)
     im = gray2rgb(im)
+    im = im.astype('uint8')
+    im *= 255
     im = np.expand_dims(im, 0)
     return im
 

@@ -15,12 +15,7 @@ from linc_cv.whiskers.read_activations import compute_activations
 
 def imshow(arr):
     assert len(arr.shape) == 3 or len(arr.shape) == 2, arr.shape
-    # assert arr.dtype == 'uint8', arr.dtype
-    #im = im.astype('uint8')
-    #im *= 255
-    if arr.dtype == 'bool':
-        arr = arr.astype('uint8')
-        arr *= 255
+    assert arr.dtype == 'uint8', arr.dtype
     im = Image.fromarray(arr)
     im.show()
 
