@@ -9,8 +9,8 @@ from PIL import Image
 from keras.models import load_model
 from keras.preprocessing.image import ImageDataGenerator, img_to_array
 from skimage.color import rgb2gray, gray2rgb
-from skimage.filters import threshold_sauvola, gaussian
 from skimage.exposure import equalize_adapthist
+from skimage.filters import threshold_sauvola, gaussian
 
 from linc_cv import CLASS_INDICIES_PATH, WHISKER_MODEL_PATH
 from linc_cv.ml import download_image, ClassifierError
@@ -69,9 +69,9 @@ def preprocess_whisker_im_to_arr(im: Image):
     im = im.resize((160, 160,), resample=Image.LANCZOS)
     assert im.size == (160, 160,)
     im = rgb2gray(np.array(im))
-    im = gaussian(im)
+    im = gaussian(im, sigma=2)
     im = equalize_adapthist(im)
-    thresh = threshold_sauvola(im, window_size=9, k=0.05)
+    thresh = threshold_sauvola(im, k=0.1)
     im = im > thresh
     im = gray2rgb(im)
     im = np.expand_dims(im, 0)
