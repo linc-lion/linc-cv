@@ -68,9 +68,9 @@ def preprocess_whisker_im_to_arr(im: Image):
     im = im.resize((160, 160,), resample=Image.LANCZOS)
     assert im.size == (160, 160,)
     im = rgb2gray(np.array(im))
-    im = gaussian(im)
+    im = gaussian(im, sigma=2)
     # im = equalize_adapthist(im)
-    thresh = threshold_sauvola(im, window_size=9, k=0.05)
+    thresh = threshold_sauvola(im, k=0.1)
     im = im > thresh
     im = gray2rgb(im)
     im = np.expand_dims(im, 0)
