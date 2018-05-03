@@ -33,10 +33,10 @@ def train_whiskers(validation, epochs, class_weight_smoothing_factor):
     train_datagen = ImageDataGenerator(
         rescale=1. / 255,
         shear_range=0.,
-        rotation_range=25,
-        zoom_range=0.15,
-        height_shift_range=0.15,
-        width_shift_range=0.15,
+        rotation_range=15,
+        zoom_range=0.1,
+        height_shift_range=0.1,
+        width_shift_range=0.1,
         fill_mode='nearest',
         samplewise_center=True,
         samplewise_std_normalization=True, )
@@ -102,7 +102,7 @@ def train_whiskers(validation, epochs, class_weight_smoothing_factor):
         save_best_only=save_best_only)
     if validation:
         print('training with validation enabled')
-        es = EarlyStopping(patience=20)
+        es = EarlyStopping(patience=30)
         model.fit_generator(
             train_generator,
             steps_per_epoch=epoch_size,
