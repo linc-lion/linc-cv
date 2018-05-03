@@ -1,5 +1,6 @@
 # coding=utf-8
 import json
+import os
 
 import numpy as np
 from keras import metrics
@@ -45,10 +46,12 @@ def train_whiskers(validation, epochs, class_weight_smoothing_factor):
 
     if validation:
         trainpath = ['whiskers_images_traintest', 'train']
+
     else:
         # train on all whisker images
         trainpath = ['whiskers_images_normalized']
 
+    assert os.path.exists(datapath(trainpath))
     train_generator = train_datagen.flow_from_directory(
         datapath(trainpath),
         target_size=(299, 299),
@@ -77,32 +80,27 @@ def train_whiskers(validation, epochs, class_weight_smoothing_factor):
     with open(CLASS_INDICIES_PATH, 'w') as f:
         json.dump(train_generator.class_indices, f)
     num_classes = train_generator.num_classes
-    max_lr = 1e-1
-    min_lr = 1e-5
-    epoch_size = 300
+    max_lr = 0.10000
+    min_lr = 0.00001
+    epoch_size = 30
     class_weight = get_class_weights(y, smooth_factor=class_weight_smoothing_factor)
     model = InceptionResNetV2(weights=None, classes=num_classes)
-    optimizer = SGD(lr=max_lr, momentum=0.9)
+    optimizer = SGD(lr=max_lr, decay=0.0005, momentum=0.9)
     model.compile(loss='categorical_crossentropy',
                   optimizer=optimizer,
                   metrics=[metrics.categorical_accuracy])
     lrs = SGDRScheduler(
         min_lr=min_lr,
         max_lr=max_lr,
-        steps_per_epoch=epoch_size,
-        lr_decay=0.9,
-        cycle_length=1,
-        mult_factor=1.5)
-    if validation:
-        save_best_only = True
-    else:
-        save_best_only = False
+        steps_per_epoch=epoch_size, )
+    save_best_only = True if validation else False
     mcp = ModelCheckpoint(
         filepath=WHISKER_MODEL_PATH, verbose=1,
         save_best_only=save_best_only)
     if validation:
+        assert validation_generator is not None
         print('training with validation enabled')
-        es = EarlyStopping(patience=30)
+        es = EarlyStopping(patience=100)
         model.fit_generator(
             train_generator,
             steps_per_epoch=epoch_size,
