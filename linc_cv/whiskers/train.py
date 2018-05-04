@@ -33,10 +33,10 @@ def train_whiskers(validation, epochs, class_weight_smoothing_factor):
 
     train_datagen = ImageDataGenerator(
         rescale=1. / 255,
-        rotation_range=35,
-        zoom_range=0.15,
-        height_shift_range=0.15,
-        width_shift_range=0.15,
+        rotation_range=5,
+        zoom_range=0.1,
+        height_shift_range=0.1,
+        width_shift_range=0.1,
         samplewise_center=True,
         samplewise_std_normalization=True, )
 
@@ -78,12 +78,12 @@ def train_whiskers(validation, epochs, class_weight_smoothing_factor):
     with open(CLASS_INDICIES_PATH, 'w') as f:
         json.dump(train_generator.class_indices, f)
     num_classes = train_generator.num_classes
-    max_lr = 0.10000
-    min_lr = 0.00001
-    epoch_size = 30
+    max_lr = 0.100000
+    min_lr = 0.000001
+    epoch_size = 50
     class_weight = get_class_weights(y, smooth_factor=class_weight_smoothing_factor)
     model = InceptionResNetV2(weights=None, classes=num_classes)
-    optimizer = SGD(lr=max_lr, decay=0.0005, momentum=0.9)
+    optimizer = SGD(lr=max_lr, momentum=0.9)
     model.compile(loss='categorical_crossentropy',
                   optimizer=optimizer,
                   metrics=[metrics.categorical_accuracy])
