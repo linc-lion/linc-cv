@@ -33,12 +33,10 @@ def train_whiskers(validation, epochs, class_weight_smoothing_factor):
 
     train_datagen = ImageDataGenerator(
         rescale=1. / 255,
-        shear_range=0.,
-        rotation_range=15,
-        zoom_range=0.1,
-        height_shift_range=0.1,
-        width_shift_range=0.1,
-        fill_mode='nearest',
+        rotation_range=35,
+        zoom_range=0.15,
+        height_shift_range=0.15,
+        width_shift_range=0.15,
         samplewise_center=True,
         samplewise_std_normalization=True, )
 
