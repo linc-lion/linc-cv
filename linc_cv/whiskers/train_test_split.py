@@ -40,8 +40,9 @@ def whiskers_train_test_split():
             y.append(label)
 
     c = Counter(y)
-    minimum_lion_whisker_images_per_lion = 5
-    ok_ys = set(y for y in c if c[y] > minimum_lion_whisker_images_per_lion)
+
+    # only include lion_ids with a minimum number of whisker images
+    ok_ys = set(y for y in c if c[y] > 2)
 
     Xf = []
     yf = []

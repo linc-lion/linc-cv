@@ -82,7 +82,7 @@ def main():
         '--no-validation', action='store_false',
         help="Do not perform cross-validation. Useful for final training.")
     parser.add_argument(
-        '--epochs', type=int, default=200,
+        '--epochs', type=int, default=500,
         help="Upper bound on training epochs.")
     parser.add_argument(
         '--class-weight-smoothing-factor', type=float, default=0.1,

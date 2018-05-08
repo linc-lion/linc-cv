@@ -1,6 +1,7 @@
 # coding=utf-8
 import json
 import os
+from multiprocessing import cpu_count
 
 import numpy as np
 from keras import metrics
@@ -33,10 +34,12 @@ def train_whiskers(validation, epochs, class_weight_smoothing_factor):
 
     train_datagen = ImageDataGenerator(
         rescale=1. / 255,
-        rotation_range=5,
-        zoom_range=0.1,
-        height_shift_range=0.1,
-        width_shift_range=0.1,
+        shear_range=0.,
+        rotation_range=25,
+        zoom_range=0.15,
+        height_shift_range=0.15,
+        width_shift_range=0.15,
+        fill_mode='nearest',
         samplewise_center=True,
         samplewise_std_normalization=True, )
 
@@ -78,9 +81,9 @@ def train_whiskers(validation, epochs, class_weight_smoothing_factor):
     with open(CLASS_INDICIES_PATH, 'w') as f:
         json.dump(train_generator.class_indices, f)
     num_classes = train_generator.num_classes
-    max_lr = 0.100000
-    min_lr = 0.000001
-    epoch_size = 50
+    max_lr = 1e-1
+    min_lr = 1e-6
+    epoch_size = 300
     class_weight = get_class_weights(y, smooth_factor=class_weight_smoothing_factor)
     model = InceptionResNetV2(weights=None, classes=num_classes)
     optimizer = SGD(lr=max_lr, momentum=0.9)
@@ -90,7 +93,10 @@ def train_whiskers(validation, epochs, class_weight_smoothing_factor):
     lrs = SGDRScheduler(
         min_lr=min_lr,
         max_lr=max_lr,
-        steps_per_epoch=epoch_size, )
+        steps_per_epoch=epoch_size,
+        lr_decay=0.8,
+        cycle_length=1,
+        mult_factor=1.0)
     save_best_only = True if validation else False
     mcp = ModelCheckpoint(
         filepath=WHISKER_MODEL_PATH, verbose=1,
@@ -98,16 +104,16 @@ def train_whiskers(validation, epochs, class_weight_smoothing_factor):
     if validation:
         assert validation_generator is not None
         print('training with validation enabled')
-        es = EarlyStopping(patience=100)
+        es = EarlyStopping(patience=30)
         model.fit_generator(
             train_generator,
             steps_per_epoch=epoch_size,
             epochs=epochs,
             validation_data=validation_generator,
             validation_steps=epoch_size,
-            max_queue_size=512,
+            max_queue_size=32,
             use_multiprocessing=True,
-            workers=8,
+            workers=cpu_count(),
             class_weight=class_weight,
             callbacks=[lrs, mcp, es])
     else:
@@ -116,8 +122,8 @@ def train_whiskers(validation, epochs, class_weight_smoothing_factor):
             train_generator,
             steps_per_epoch=epoch_size,
             epochs=epochs,
-            max_queue_size=512,
+            max_queue_size=32,
             use_multiprocessing=True,
-            workers=8,
+            workers=cpu_count(),
             class_weight=class_weight,
             callbacks=[lrs, mcp])
