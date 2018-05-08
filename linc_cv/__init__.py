@@ -22,3 +22,5 @@ ACTIVATIONS_PATH = datapath(['activations'])
 WHISKER_IMAGES_PATH = datapath(['whisker_images'])
 WHISKER_IMAGES_TRAINTEST_PATH = datapath(['whiskers_images_traintest', 'test'])
 WHISKER_MODEL_PATH = datapath(['whisker_model.h5'])
+VALID_LION_IMAGE_TYPES = [
+    'cv', 'whisker', 'whisker-left', 'whisker-right']

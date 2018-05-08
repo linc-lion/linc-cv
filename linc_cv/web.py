@@ -1,13 +1,13 @@
 # coding=utf-8
+import json
+
 from flask import Flask
 from flask import request
 from flask_restful import Resource, Api
 
+from linc_cv import VALID_LION_IMAGE_TYPES, datapath
 from linc_cv.keys import API_KEY
 from linc_cv.tasks import c, classify_image_url_against_lion_ids
-
-VALID_LION_IMAGE_TYPES = [
-    'cv', 'whisker', 'whisker-left', 'whisker-right']
 
 
 class LincResultAPI(Resource):
@@ -21,6 +21,14 @@ class LincResultAPI(Resource):
             'status': 'pending',
             'match_probability': []
         }
+
+
+class LincWhiskerClassifierCapabilitiesAPI(Resource):
+    def get(self):
+        if request.headers.get('ApiKey') != API_KEY:
+            return {'status': 'error', 'info': 'authentication failure'}, 401
+        with open(datapath(['class_indicies.json'])) as f:
+            return {'valid_lion_ids': list(json.load(f).keys())}
 
 
 class LincClassifyAPI(Resource):
@@ -78,6 +86,7 @@ app = Flask(__name__)
 api = Api(app)
 
 api.add_resource(LincClassifyAPI, '/linc/v1/classify')
+api.add_resource(LincWhiskerClassifierCapabilitiesAPI, '/linc/v1/whisker/capabilities')
 api.add_resource(LincResultAPI, '/linc/v1/results/<string:celery_id>')
 
 if __name__ == '__main__':
