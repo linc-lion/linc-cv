@@ -43,7 +43,7 @@ def train_whiskers(validation, epochs, class_weight_smoothing_factor):
         samplewise_center=True,
         samplewise_std_normalization=True, )
 
-    batch_size = 28
+    batch_size = 24
 
     if validation:
         trainpath = ['whiskers_images_traintest', 'train']
@@ -94,8 +94,7 @@ def train_whiskers(validation, epochs, class_weight_smoothing_factor):
         min_lr=min_lr,
         max_lr=max_lr,
         steps_per_epoch=epoch_size,
-        lr_decay=0.8,
-        cycle_length=1,
+        cycle_length=3,
         mult_factor=1.0)
     save_best_only = True if validation else False
     mcp = ModelCheckpoint(
