@@ -95,7 +95,7 @@ def train_whiskers(validation, epochs, class_weight_smoothing_factor):
         max_lr=max_lr,
         steps_per_epoch=epoch_size,
         cycle_length=3,
-        mult_factor=1.0)
+        mult_factor=1.1)
     save_best_only = True if validation else False
     mcp = ModelCheckpoint(
         filepath=WHISKER_MODEL_PATH, verbose=1,
@@ -103,7 +103,7 @@ def train_whiskers(validation, epochs, class_weight_smoothing_factor):
     if validation:
         assert validation_generator is not None
         print('training with validation enabled')
-        es = EarlyStopping(patience=30)
+        es = EarlyStopping(patience=50)
         model.fit_generator(
             train_generator,
             steps_per_epoch=epoch_size,
