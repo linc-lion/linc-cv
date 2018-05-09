@@ -1,9 +1,9 @@
 {
-  "type": "marking",
-  "url": "http://pixdaus.com/files/items/pics/7/84/542784_81cef138c75698faddafee92d42c0cc5_large.jpg",
+  "type": "cv",
+  "url": "https://linc-media.linclion.org/linc-api-lions/imageset_30_569b0b5a0640fd7dcb51fa25/2017-02-07_image_12088_589abbd891e28200042a18df_thumbnail.jpg",
   "lions": [
-    14,
-    18,
-    19
+    "14",
+    "18",
+    "19"
   ]
 }
