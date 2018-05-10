@@ -1,4 +1,5 @@
 # coding=utf-8
+import heapq
 import json
 import time
 from operator import itemgetter
@@ -43,7 +44,7 @@ def initialize():
     return model, test_datagen, class_indicies, labels
 
 
-def predict_whisker_from_preprocessed_image(path):
+def predict_whisker_from_preprocessed_image(path, k=20):
     model, test_datagen, class_indicies, labels = initialize()
     if class_indicies is None:
         raise ClassifierError('is whisker network trained? could not find class indicies json')
@@ -57,11 +58,11 @@ def predict_whisker_from_preprocessed_image(path):
     y = np.zeros((1, len(labels),))
     y[0][class_indicies[gt_label]] = 1
     X = next(test_datagen.flow(im, shuffle=False, batch_size=1))
-    p = model.predict(X)
-    pred_label = labels[np.argmax(p, axis=1)[0]]
-    correct = pred_label == gt_label
-    total_time = time.time() - start_time
-    return gt_label, pred_label, correct, total_time
+    p = model.predict(X).flatten()
+    topk = heapq.nlargest(k, range(len(p)), p.take)
+    topk_labels = [labels[x] for x in topk]
+    prediction_time = time.time() - start_time
+    return gt_label, topk_labels, prediction_time
 
 
 def preprocess_whisker_im_to_arr(im: Image):

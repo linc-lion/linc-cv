@@ -25,13 +25,6 @@ CELERY_EXE_PATH = os.path.join(os.path.dirname(sys.argv[0]), 'celery')
 FLOWER_EXE_PATH = os.path.join(os.path.dirname(sys.argv[0]), 'flower')
 
 
-def validate_whiskers_test_set():
-    """
-    Validate whiskers on entire dataset, including training data.
-    """
-    return validate_whiskers(all_whiskers=True)
-
-
 def main():
     """
     linc_cv: command line interface entry point
@@ -74,10 +67,10 @@ def main():
         help=inspect.getdoc(train_whiskers))
     parser.add_argument(
         '--validate-whiskers-test-set', action='store_true',
-        help=inspect.getdoc(validate_whiskers_test_set))
+        help="Validate whiskers on holdout test data.")
     parser.add_argument(
         '--validate-whiskers-all', action='store_true',
-        help=inspect.getdoc(validate_whiskers))
+        help="Validate whiskers on entire dataset, including training data.")
     parser.add_argument(
         '--no-validation', action='store_false',
         help="Do not perform cross-validation. Useful for final training.")
@@ -131,8 +124,11 @@ def main():
     if args.train_whiskers:
         train_whiskers(args.no_validation, args.epochs, args.class_weight_smoothing_factor)
 
+    if args.validate_whiskers_test_set:
+        validate_whiskers(all_whiskers=False)
+
     if args.validate_whiskers_all:
-        validate_whiskers()
+        validate_whiskers(all_whiskers=True)
 
     if args.web:
         app.run(host='0.0.0.0', port=5000, debug=False)
