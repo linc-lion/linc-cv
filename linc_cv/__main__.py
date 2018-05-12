@@ -9,10 +9,8 @@ import matplotlib
 
 matplotlib.use('Agg')
 from linc_cv import BASE_DIR
-from linc_cv.ml import generate_linc_lut
 from linc_cv.parse_lion_db import linc_db_to_image_lut
 from linc_cv.scrape_lion_db import scrape_lion_database
-from linc_cv.validation_ml import validate_random_lions
 from linc_cv.web import app
 from linc_cv.whiskers.download import download_whisker_images
 from linc_cv.whiskers.process import process_whisker_images, show_random_processed_whisker_image, \
@@ -20,6 +18,8 @@ from linc_cv.whiskers.process import process_whisker_images, show_random_process
 from linc_cv.whiskers.train import train_whiskers
 from linc_cv.whiskers.train_test_split import whiskers_train_test_split
 from linc_cv.whiskers.validation import validate_whiskers
+from linc_cv.feature_cv.download import download_cv_images
+from linc_cv.feature_cv.train import train_cv
 
 CELERY_EXE_PATH = os.path.join(os.path.dirname(sys.argv[0]), 'celery')
 FLOWER_EXE_PATH = os.path.join(os.path.dirname(sys.argv[0]), 'flower')
@@ -41,18 +41,31 @@ def main():
     parser.add_argument(
         '--parse-lion-database', action='store_true',
         help=inspect.getdoc(linc_db_to_image_lut))
+
+    # < feature cv specific >
     parser.add_argument(
-        '--extract-lion-features', action='store_true',
-        help=inspect.getdoc(generate_linc_lut))
+        '--download-cv-images', action='store_true',
+        help=inspect.getdoc(download_cv_images))
     parser.add_argument(
-        '--validate-random-lions', action='store_true',
-        help=inspect.getdoc(validate_random_lions))
+        '--train-cv', action='store_true',
+        help=inspect.getdoc(train_cv))
+    # parser.add_argument(
+    #     '--validate-cv-test-set', action='store_true',
+    #     help="Validate 'cv' images on holdout test data.")
+    # parser.add_argument(
+    #     '--validate-cv-all', action='store_true',
+    #     help="Validate 'cv' images on entire dataset, including training data.")
+    # parser.add_argument(
+    #     '--show-random-processed-cv-activations', action='store_true',
+    #     help=inspect.getdoc(show_random_processed_cv_activations))
+
+    # </ feature cv specific >
+
+    # < whisker specific >
+
     parser.add_argument(
         '--download-whisker-images', action='store_true',
         help=inspect.getdoc(download_whisker_images))
-    parser.add_argument(
-        '--show-random-processed-whisker-activations', action='store_true',
-        help=inspect.getdoc(show_random_processed_whisker_activations))
     parser.add_argument(
         '--show-random-processed-whisker-image', action='store_true',
         help=inspect.getdoc(show_random_processed_whisker_image))
@@ -71,6 +84,12 @@ def main():
     parser.add_argument(
         '--validate-whiskers-all', action='store_true',
         help="Validate whiskers on entire dataset, including training data.")
+    parser.add_argument(
+        '--show-random-processed-whisker-activations', action='store_true',
+        help=inspect.getdoc(show_random_processed_whisker_activations))
+
+    # </ whisker specific >
+
     parser.add_argument(
         '--no-validation', action='store_false',
         help="Do not perform cross-validation. Useful for final training.")
@@ -100,11 +119,22 @@ def main():
     if args.parse_lion_database:
         linc_db_to_image_lut()
 
-    if args.extract_lion_features:
-        generate_linc_lut()
+    # if args.extract_lion_features:
+    #     generate_linc_lut()
+    # if args.validate_random_lions:
+    #     validate_random_lions()
 
-    if args.validate_random_lions:
-        validate_random_lions()
+    # < feature cv specific >
+
+    if args.download_cv_images:
+        download_cv_images()
+
+    if args.train_cv:
+        train_cv()
+
+    # </ feature cv specific >
+
+    # < whisker specific >
 
     if args.download_whisker_images:
         download_whisker_images()
@@ -129,6 +159,8 @@ def main():
 
     if args.validate_whiskers_all:
         validate_whiskers(all_whiskers=True)
+
+    # </ whisker specific >
 
     if args.web:
         app.run(host='0.0.0.0', port=5000, debug=False)

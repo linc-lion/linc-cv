@@ -11,9 +11,8 @@ from linc_cv.ml import initialize, ClassifierError, predict_lion
 def get_test_lion(lion_id_count=5):
     global lion_features, features_lut, model
     lion_features, features_lut, model = initialize()
-    feature_types = list(features_lut.keys())
+    feature_type = 'cv'
     while True:
-        feature_type = random.choice(feature_types)
         all_lion_ids = list(features_lut[feature_type].keys())
         random.shuffle(all_lion_ids)
         selected_lion_ids = [all_lion_ids.pop() for _ in range(lion_id_count)]
