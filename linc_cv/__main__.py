@@ -67,15 +67,6 @@ def main():
         '--download-whisker-images', action='store_true',
         help=inspect.getdoc(download_whisker_images))
     parser.add_argument(
-        '--show-random-processed-whisker-image', action='store_true',
-        help=inspect.getdoc(show_random_processed_whisker_image))
-    parser.add_argument(
-        '--process-whisker-images', action='store_true',
-        help=inspect.getdoc(process_whisker_images))
-    parser.add_argument(
-        '--whiskers-train-test-split', action='store_true',
-        help=inspect.getdoc(whiskers_train_test_split))
-    parser.add_argument(
         '--train-whiskers', action='store_true',
         help=inspect.getdoc(train_whiskers))
     parser.add_argument(
@@ -90,16 +81,6 @@ def main():
 
     # </ whisker specific >
 
-    parser.add_argument(
-        '--no-validation', action='store_false',
-        help="Do not perform cross-validation. Useful for final training.")
-    parser.add_argument(
-        '--epochs', type=int, default=500,
-        help="Upper bound on training epochs.")
-    parser.add_argument(
-        '--class-weight-smoothing-factor', type=float, default=0.1,
-        help="Factor that smooths extremely uneven weights computed for "
-             "balanced class weights.")
     parser.add_argument(
         '--web', action='store_true',
         help="Start HTTP REST API")
@@ -139,20 +120,8 @@ def main():
     if args.download_whisker_images:
         download_whisker_images()
 
-    if args.show_random_processed_whisker_activations:
-        show_random_processed_whisker_activations()
-
-    if args.show_random_processed_whisker_image:
-        show_random_processed_whisker_image()
-
-    if args.process_whisker_images:
-        process_whisker_images()
-
-    if args.whiskers_train_test_split:
-        whiskers_train_test_split()
-
     if args.train_whiskers:
-        train_whiskers(args.no_validation, args.epochs, args.class_weight_smoothing_factor)
+        train_whiskers()
 
     if args.validate_whiskers_test_set:
         validate_whiskers(all_whiskers=False)

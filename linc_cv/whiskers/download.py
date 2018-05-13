@@ -5,20 +5,27 @@ import multiprocessing
 import os
 import shutil
 import sys
+from io import BytesIO
 
 import requests
+from PIL import Image
 
-from linc_cv import datapath, IMAGES_LUT_PATH
+from linc_cv import WHISKER_IMAGES_PATH, IMAGES_LUT_PATH
 
 
-def download_whisker_image(image_url, lion_id, idx):
-    filepath = datapath(['whisker_images', f'{lion_id}/{idx}'])
+def download_linc_image(image_url, lion_id, idx):
+    filepath = os.path.join(WHISKER_IMAGES_PATH, f'{lion_id}/{idx}.jpg')
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
-    with open(filepath, 'wb') as f:
-        r = requests.get(image_url, stream=True)
-        shutil.copyfileobj(r.raw, f)
-    sys.stdout.write('.')
-    sys.stdout.flush()
+    r = requests.get(image_url)
+    if r.ok:
+        try:
+            Image.open(BytesIO(r.content)).convert('RGB').save(
+                filepath, format='JPEG', optimize=True)
+        except OSError:
+            pass
+        else:
+            sys.stdout.write('.')
+            sys.stdout.flush()
 
 
 def download_whisker_images():
@@ -26,6 +33,11 @@ def download_whisker_images():
     Download all whisker images for processing and training a
     new whisker classifier
     """
+
+    try:
+        shutil.rmtree(WHISKER_IMAGES_PATH)
+    except FileNotFoundError:
+        pass
 
     with open(IMAGES_LUT_PATH) as f:
         images_lut = json.load(f)
@@ -41,4 +53,4 @@ def download_whisker_images():
             continue
 
     with multiprocessing.Pool(processes=multiprocessing.cpu_count() * 2) as pool:
-        pool.starmap(download_whisker_image, data)
+        pool.starmap(download_linc_image, data)

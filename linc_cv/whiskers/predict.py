@@ -12,7 +12,7 @@ from keras.preprocessing.image import ImageDataGenerator, img_to_array
 from skimage.color import rgb2gray, gray2rgb
 from skimage.filters import threshold_sauvola, gaussian
 
-from linc_cv import CLASS_INDICIES_PATH, WHISKER_MODEL_PATH
+from linc_cv import WHISKER_CLASSES_LUT_PATH, WHISKER_MODEL_PATH
 from linc_cv.ml import download_image, ClassifierError
 
 model = None
@@ -28,7 +28,7 @@ def initialize():
     global labels
     if class_indicies is None:
         try:
-            with open(CLASS_INDICIES_PATH) as f:
+            with open(WHISKER_CLASSES_LUT_PATH) as f:
                 class_indicies = json.load(f)
             labels = [x[0] for x in sorted(class_indicies.items(), key=itemgetter(1))]
         except FileNotFoundError:

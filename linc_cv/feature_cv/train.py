@@ -6,17 +6,21 @@ from collections import Counter
 from multiprocessing import cpu_count
 
 from keras.applications.inception_resnet_v2 import InceptionResNetV2
+from keras.callbacks import ModelCheckpoint
 from keras.layers import Dense, GlobalAveragePooling2D
 from keras.models import Model
+from keras.optimizers import SGD
 from keras.preprocessing.image import ImageDataGenerator
 from sklearn.model_selection import train_test_split
 
 from linc_cv import CV_IMAGES_PATH, CV_IMAGES_TRAINTEST_PATH
+from linc_cv.whiskers.sgdr import SGDRScheduler
+from linc_cv.whiskers.utils import get_class_weights
 
 
 def train_cv():
     input_shape = (299, 299, 3,)
-    batch_size = 24
+    batch_size = 20
     XY = []
     for root, dirs, files in os.walk(CV_IMAGES_PATH):
         for f in files:
@@ -49,7 +53,11 @@ def train_cv():
     train_datagen = ImageDataGenerator(
         rescale=1. / 255,
         samplewise_center=True,
-        samplewise_std_normalization=True)
+        samplewise_std_normalization=True,
+        width_shift_range=0.1,
+        height_shift_range=0.1,
+        zoom_range=0.1,
+        rotation_range=5)
 
     train_generator = train_datagen.flow_from_directory(
         os.path.join(CV_IMAGES_TRAINTEST_PATH, 'train'),
@@ -75,17 +83,31 @@ def train_cv():
         '~/.keras/models/inception_resnet_v2_weights_tf_dim_ordering_tf_kernels_notop.h5')
     base_model = InceptionResNetV2(weights='imagenet', include_top=False)
     x = base_model.output
-    x = GlobalAveragePooling2D(name='avg_pool')(x)
-    x = Dense(num_classes, activation='softmax', name='predictions')(x)
+    x = GlobalAveragePooling2D()(x)
+    x = Dense(num_classes, activation='softmax')(x)
     model = Model(inputs=base_model.input, outputs=x)
     model.load_weights(imagenet_weights_path, by_name=True)
     # freeze all but last 2 layers
-    for layer in model.layers[:-2]:
-        layer.trainable = False
-    model.compile(optimizer='sgd', loss='categorical_crossentropy', metrics=['accuracy'])
+    # for layer in model.layers[:-2]:
+    #     layer.trainable = False
+    max_lr = 0.01000
+    min_lr = 0.00001
+    model.compile(optimizer=SGD(lr=max_lr, momentum=0.8), loss='categorical_crossentropy', metrics=['accuracy'])
+    class_weights = get_class_weights(train_generator.classes)
+    mc = ModelCheckpoint('cv.h5', save_best_only=True, verbose=1)
+    lrs = SGDRScheduler(
+        max_lr=max_lr,
+        min_lr=min_lr,
+        steps_per_epoch=len(X_train) // batch_size,
+        lr_decay=1,
+        cycle_length=5,
+        mult_factor=1)
     model.fit_generator(
-        train_generator, epochs=500,
+        train_generator, epochs=50000,
         steps_per_epoch=len(X_train) // batch_size,
         validation_data=validation_generator,
         validation_steps=len(X_test) // batch_size,
-        use_multiprocessing=True, workers=cpu_count())
+        use_multiprocessing=True,
+        workers=cpu_count(),
+        class_weight=class_weights,
+        callbacks=[mc, lrs])

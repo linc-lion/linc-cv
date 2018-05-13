@@ -10,11 +10,11 @@ from io import BytesIO
 import requests
 from PIL import Image
 
-from linc_cv import datapath, IMAGES_LUT_PATH
+from linc_cv import CV_IMAGES_PATH, IMAGES_LUT_PATH
 
 
 def download_cv_image(image_url, lion_id, idx):
-    filepath = datapath(['cv_images', f'{lion_id}/{idx}.jpg'])
+    filepath = os.path.join(CV_IMAGES_PATH, f'{lion_id}/{idx}.jpg')
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
     r = requests.get(image_url)
     if r.ok:
@@ -30,12 +30,12 @@ def download_cv_image(image_url, lion_id, idx):
 
 def download_cv_images():
     """
-    Download all whisker images for processing and training a
+    Download all cv images for processing and training a
     new whisker classifier
     """
 
     try:
-        shutil.rmtree(datapath(['cv_images']))
+        shutil.rmtree(CV_IMAGES_PATH)
     except FileNotFoundError:
         pass
 
