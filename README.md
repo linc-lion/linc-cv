@@ -6,7 +6,9 @@
     linc_cv --scrape-lion-database
     linc_cv --generate-images-lut
     linc_cv --train-cv
-    linc_cv --train-whisker
+    linc_cv --validate-cv
+    linc_cv --train-whiskers
+    linc_cv --validate-whiskers
 
 ## Runtime
 
