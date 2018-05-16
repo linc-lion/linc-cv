@@ -15,6 +15,7 @@ def datapath(path: Iterable):
 
 os.makedirs(datapath([]), exist_ok=True)
 
+INPUT_SHAPE = (299, 299, 3,)
 WHISKER_CLASSIFIER_ACCURACY = 0.62
 CV_CLASSIFIER_ACCURACY = 0.88
 IMAGES_LUT_PATH = datapath(['images_lut.json'])

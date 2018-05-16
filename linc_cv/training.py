@@ -12,13 +12,11 @@ from keras.optimizers import SGD
 from keras.preprocessing.image import ImageDataGenerator
 from sklearn.model_selection import train_test_split
 
-from linc_cv import get_class_weights
+from linc_cv import get_class_weights, INPUT_SHAPE
 from linc_cv.sgdr import SGDRScheduler
-
 
 def train(*, images_dir, images_traintest_dir, lut_path, model_path,
           training_idg_params, testing_idg_params):
-    input_shape = (299, 299, 3,)
     batch_size = 20
     X = []
     y = []
@@ -52,7 +50,7 @@ def train(*, images_dir, images_traintest_dir, lut_path, model_path,
 
     train_generator = train_datagen.flow_from_directory(
         os.path.join(images_traintest_dir, 'train'),
-        target_size=input_shape[:-1],
+        target_size=INPUT_SHAPE[:-1],
         batch_size=batch_size,
         class_mode='categorical')
 
@@ -60,7 +58,7 @@ def train(*, images_dir, images_traintest_dir, lut_path, model_path,
 
     validation_generator = test_datagen.flow_from_directory(
         os.path.join(images_traintest_dir, 'test'),
-        target_size=input_shape[:-1],
+        target_size=INPUT_SHAPE[:-1],
         batch_size=batch_size,
         class_mode='categorical')
 
