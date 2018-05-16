@@ -1,4 +1,3 @@
-# coding=utf-8
 import json
 
 from . import IMAGES_LUT_PATH, LINC_DB_PATH

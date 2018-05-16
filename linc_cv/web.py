@@ -1,4 +1,3 @@
-# coding=utf-8
 import json
 
 from flask import Flask
@@ -7,7 +6,7 @@ from flask_restful import Resource, Api
 
 from linc_cv import VALID_LION_IMAGE_TYPES, datapath
 from linc_cv.keys import API_KEY
-from linc_cv.tasks import c, classify_image_url_against_lion_ids
+from linc_cv.tasks import c, classify_image_url
 
 
 class LincResultAPI(Resource):
@@ -62,20 +61,13 @@ class LincClassifyAPI(Resource):
             errors.append('missing url')
             failure = True
 
-        lions_ids = None
-        try:
-            lions_ids = rj['lions']
-        except KeyError:
-            errors.append('could not parse lion ids')
-            failure = True
-
         job_id = None
         if failure:
             status = 'failure'
             status_code = 400
         else:
-            job_id = classify_image_url_against_lion_ids.delay(
-                image_url, image_type, lions_ids).id
+            job_id = classify_image_url.delay(
+                image_url, image_type).id
             status = 'pending'
             status_code = 200
 

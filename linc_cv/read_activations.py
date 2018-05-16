@@ -1,4 +1,3 @@
-# coding=utf-8
 import gc
 import os
 import shutil
@@ -18,7 +17,7 @@ def optimize_jpeg_inplace(image_path):
     # flatten, fuzz, trim, and repage eliminate white space
     cmd = f'magick mogrify -flatten -fuzz 1% -trim +repage ' \
           f'-define jpeg:dct-method=float ' \
-          f'-strip -interlace Plane -sampling-factor 4:2:0 -quality 70% {image_path}'
+          f'-strip -interlace Plane -sampling-factor 4:2:0 -quality 50% {image_path}'
     try:
         run(cmd.split(' '), check=True)
     except CalledProcessError:

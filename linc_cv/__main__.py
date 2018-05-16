@@ -1,4 +1,3 @@
-# coding=utf-8
 import argparse
 import inspect
 import os
@@ -13,13 +12,11 @@ from linc_cv.parse_lion_db import linc_db_to_image_lut
 from linc_cv.scrape_lion_db import scrape_lion_database
 from linc_cv.web import app
 from linc_cv.whiskers.download import download_whisker_images
-from linc_cv.whiskers.process import process_whisker_images, show_random_processed_whisker_image, \
-    show_random_processed_whisker_activations
 from linc_cv.whiskers.train import train_whiskers
-from linc_cv.whiskers.train_test_split import whiskers_train_test_split
-from linc_cv.whiskers.validation import validate_whiskers
+from linc_cv.whiskers.validation import validate_whiskers, show_processed_whisker_activation
 from linc_cv.feature_cv.download import download_cv_images
 from linc_cv.feature_cv.train import train_cv
+from linc_cv.feature_cv.validation import validate_cv, show_processed_cv_activation
 
 CELERY_EXE_PATH = os.path.join(os.path.dirname(sys.argv[0]), 'celery')
 FLOWER_EXE_PATH = os.path.join(os.path.dirname(sys.argv[0]), 'flower')
@@ -36,7 +33,7 @@ def main():
         '--scrape-lion-database', action='store_true',
         help=inspect.getdoc(scrape_lion_database))
     parser.add_argument(
-        '--max-lion-id', type=int, default=2000,
+        '--max-lion-id', type=int, default=3000,
         help='Maximum lion id in LINC database')
     parser.add_argument(
         '--parse-lion-database', action='store_true',
@@ -49,15 +46,12 @@ def main():
     parser.add_argument(
         '--train-cv', action='store_true',
         help=inspect.getdoc(train_cv))
-    # parser.add_argument(
-    #     '--validate-cv-test-set', action='store_true',
-    #     help="Validate 'cv' images on holdout test data.")
-    # parser.add_argument(
-    #     '--validate-cv-all', action='store_true',
-    #     help="Validate 'cv' images on entire dataset, including training data.")
-    # parser.add_argument(
-    #     '--show-random-processed-cv-activations', action='store_true',
-    #     help=inspect.getdoc(show_random_processed_cv_activations))
+    parser.add_argument(
+        '--validate-cv', action='store_true',
+        help=inspect.getdoc(validate_cv))
+    parser.add_argument(
+        '--show-processed-cv-activation', action='store_true',
+        help=inspect.getdoc(show_processed_cv_activation))
 
     # </ feature cv specific >
 
@@ -70,14 +64,11 @@ def main():
         '--train-whiskers', action='store_true',
         help=inspect.getdoc(train_whiskers))
     parser.add_argument(
-        '--validate-whiskers-test-set', action='store_true',
-        help="Validate whiskers on holdout test data.")
+        '--validate-whiskers', action='store_true',
+        help=inspect.getdoc(validate_whiskers))
     parser.add_argument(
-        '--validate-whiskers-all', action='store_true',
-        help="Validate whiskers on entire dataset, including training data.")
-    parser.add_argument(
-        '--show-random-processed-whisker-activations', action='store_true',
-        help=inspect.getdoc(show_random_processed_whisker_activations))
+        '--show-processed-whisker-activation', action='store_true',
+        help=inspect.getdoc(show_processed_whisker_activation))
 
     # </ whisker specific >
 
@@ -100,11 +91,6 @@ def main():
     if args.parse_lion_database:
         linc_db_to_image_lut()
 
-    # if args.extract_lion_features:
-    #     generate_linc_lut()
-    # if args.validate_random_lions:
-    #     validate_random_lions()
-
     # < feature cv specific >
 
     if args.download_cv_images:
@@ -112,6 +98,12 @@ def main():
 
     if args.train_cv:
         train_cv()
+
+    if args.validate_cv:
+        validate_cv()
+
+    if args.show_processed_cv_activation:
+        show_processed_cv_activation()
 
     # </ feature cv specific >
 
@@ -123,11 +115,11 @@ def main():
     if args.train_whiskers:
         train_whiskers()
 
-    if args.validate_whiskers_test_set:
-        validate_whiskers(all_whiskers=False)
+    if args.validate_whiskers:
+        validate_whiskers()
 
-    if args.validate_whiskers_all:
-        validate_whiskers(all_whiskers=True)
+    if args.show_processed_cv_activation:
+        show_processed_whisker_activation()
 
     # </ whisker specific >
 
@@ -135,7 +127,7 @@ def main():
         app.run(host='0.0.0.0', port=5000, debug=False)
 
     if args.worker:
-        cmd = f'{CELERY_EXE_PATH} worker -A linc_cv.tasks --concurrency=1 --max-tasks-per-child=4 -E'.split(' ')
+        cmd = f'{CELERY_EXE_PATH} worker -A linc_cv.tasks --concurrency=1 --max-tasks-per-child=8 -E'.split(' ')
         run(cmd, check=True, cwd=BASE_DIR)
 
     if args.flower:

@@ -1,18 +1,18 @@
-# coding=utf-8
 import json
 import multiprocessing
-import os
 
 import requests
+
+from linc_cv import LINC_DB_PATH
 
 
 def scrape_lion_idx(idx):
     j = None
     try:
         j = requests.get('https://linc-api.herokuapp.com/lions/' + str(idx)).json()
-        print('successfully scraped database id -> ' + str(idx))
+        print('ok -> ' + str(idx))
     except:
-        print('failed to scrape database id -> ' + str(idx))
+        print('failed -> ' + str(idx))
     return j
 
 
@@ -32,7 +32,7 @@ def scrape_lion_database(max_lion_id):
         for result in pool.imap_unordered(scrape_lion_idx, list(range(max_lion_id))):
             data.append(result)
 
-    with open(os.path.join(BASE_DIR, 'data', 'linc_db.json'), 'w') as f:
+    with open(LINC_DB_PATH, 'w') as f:
         json.dump(data, f)
 
     print('LINC database scraping succeeded.')
