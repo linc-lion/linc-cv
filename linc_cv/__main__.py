@@ -8,7 +8,7 @@ import matplotlib
 
 matplotlib.use('Agg')
 from linc_cv import BASE_DIR
-from linc_cv.parse_lion_db import linc_db_to_image_lut
+from linc_cv.parse_lion_db import generate_images_lut
 from linc_cv.scrape_lion_db import scrape_lion_database
 from linc_cv.web import app
 from linc_cv.whiskers.download import download_whisker_images
@@ -33,11 +33,11 @@ def main():
         '--scrape-lion-database', action='store_true',
         help=inspect.getdoc(scrape_lion_database))
     parser.add_argument(
+        '--generate-images-lut', action='store_true',
+        help=inspect.getdoc(generate_images_lut))
+    parser.add_argument(
         '--max-lion-id', type=int, default=3000,
         help='Maximum lion id in LINC database')
-    parser.add_argument(
-        '--parse-lion-database', action='store_true',
-        help=inspect.getdoc(linc_db_to_image_lut))
 
     # < feature cv specific >
     parser.add_argument(
@@ -88,8 +88,8 @@ def main():
         scrape_lion_database(
             max_lion_id=args.max_lion_id)
 
-    if args.parse_lion_database:
-        linc_db_to_image_lut()
+    if args.generate_images_lut:
+        generate_images_lut()
 
     # < feature cv specific >
 

@@ -1,5 +1,6 @@
 import json
 import multiprocessing
+import sys
 
 import requests
 
@@ -10,9 +11,10 @@ def scrape_lion_idx(idx):
     j = None
     try:
         j = requests.get('https://linc-api.herokuapp.com/lions/' + str(idx)).json()
-        print('ok -> ' + str(idx))
+        sys.stdout.write('.')
     except:
-        print('failed -> ' + str(idx))
+        sys.stdout.write('-')
+    sys.stdout.flush()
     return j
 
 
@@ -28,7 +30,7 @@ def scrape_lion_database(max_lion_id):
     """
 
     data = []
-    with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
+    with multiprocessing.Pool(processes=multiprocessing.cpu_count() * 4) as pool:
         for result in pool.imap_unordered(scrape_lion_idx, list(range(max_lion_id))):
             data.append(result)
 

@@ -3,7 +3,7 @@ import json
 from . import IMAGES_LUT_PATH, LINC_DB_PATH
 
 
-def linc_db_to_image_lut():
+def generate_images_lut():
     """
     Parse LINC database into a lookup table consisting of lion_ids
     and image URLs for each feature type for each lion. Feature types
@@ -21,7 +21,7 @@ def linc_db_to_image_lut():
             for imset in k['_embedded']['image_sets']:
                 for image in imset['_embedded']['images']:
                     t = image['image_type']
-                    tn = image['thumbnail_url']
+                    tn = image['url']
                     linc_images_lut.setdefault(i, {})
                     linc_images_lut[i].setdefault(t, [])
                     linc_images_lut[i][t].append(tn)

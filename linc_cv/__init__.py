@@ -1,8 +1,7 @@
 import os
 import warnings
-from typing import Iterable
-
 from collections import Counter
+from typing import Iterable
 
 # ignore h5py deprecation warning we cannot control
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -13,6 +12,8 @@ BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 def datapath(path: Iterable):
     return os.path.join(BASE_DIR, 'data', *path)
 
+
+os.makedirs(datapath([]), exist_ok=True)
 
 WHISKER_CLASSIFIER_ACCURACY = 0.62
 CV_CLASSIFIER_ACCURACY = 0.88

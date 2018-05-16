@@ -11,7 +11,7 @@ from PIL import Image
 from linc_cv import IMAGES_LUT_PATH
 
 
-def download_image(*, images_path, image_url, lion_id, idx):
+def download_image(images_path, image_url, lion_id, idx):
     filepath = os.path.join(images_path, f'{lion_id}/{idx}.jpg')
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
     r = requests.get(image_url)
@@ -36,14 +36,14 @@ def download_images(*, images_path, modality):
         images_lut = json.load(f)
 
     data = []
-    i = 0
+    idx = 0
     for lion_id in images_lut:
         try:
-            for url in images_lut[lion_id][modality]:
-                data.append((url, lion_id, i,))
-                i += 1
+            for image_url in images_lut[lion_id][modality]:
+                data.append((images_path, image_url, lion_id, idx,))
+                idx += 1
         except KeyError:
             continue
 
-    with multiprocessing.Pool(processes=multiprocessing.cpu_count() * 2) as pool:
+    with multiprocessing.Pool(processes=multiprocessing.cpu_count() * 4) as pool:
         pool.starmap(download_image, data)
