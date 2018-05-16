@@ -17,7 +17,7 @@ from linc_cv.sgdr import SGDRScheduler
 
 
 def train(*, images_dir, images_traintest_dir, lut_path, model_path,
-          imagedatagenerator_training_params, imagedatagenerator_testing_params):
+          training_idg_params, testing_idg_params):
     input_shape = (299, 299, 3,)
     batch_size = 20
     X = []
@@ -48,7 +48,7 @@ def train(*, images_dir, images_traintest_dir, lut_path, model_path,
             os.makedirs(os.path.dirname(np), exist_ok=True)
             shutil.copyfile(x, np)
 
-    train_datagen = ImageDataGenerator(**imagedatagenerator_training_params)
+    train_datagen = ImageDataGenerator(**training_idg_params)
 
     train_generator = train_datagen.flow_from_directory(
         os.path.join(images_traintest_dir, 'train'),
@@ -56,7 +56,7 @@ def train(*, images_dir, images_traintest_dir, lut_path, model_path,
         batch_size=batch_size,
         class_mode='categorical')
 
-    test_datagen = ImageDataGenerator(**imagedatagenerator_testing_params)
+    test_datagen = ImageDataGenerator(**testing_idg_params)
 
     validation_generator = test_datagen.flow_from_directory(
         os.path.join(images_traintest_dir, 'test'),

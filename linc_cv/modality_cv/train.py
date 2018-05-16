@@ -10,5 +10,6 @@ def train_cv():
         images_traintest_dir=CV_IMAGES_TRAINTEST_PATH,
         lut_path=CV_CLASSES_LUT_PATH,
         model_path=CV_MODEL_PATH,
-        imagedatagenerator_training_params=CV_TRAINING_IMAGEDATAGENERATOR_PARAMS,
-        imagedatagenerator_testing_params=CV_TESTING_IMAGEDATAGENERATOR_PARAMS)
+        training_idg_params=CV_TRAINING_IMAGEDATAGENERATOR_PARAMS,
+        testing_idg_params=CV_TESTING_IMAGEDATAGENERATOR_PARAMS)
+
