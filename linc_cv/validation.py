@@ -2,7 +2,7 @@ import json
 import os
 from operator import itemgetter
 
-from linc_cv.modality_whisker.predict import predict_on_image_path
+from linc_cv.predict import predict_on_image_path
 
 
 def classifier_classes_lut_to_labels(lut_path):

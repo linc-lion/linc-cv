@@ -19,7 +19,3 @@ def predict_on_image_path(*, model, image_path, test_datagen, labels):
     topk_labels = [labels[x] for x in topk]
     prediction_time = time.time() - start_time
     return topk_labels, prediction_time
-
-
-def predict_whisker_url(url):
-    return []

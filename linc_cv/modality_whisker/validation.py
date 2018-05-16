@@ -6,8 +6,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from linc_cv import WHISKER_IMAGES_TRAINTEST_PATH, \
     WHISKER_TESTING_IMAGEDATAGENERATOR_PARAMS, WHISKER_MODEL_PATH, \
     WHISKER_CLASSES_LUT_PATH
-from linc_cv.validation import classifier_classes_lut_to_labels
-from linc_cv.validation import validate_classifier
+from linc_cv.validation import classifier_classes_lut_to_labels, validate_classifier
 
 
 def validate_whiskers():
