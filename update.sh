@@ -1,6 +1,2 @@
-rsync -rtv --stats \
-    --exclude "linc_cv/data/" \
-    --exclude ".git" \
-    --exclude ".DS_Store" \
-    --exclude ".idea" \
-    ~/customers/linc/linc-cv-server cassiopeia-lan:
+clear && rsync -rtvz --exclude data --exclude .git \
+    --exclude .idea --exclude \*.egg\* --exclude __pycache__  ~/customers/linc/linc-cv-server cassiopeia:

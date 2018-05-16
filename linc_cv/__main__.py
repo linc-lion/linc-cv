@@ -36,8 +36,8 @@ def main():
         '--generate-images-lut', action='store_true',
         help=inspect.getdoc(generate_images_lut))
     parser.add_argument(
-        '--max-lion-id', type=int, default=3000,
-        help='Maximum lion id in LINC database')
+        '--scraping-max-id', type=int, default=3000,
+        help='LINC database scrape id limit')
 
     # < feature cv specific >
     parser.add_argument(

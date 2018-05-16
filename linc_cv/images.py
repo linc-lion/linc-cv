@@ -20,10 +20,10 @@ def download_image(images_path, image_url, lion_id, idx):
             Image.open(BytesIO(r.content)).convert('RGB').save(
                 filepath, format='JPEG', optimize=True)
         except OSError:
-            pass
+            print(f'\nfailed to download image url {image_url}\n')
         else:
             sys.stdout.write('.')
-            sys.stdout.flush()
+        sys.stdout.flush()
 
 
 def download_images(*, images_path, modality):
