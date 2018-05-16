@@ -15,7 +15,7 @@ def predict_on_image_path(*, model, image_path, test_datagen, labels):
     topk = heapq.nlargest(20, range(len(preds)), preds.take)
     topk_labels = [labels[x] for x in topk]
     prediction_time = time.time() - start_time
-    return gt_label, topk_labels, prediction_time
+    return topk_labels, prediction_time
 
 
 def predict_whisker_url(url):
