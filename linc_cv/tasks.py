@@ -1,7 +1,7 @@
 from celery import Celery
 
 from linc_cv import ClassifierError, WHISKER_CLASSIFIER_ACCURACY
-from linc_cv.whiskers.predict import predict_whisker_url
+from linc_cv.modality_whisker.predict import predict_whisker_url
 
 c = Celery()
 c.conf.broker_url = 'redis://localhost:6379/0'

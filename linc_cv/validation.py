@@ -1,7 +1,7 @@
 import os
 import sys
 
-from linc_cv.whiskers.predict import predict_whisker_path
+from linc_cv.modality_whisker.predict import predict_whisker_path
 
 
 def validate_classifier_on_testdir(*, traintest_path):

@@ -11,12 +11,12 @@ from linc_cv import BASE_DIR
 from linc_cv.parse_lion_db import generate_images_lut
 from linc_cv.scrape_lion_db import scrape_lion_database
 from linc_cv.web import app
-from linc_cv.whiskers.download import download_whisker_images
-from linc_cv.whiskers.train import train_whiskers
-from linc_cv.whiskers.validation import validate_whiskers, show_processed_whisker_activation
-from linc_cv.feature_cv.download import download_cv_images
-from linc_cv.feature_cv.train import train_cv
-from linc_cv.feature_cv.validation import validate_cv, show_processed_cv_activation
+from linc_cv.modality_whisker.download import download_whisker_images
+from linc_cv.modality_whisker.train import train_whiskers
+from linc_cv.modality_whisker.validation import validate_whiskers, show_processed_whisker_activation
+from linc_cv.modality_cv.download import download_cv_images
+from linc_cv.modality_cv.train import train_cv
+from linc_cv.modality_cv.validation import validate_cv, show_processed_cv_activation
 
 CELERY_EXE_PATH = os.path.join(os.path.dirname(sys.argv[0]), 'celery')
 FLOWER_EXE_PATH = os.path.join(os.path.dirname(sys.argv[0]), 'flower')

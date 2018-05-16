@@ -10,6 +10,6 @@ def train_whiskers():
         images_traintest_dir=WHISKER_IMAGES_TRAINTEST_PATH,
         lut_path=WHISKER_CLASSES_LUT_PATH,
         model_path=WHISKER_MODEL_PATH,
-        imagedatagenerator_params=WHISKER_TRAINING_IMAGEDATAGENERATOR_PARAMS)
+        imagedatagenerator_training_params=WHISKER_TRAINING_IMAGEDATAGENERATOR_PARAMS)
 
 
