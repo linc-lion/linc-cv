@@ -1,12 +1,11 @@
-import json
-
 from flask import Flask
 from flask import request
 from flask_restful import Resource, Api
 
-from linc_cv import VALID_LION_IMAGE_TYPES, datapath
+from linc_cv import VALID_LION_IMAGE_TYPES, CV_CLASSES_LUT_PATH, WHISKER_CLASSES_LUT_PATH
 from linc_cv.keys import API_KEY
 from linc_cv.tasks import c, classify_image_url
+from linc_cv.validation import classifier_classes_lut_to_labels
 
 
 class LincResultAPI(Resource):
@@ -16,18 +15,17 @@ class LincResultAPI(Resource):
         t = c.AsyncResult(id=celery_id)
         if t.ready():
             return t.get()
-        return {
-            'status': 'pending',
-            'match_probability': []
-        }
+        else:
+            return {'status': t.status}
 
 
 class LincWhiskerClassifierCapabilitiesAPI(Resource):
     def get(self):
         if request.headers.get('ApiKey') != API_KEY:
             return {'status': 'error', 'info': 'authentication failure'}, 401
-        with open(datapath(['class_indicies.json'])) as f:
-            return {'valid_lion_ids': list(json.load(f).keys())}
+        cv_labels = classifier_classes_lut_to_labels(CV_CLASSES_LUT_PATH)
+        whisker_labels = classifier_classes_lut_to_labels(WHISKER_CLASSES_LUT_PATH)
+        return {'valid_cv_lion_ids': cv_labels, 'valid_cv_whisker_labels': whisker_labels}
 
 
 class LincClassifyAPI(Resource):
@@ -63,12 +61,11 @@ class LincClassifyAPI(Resource):
 
         job_id = None
         if failure:
-            status = 'failure'
+            status = 'FAILURE'
             status_code = 400
         else:
-            job_id = classify_image_url.delay(
-                image_url, image_type).id
-            status = 'pending'
+            job_id = classify_image_url.delay(image_url, image_type).id
+            status = 'PENDING'
             status_code = 200
 
         return {'id': job_id, 'status': status, 'errors': errors}, status_code

@@ -2,7 +2,7 @@ import json
 import os
 from operator import itemgetter
 
-from linc_cv.predict import predict_on_image_path
+from linc_cv.predict import validate_on_image_path
 
 
 def classifier_classes_lut_to_labels(lut_path):
@@ -19,7 +19,7 @@ def validate_classifier(*, traintest_path, model, test_datagen, labels):
         for f in files:
             image_path = os.path.join(root, f)
             gt_label = image_path.split(os.path.sep)[-2]
-            topk_labels, prediction_time = predict_on_image_path(
+            topk_labels, prediction_time = validate_on_image_path(
                 model=model, image_path=image_path, test_datagen=test_datagen,
                 labels=labels)
             results.append([gt_label, topk_labels])
