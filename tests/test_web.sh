@@ -16,7 +16,7 @@ curl \
 curl \
     -H "Content-Type: application/json" \
     -H "ApiKey: ${API_KEY}" \
-    --data @test_lion_classification.json \
+    --data @test_cv_classification.json \
     http://localhost:5000/linc/v1/classify
 
 curl -H "ApiKey: ${API_KEY}" http://localhost:5000/linc/v1/results/${RESULT_ID}
