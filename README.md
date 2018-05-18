@@ -9,6 +9,8 @@
     linc_cv --validate-cv > cv_results.json
     linc_cv --train-whiskers
     linc_cv --validate-whiskers > whisker_results.json
+    linc_cv --cv-classification-report
+    linc_cv --whisker-classification-report
 
 ## Runtime
 
