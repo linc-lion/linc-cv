@@ -2,6 +2,9 @@ import json
 import os
 from operator import itemgetter
 
+import pandas as pd
+from sklearn.metrics import classification_report, precision_recall_fscore_support
+
 from linc_cv.predict import validate_on_image_path
 
 
@@ -25,3 +28,17 @@ def validate_classifier(*, traintest_path, model, test_datagen, labels):
             results.append([gt_label, topk_labels])
             prediction_times.append(prediction_time)
     return results
+
+
+def linc_classification_report(*, results, output):
+    """CV classification report"""
+    y_true, y_pred = zip(*([x, y[0]] for x, y in results))
+    print(classification_report(y_true, y_pred))
+    prfs_labels = sorted(list(set(y_true + y_pred)))
+    precision, recall, fbeta_score, support = precision_recall_fscore_support(y_true, y_pred)
+    df = pd.DataFrame(
+        {'label': prfs_labels, 'precision': precision,
+         'recall': recall, 'fbeta_score': fbeta_score,
+         'support': support})
+    df = df.set_index('label')
+    df.to_pickle(output)

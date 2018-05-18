@@ -13,10 +13,10 @@ from linc_cv.scrape_lion_db import scrape_lion_database
 from linc_cv.web import app
 from linc_cv.modality_whisker.download import download_whisker_images
 from linc_cv.modality_whisker.train import train_whiskers
-from linc_cv.modality_whisker.validation import validate_whiskers, show_processed_whisker_activation
+from linc_cv.modality_whisker.validation import validate_whiskers, whisker_classification_report
 from linc_cv.modality_cv.download import download_cv_images
 from linc_cv.modality_cv.train import train_cv
-from linc_cv.modality_cv.validation import validate_cv, show_processed_cv_activation
+from linc_cv.modality_cv.validation import validate_cv, cv_classification_report
 
 CELERY_EXE_PATH = os.path.join(os.path.dirname(sys.argv[0]), 'celery')
 FLOWER_EXE_PATH = os.path.join(os.path.dirname(sys.argv[0]), 'flower')
@@ -50,8 +50,8 @@ def main():
         '--validate-cv', action='store_true',
         help=inspect.getdoc(validate_cv))
     parser.add_argument(
-        '--show-processed-cv-activation', action='store_true',
-        help=inspect.getdoc(show_processed_cv_activation))
+        '--cv-classification-report', action='store_true',
+        help=inspect.getdoc(cv_classification_report))
 
     # </ feature cv specific >
 
@@ -67,8 +67,8 @@ def main():
         '--validate-whiskers', action='store_true',
         help=inspect.getdoc(validate_whiskers))
     parser.add_argument(
-        '--show-processed-whisker-activation', action='store_true',
-        help=inspect.getdoc(show_processed_whisker_activation))
+        '--whisker-classification-report', action='store_true',
+        help=inspect.getdoc(whisker_classification_report))
 
     # </ whisker specific >
 
@@ -102,8 +102,8 @@ def main():
     if args.validate_cv:
         validate_cv()
 
-    if args.show_processed_cv_activation:
-        show_processed_cv_activation()
+    if args.cv_classification_report:
+        cv_classification_report()
 
     # </ feature cv specific >
 
@@ -118,8 +118,8 @@ def main():
     if args.validate_whiskers:
         validate_whiskers()
 
-    if args.show_processed_cv_activation:
-        show_processed_whisker_activation()
+    if args.whisker_classification_report:
+        whisker_classification_report()
 
     # </ whisker specific >
 

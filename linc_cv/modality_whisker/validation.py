@@ -6,20 +6,26 @@ from keras.preprocessing.image import ImageDataGenerator
 from linc_cv import WHISKER_IMAGES_TRAINTEST_PATH, \
     WHISKER_TESTING_IMAGEDATAGENERATOR_PARAMS, WHISKER_MODEL_PATH, \
     WHISKER_CLASSES_LUT_PATH
-from linc_cv.validation import classifier_classes_lut_to_labels, validate_classifier
+from linc_cv.validation import classifier_classes_lut_to_labels, validate_classifier, linc_classification_report
 
 
-def validate_whiskers():
-    """Validate whisker classifier performance on labeled test data"""
+def whisker_test_results():
     test_datagen = ImageDataGenerator(**WHISKER_TESTING_IMAGEDATAGENERATOR_PARAMS)
     model = load_model(WHISKER_MODEL_PATH)
     labels = classifier_classes_lut_to_labels(WHISKER_CLASSES_LUT_PATH)
     results = validate_classifier(
         traintest_path=WHISKER_IMAGES_TRAINTEST_PATH,
         model=model, test_datagen=test_datagen, labels=labels)
+    return results
+
+
+def validate_whiskers():
+    """Verify Whisker classifier performance on labeled test data"""
+    results = whisker_test_results()
     print(json.dumps(results, indent=4))
 
 
-def show_processed_whisker_activation():
-    """Validate whiskers on holdout test data."""
-    pass
+def whisker_classification_report():
+    """Print Whisker classifier report and Save it to a local file as a pickled Pandas dataframe"""
+    return linc_classification_report(
+        results=whisker_test_results(), output='whisker_classification_report.pkl')
