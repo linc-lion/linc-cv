@@ -5,7 +5,7 @@
 
 curl \
     -H "ApiKey: ${API_KEY}" \
-    http://localhost:5000/linc/v1/whisker/capabilities
+    http://localhost:5000/linc/v1/capabilities
 
 curl \
     -H "Content-Type: application/json" \

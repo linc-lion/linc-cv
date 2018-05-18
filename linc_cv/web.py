@@ -19,7 +19,7 @@ class LincResultAPI(Resource):
             return {'status': t.status}
 
 
-class LincWhiskerClassifierCapabilitiesAPI(Resource):
+class LincClassifierCapabilitiesAPI(Resource):
     def get(self):
         if request.headers.get('ApiKey') != API_KEY:
             return {'status': 'error', 'info': 'authentication failure'}, 401
@@ -75,7 +75,7 @@ app = Flask(__name__)
 api = Api(app)
 
 api.add_resource(LincClassifyAPI, '/linc/v1/classify')
-api.add_resource(LincWhiskerClassifierCapabilitiesAPI, '/linc/v1/whisker/capabilities')
+api.add_resource(LincClassifierCapabilitiesAPI, '/linc/v1/capabilities')
 api.add_resource(LincResultAPI, '/linc/v1/results/<string:celery_id>')
 
 if __name__ == '__main__':
