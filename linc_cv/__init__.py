@@ -16,8 +16,6 @@ def datapath(path: Iterable):
 os.makedirs(datapath([]), exist_ok=True)
 
 INPUT_SHAPE = (299, 299, 3,)
-WHISKER_CLASSIFIER_ACCURACY = 0.62
-CV_CLASSIFIER_ACCURACY = 0.88
 IMAGES_LUT_PATH = datapath(['images_lut.json'])
 LINC_DB_PATH = datapath(['linc_db.json'])
 WHISKER_CLASSES_LUT_PATH = datapath(['whisker_classes_lut.json'])
@@ -25,7 +23,7 @@ CV_CLASSES_LUT_PATH = datapath(['cv_classes_lut.json'])
 LION_FEATURES_PATH = datapath(['lion_features.h5'])
 ACTIVATIONS_PATH = datapath(['activations'])
 WHISKER_IMAGES_PATH = datapath(['whisker_images'])
-WHISKER_IMAGES_TRAINTEST_PATH = datapath(['whiskers_images_traintest', 'test'])
+WHISKER_IMAGES_TRAINTEST_PATH = datapath(['whiskers_images_traintest'])
 CV_IMAGES_PATH = datapath(['cv_images'])
 CV_IMAGES_TRAINTEST_PATH = datapath(['cv_images_traintest'])
 CV_MODEL_PATH = datapath(['cv_model.h5'])
