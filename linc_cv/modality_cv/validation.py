@@ -19,13 +19,14 @@ def cv_test_results():
     return results
 
 
-def validate_cv():
+def validate_cv_classifier():
     """Verify CV classifier performance on labeled test data"""
     results = cv_test_results()
-    print(json.dumps(results, indent=4))
+    with open('cv_validation.json', 'w') as f:
+        json.dump(results, f, indent=4)
 
 
-def cv_classification_report():
+def cv_classifier_report():
     """Print CV classifier report and Save it to a local file as a pickled Pandas dataframe"""
     return linc_classification_report(
         results=cv_test_results(), output='cv_classification_report.pkl')

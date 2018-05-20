@@ -19,13 +19,14 @@ def whisker_test_results():
     return results
 
 
-def validate_whiskers():
+def validate_whisker_classifier():
     """Verify Whisker classifier performance on labeled test data"""
     results = whisker_test_results()
-    print(json.dumps(results, indent=4))
+    with open('whisker_validation.json', 'w') as f:
+        json.dump(results, f, indent=4)
 
 
-def whisker_classification_report():
+def whisker_classifier_report():
     """Print Whisker classifier report and Save it to a local file as a pickled Pandas dataframe"""
     return linc_classification_report(
         results=whisker_test_results(), output='whisker_classification_report.pkl')

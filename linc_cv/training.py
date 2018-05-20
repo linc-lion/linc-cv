@@ -92,9 +92,9 @@ def train(*, images_dir, images_traintest_dir, lut_path, model_path,
         cycle_length=5,
         mult_factor=1)
     tb = TensorBoard(
-        log_dir=tensorboard_logdir, histogram_freq=1, write_graph=True,
+        log_dir=tensorboard_logdir, histogram_freq=5, write_graph=True,
         write_grads=True, batch_size=batch_size, write_images=True,
-        embeddings_freq=1, )
+        embeddings_freq=5, )
     model.fit_generator(
         train_generator, epochs=100,
         steps_per_epoch=len(X_train) // batch_size,

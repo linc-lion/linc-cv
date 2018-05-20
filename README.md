@@ -5,12 +5,16 @@
     ./install_dev.sh
     linc_cv --scrape-lion-database
     linc_cv --generate-images-lut
-    linc_cv --train-cv
-    linc_cv --validate-cv > cv_results.json
-    linc_cv --train-whiskers
-    linc_cv --validate-whiskers > whisker_results.json
-    linc_cv --cv-classification-report
-    linc_cv --whisker-classification-report
+
+    linc_cv --download-cv-images
+    linc_cv --train-cv-classifier
+    linc_cv --cv-classifier-report
+    linc_cv --validate-cv-classifier
+
+    linc_cv --download-whisker-images
+    linc_cv --train-whisker-classifier
+    linc_cv --whisker-classifier-report
+    linc_cv --validate-whisker-classifier
 
 ## Runtime
 

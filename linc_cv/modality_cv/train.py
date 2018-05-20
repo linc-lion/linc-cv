@@ -5,7 +5,7 @@ from linc_cv import CV_IMAGES_PATH, CV_IMAGES_TRAINTEST_PATH, \
 from linc_cv.training import train
 
 
-def train_cv():
+def train_cv_classifier():
     return train(
         images_dir=CV_IMAGES_PATH,
         images_traintest_dir=CV_IMAGES_TRAINTEST_PATH,

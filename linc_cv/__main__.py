@@ -12,11 +12,11 @@ from linc_cv.parse_lion_db import generate_images_lut
 from linc_cv.scrape_lion_db import scrape_lion_database
 from linc_cv.web import app
 from linc_cv.modality_whisker.download import download_whisker_images
-from linc_cv.modality_whisker.train import train_whiskers
-from linc_cv.modality_whisker.validation import validate_whiskers, whisker_classification_report
+from linc_cv.modality_whisker.train import train_whisker_classifier
+from linc_cv.modality_whisker.validation import validate_whisker_classifier, whisker_classifier_report
 from linc_cv.modality_cv.download import download_cv_images
-from linc_cv.modality_cv.train import train_cv
-from linc_cv.modality_cv.validation import validate_cv, cv_classification_report
+from linc_cv.modality_cv.train import train_cv_classifier
+from linc_cv.modality_cv.validation import validate_cv_classifier, cv_classifier_report
 
 CELERY_EXE_PATH = os.path.join(os.path.dirname(sys.argv[0]), 'celery')
 FLOWER_EXE_PATH = os.path.join(os.path.dirname(sys.argv[0]), 'flower')
@@ -44,14 +44,14 @@ def main():
         '--download-cv-images', action='store_true',
         help=inspect.getdoc(download_cv_images))
     parser.add_argument(
-        '--train-cv', action='store_true',
-        help=inspect.getdoc(train_cv))
+        '--train-cv-classifier', action='store_true',
+        help=inspect.getdoc(train_cv_classifier))
     parser.add_argument(
-        '--validate-cv', action='store_true',
-        help=inspect.getdoc(validate_cv))
+        '--cv-classifier-report', action='store_true',
+        help=inspect.getdoc(cv_classifier_report))
     parser.add_argument(
-        '--cv-classification-report', action='store_true',
-        help=inspect.getdoc(cv_classification_report))
+        '--validate-cv-classifier', action='store_true',
+        help=inspect.getdoc(validate_cv_classifier))
 
     # </ feature cv specific >
 
@@ -61,14 +61,14 @@ def main():
         '--download-whisker-images', action='store_true',
         help=inspect.getdoc(download_whisker_images))
     parser.add_argument(
-        '--train-whiskers', action='store_true',
-        help=inspect.getdoc(train_whiskers))
+        '--train-whisker-classifier', action='store_true',
+        help=inspect.getdoc(train_whisker_classifier))
     parser.add_argument(
-        '--validate-whiskers', action='store_true',
-        help=inspect.getdoc(validate_whiskers))
+        '--whisker-classifier-report', action='store_true',
+        help=inspect.getdoc(whisker_classifier_report))
     parser.add_argument(
-        '--whisker-classification-report', action='store_true',
-        help=inspect.getdoc(whisker_classification_report))
+        '--validate-whisker-classifier', action='store_true',
+        help=inspect.getdoc(validate_whisker_classifier))
 
     # </ whisker specific >
 
@@ -96,14 +96,14 @@ def main():
     if args.download_cv_images:
         download_cv_images()
 
-    if args.train_cv:
-        train_cv()
+    if args.train_cv_classifier:
+        train_cv_classifier()
 
-    if args.validate_cv:
-        validate_cv()
+    if args.cv_classifier_report:
+        cv_classifier_report()
 
-    if args.cv_classification_report:
-        cv_classification_report()
+    if args.validate_cv_classifier:
+        validate_cv_classifier()
 
     # </ feature cv specific >
 
@@ -112,14 +112,14 @@ def main():
     if args.download_whisker_images:
         download_whisker_images()
 
-    if args.train_whiskers:
-        train_whiskers()
+    if args.train_whisker_classifier:
+        train_whisker_classifier()
 
-    if args.validate_whiskers:
-        validate_whiskers()
+    if args.whisker_classifier_report:
+        whisker_classifier_report()
 
-    if args.whisker_classification_report:
-        whisker_classification_report()
+    if args.validate_whisker_classifier:
+        validate_whisker_classifier()
 
     # </ whisker specific >
 
