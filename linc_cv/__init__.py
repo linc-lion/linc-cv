@@ -3,7 +3,7 @@ import warnings
 from collections import Counter
 from typing import Iterable
 
-# ignore h5py deprecation warning we cannot control
+# ignore h5py deprecation warning we cannot do anything about
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -18,19 +18,16 @@ os.makedirs(datapath([]), exist_ok=True)
 INPUT_SHAPE = (299, 299, 3,)
 IMAGES_LUT_PATH = datapath(['images_lut.json'])
 LINC_DB_PATH = datapath(['linc_db.json'])
-WHISKER_CLASSES_LUT_PATH = datapath(['whisker_classes_lut.json'])
-CV_CLASSES_LUT_PATH = datapath(['cv_classes_lut.json'])
 LION_FEATURES_PATH = datapath(['lion_features.h5'])
 ACTIVATIONS_PATH = datapath(['activations'])
-WHISKER_IMAGES_PATH = datapath(['whisker_images'])
-WHISKER_IMAGES_TRAINTEST_PATH = datapath(['whiskers_images_traintest'])
-CV_IMAGES_PATH = datapath(['cv_images'])
-CV_IMAGES_TRAINTEST_PATH = datapath(['cv_images_traintest'])
-CV_MODEL_PATH = datapath(['cv_model.h5'])
-WHISKER_MODEL_PATH = datapath(['whisker_model.h5'])
 VALID_LION_IMAGE_TYPES = [
     'cv', 'whisker', 'whisker-left', 'whisker-right']
 
+CV_CLASSES_LUT_PATH = datapath(['cv_classes_lut.json'])
+CV_IMAGES_PATH = datapath(['cv_images'])
+CV_IMAGES_TRAINTEST_PATH = datapath(['cv_images_traintest'])
+CV_MODEL_PATH = datapath(['cv_model.h5'])
+CV_TENSORBOARD_LOGDIR = datapath(['cv_tensorboard_logdir'])
 CV_TRAINING_IMAGEDATAGENERATOR_PARAMS = {
     'rescale': 1. / 255,
     'samplewise_center': True,
@@ -39,14 +36,17 @@ CV_TRAINING_IMAGEDATAGENERATOR_PARAMS = {
     'height_shift_range': 0.1,
     'zoom_range': 0.1,
     'rotation_range': 5, }
-
-WHISKER_TRAINING_IMAGEDATAGENERATOR_PARAMS = CV_TRAINING_IMAGEDATAGENERATOR_PARAMS
-
 CV_TESTING_IMAGEDATAGENERATOR_PARAMS = {
     'rescale': 1. / 255,
     'samplewise_center': True,
     'samplewise_std_normalization': True}
 
+WHISKER_CLASSES_LUT_PATH = datapath(['whisker_classes_lut.json'])
+WHISKER_IMAGES_PATH = datapath(['whisker_images'])
+WHISKER_IMAGES_TRAINTEST_PATH = datapath(['whisker_images_traintest'])
+WHISKER_MODEL_PATH = datapath(['whisker_model.h5'])
+WHISKER_TENSORBOARD_LOGDIR = datapath(['whisker_tensorboard_logdir'])
+WHISKER_TRAINING_IMAGEDATAGENERATOR_PARAMS = CV_TRAINING_IMAGEDATAGENERATOR_PARAMS
 WHISKER_TESTING_IMAGEDATAGENERATOR_PARAMS = CV_TESTING_IMAGEDATAGENERATOR_PARAMS
 
 
