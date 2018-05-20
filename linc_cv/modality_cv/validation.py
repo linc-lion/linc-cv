@@ -5,7 +5,7 @@ from keras.preprocessing.image import ImageDataGenerator
 
 from linc_cv import CV_IMAGES_TRAINTEST_PATH, \
     CV_TESTING_IMAGEDATAGENERATOR_PARAMS, CV_MODEL_PATH, \
-    CV_CLASSES_LUT_PATH
+    CV_CLASSES_LUT_PATH, WHISKER_VALIDATION_JSON_PATH
 from linc_cv.validation import classifier_classes_lut_to_labels, validate_classifier, linc_classification_report
 
 
@@ -22,7 +22,7 @@ def cv_test_results():
 def validate_cv_classifier():
     """Verify CV classifier performance on labeled test data"""
     results = cv_test_results()
-    with open('cv_validation.json', 'w') as f:
+    with open(WHISKER_VALIDATION_JSON_PATH, 'w') as f:
         json.dump(results, f, indent=4)
 
 
