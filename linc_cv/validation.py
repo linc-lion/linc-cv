@@ -9,8 +9,11 @@ from linc_cv.predict import validate_on_image_path
 
 
 def classifier_classes_lut_to_labels(lut_path):
-    with open(lut_path) as f:
-        class_indicies = json.load(f)
+    try:
+        with open(lut_path) as f:
+            class_indicies = json.load(f)
+    except FileNotFoundError:
+        return None
     labels = [x[0] for x in sorted(class_indicies.items(), key=itemgetter(1))]
     return labels
 
