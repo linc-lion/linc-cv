@@ -16,4 +16,3 @@ toolz
 tables
 flower
 pandas
-tensorboard

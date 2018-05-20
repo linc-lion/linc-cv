@@ -6,7 +6,7 @@ from multiprocessing import cpu_count
 from collections.__init__ import Counter
 from keras import Model
 from keras.applications import InceptionResNetV2
-from keras.callbacks import ModelCheckpoint, TensorBoard
+from keras.callbacks import ModelCheckpoint, CSVLogger
 from keras.layers import GlobalAveragePooling2D, Dense
 from keras.optimizers import SGD
 from keras.preprocessing.image import ImageDataGenerator
@@ -17,7 +17,7 @@ from linc_cv.sgdr import SGDRScheduler
 
 
 def train(*, images_dir, images_traintest_dir, lut_path, model_path,
-          training_idg_params, testing_idg_params, tensorboard_logdir):
+          training_idg_params, testing_idg_params, training_log):
     batch_size = 20
     X = []
     y = []
@@ -91,10 +91,7 @@ def train(*, images_dir, images_traintest_dir, lut_path, model_path,
         lr_decay=1,
         cycle_length=5,
         mult_factor=1)
-    tb = TensorBoard(
-        log_dir=tensorboard_logdir, histogram_freq=5, write_graph=True,
-        write_grads=True, batch_size=batch_size, write_images=True,
-        embeddings_freq=5, )
+    csvl = CSVLogger(training_log)
     model.fit_generator(
         train_generator, epochs=100,
         steps_per_epoch=len(X_train) // batch_size,
@@ -103,4 +100,4 @@ def train(*, images_dir, images_traintest_dir, lut_path, model_path,
         use_multiprocessing=True,
         workers=cpu_count(),
         class_weight=class_weights,
-        callbacks=[mc, lrs, tb])
+        callbacks=[csvl, mc, lrs])
