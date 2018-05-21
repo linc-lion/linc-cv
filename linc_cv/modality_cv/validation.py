@@ -5,7 +5,8 @@ from keras.preprocessing.image import ImageDataGenerator
 
 from linc_cv import CV_IMAGES_TRAINTEST_PATH, \
     CV_TESTING_IMAGEDATAGENERATOR_PARAMS, CV_MODEL_PATH, \
-    CV_CLASSES_LUT_PATH, WHISKER_VALIDATION_JSON_PATH
+    CV_CLASSES_LUT_PATH, CV_VALIDATION_JSON_PATH, \
+    CV_CLASSIFICATION_REPORT_PATH
 from linc_cv.validation import classifier_classes_lut_to_labels, validate_classifier, linc_classification_report
 
 
@@ -20,13 +21,10 @@ def cv_test_results():
 
 
 def validate_cv_classifier():
-    """Verify CV classifier performance on labeled test data"""
+    """Verify CV classifier performance on labeled test data.
+    Print CV classifier report and save it to a local file as a pickled Pandas dataframe"""
     results = cv_test_results()
-    with open(WHISKER_VALIDATION_JSON_PATH, 'w') as f:
+    with open(CV_VALIDATION_JSON_PATH, 'w') as f:
         json.dump(results, f, indent=4)
-
-
-def cv_classifier_report():
-    """Print CV classifier report and Save it to a local file as a pickled Pandas dataframe"""
     return linc_classification_report(
-        results=cv_test_results(), output='cv_classification_report.pkl')
+        results=results, output=CV_CLASSIFICATION_REPORT_PATH)

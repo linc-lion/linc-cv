@@ -28,7 +28,8 @@ CV_IMAGES_PATH = datapath(['cv_images'])
 CV_IMAGES_TRAINTEST_PATH = datapath(['cv_images_traintest'])
 CV_MODEL_PATH = datapath(['cv_model.h5'])
 CV_TRAINING_LOG_PATH = datapath(['cv_training_log.csv'])
-CV_VALIDATION_JSON_PATH='whisker_validation.json'
+CV_CLASSIFICATION_REPORT_PATH = 'cv_classification_report.pkl'
+CV_VALIDATION_JSON_PATH = 'whisker_validation.json'
 CV_TRAINING_IMAGEDATAGENERATOR_PARAMS = {
     'rescale': 1. / 255,
     'samplewise_center': True,
@@ -47,7 +48,8 @@ WHISKER_IMAGES_PATH = datapath(['whisker_images'])
 WHISKER_IMAGES_TRAINTEST_PATH = datapath(['whisker_images_traintest'])
 WHISKER_MODEL_PATH = datapath(['whisker_model.h5'])
 WHISKER_TRAINING_LOG_PATH = datapath(['whisker_training_log.csv'])
-WHISKER_VALIDATION_JSON_PATH='whisker_validation.json'
+WHISKER_CLASSIFICATION_REPORT_PATH = 'whisker_classification_report.pkl'
+WHISKER_VALIDATION_JSON_PATH = 'whisker_validation.json'
 WHISKER_TRAINING_IMAGEDATAGENERATOR_PARAMS = CV_TRAINING_IMAGEDATAGENERATOR_PARAMS
 WHISKER_TESTING_IMAGEDATAGENERATOR_PARAMS = CV_TESTING_IMAGEDATAGENERATOR_PARAMS
 

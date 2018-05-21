@@ -13,10 +13,10 @@ from linc_cv.scrape_lion_db import scrape_lion_database
 from linc_cv.web import app
 from linc_cv.modality_whisker.download import download_whisker_images
 from linc_cv.modality_whisker.train import train_whisker_classifier
-from linc_cv.modality_whisker.validation import validate_whisker_classifier, whisker_classifier_report
+from linc_cv.modality_whisker.validation import validate_whisker_classifier
 from linc_cv.modality_cv.download import download_cv_images
 from linc_cv.modality_cv.train import train_cv_classifier
-from linc_cv.modality_cv.validation import validate_cv_classifier, cv_classifier_report
+from linc_cv.modality_cv.validation import validate_cv_classifier
 
 CELERY_EXE_PATH = os.path.join(os.path.dirname(sys.argv[0]), 'celery')
 FLOWER_EXE_PATH = os.path.join(os.path.dirname(sys.argv[0]), 'flower')
@@ -47,9 +47,6 @@ def main():
         '--train-cv-classifier', action='store_true',
         help=inspect.getdoc(train_cv_classifier))
     parser.add_argument(
-        '--cv-classifier-report', action='store_true',
-        help=inspect.getdoc(cv_classifier_report))
-    parser.add_argument(
         '--validate-cv-classifier', action='store_true',
         help=inspect.getdoc(validate_cv_classifier))
 
@@ -63,9 +60,6 @@ def main():
     parser.add_argument(
         '--train-whisker-classifier', action='store_true',
         help=inspect.getdoc(train_whisker_classifier))
-    parser.add_argument(
-        '--whisker-classifier-report', action='store_true',
-        help=inspect.getdoc(whisker_classifier_report))
     parser.add_argument(
         '--validate-whisker-classifier', action='store_true',
         help=inspect.getdoc(validate_whisker_classifier))
@@ -99,9 +93,6 @@ def main():
     if args.train_cv_classifier:
         train_cv_classifier()
 
-    if args.cv_classifier_report:
-        cv_classifier_report()
-
     if args.validate_cv_classifier:
         validate_cv_classifier()
 
@@ -114,9 +105,6 @@ def main():
 
     if args.train_whisker_classifier:
         train_whisker_classifier()
-
-    if args.whisker_classifier_report:
-        whisker_classifier_report()
 
     if args.validate_whisker_classifier:
         validate_whisker_classifier()
