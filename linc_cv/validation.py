@@ -38,7 +38,8 @@ def linc_classification_report(*, results, output):
     y_true, y_pred = zip(*([x, y[0]] for x, y in results))
     print(classification_report(y_true, y_pred))
     prfs_labels = sorted(list(set(y_true + y_pred)))
-    precision, recall, fbeta_score, support = precision_recall_fscore_support(y_true, y_pred)
+    precision, recall, fbeta_score, support = precision_recall_fscore_support(
+        y_true, y_pred, average='weighted')
     df = pd.DataFrame(
         {'label': prfs_labels, 'precision': precision,
          'recall': recall, 'fbeta_score': fbeta_score,

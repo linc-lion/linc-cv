@@ -29,7 +29,7 @@ CV_IMAGES_TRAINTEST_PATH = datapath(['cv_images_traintest'])
 CV_MODEL_PATH = datapath(['cv_model.h5'])
 CV_TRAINING_LOG_PATH = datapath(['cv_training_log.csv'])
 CV_CLASSIFICATION_REPORT_PATH = 'cv_classification_report.pkl'
-CV_VALIDATION_JSON_PATH = 'whisker_validation.json'
+CV_VALIDATION_JSON_PATH = 'cv_validation.json'
 CV_TRAINING_IMAGEDATAGENERATOR_PARAMS = {
     'rescale': 1. / 255,
     'samplewise_center': True,
