@@ -26,5 +26,3 @@ def validate_cv_classifier():
     results = cv_test_results()
     with open(CV_VALIDATION_JSON_PATH, 'w') as f:
         json.dump(results, f, indent=4)
-    return linc_classification_report(
-        results=results, output=CV_CLASSIFICATION_REPORT_PATH)

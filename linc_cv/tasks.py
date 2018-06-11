@@ -20,7 +20,7 @@ def classify_image_url(test_image_url, feature_type):
             raise ClassifierError(f'unknown feature_type {feature_type}')
         return {
             'status': 'finished',
-            'sorted_predicted_lion_ids': results}
+            'predictions': results}
     except ClassifierError as e:
         return {
             'status': 'error',

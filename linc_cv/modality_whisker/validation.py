@@ -5,9 +5,8 @@ from keras.preprocessing.image import ImageDataGenerator
 
 from linc_cv import WHISKER_IMAGES_TRAINTEST_PATH, \
     WHISKER_TESTING_IMAGEDATAGENERATOR_PARAMS, WHISKER_MODEL_PATH, \
-    WHISKER_CLASSES_LUT_PATH, WHISKER_VALIDATION_JSON_PATH, \
-    WHISKER_CLASSIFICATION_REPORT_PATH
-from linc_cv.validation import classifier_classes_lut_to_labels, validate_classifier, linc_classification_report
+    WHISKER_CLASSES_LUT_PATH, WHISKER_VALIDATION_JSON_PATH
+from linc_cv.validation import classifier_classes_lut_to_labels, validate_classifier
 
 
 def whisker_test_results():
@@ -26,5 +25,3 @@ def validate_whisker_classifier():
     results = whisker_test_results()
     with open(WHISKER_VALIDATION_JSON_PATH, 'w') as f:
         json.dump(results, f, indent=4)
-    return linc_classification_report(
-        results=results, output=WHISKER_CLASSIFICATION_REPORT_PATH)
