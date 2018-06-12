@@ -5,9 +5,8 @@ from keras.preprocessing.image import ImageDataGenerator
 
 from linc_cv import CV_IMAGES_TRAINTEST_PATH, \
     CV_TESTING_IMAGEDATAGENERATOR_PARAMS, CV_MODEL_PATH, \
-    CV_CLASSES_LUT_PATH, CV_VALIDATION_JSON_PATH, \
-    CV_CLASSIFICATION_REPORT_PATH
-from linc_cv.validation import classifier_classes_lut_to_labels, validate_classifier, linc_classification_report
+    CV_CLASSES_LUT_PATH, CV_VALIDATION_JSON_PATH
+from linc_cv.validation import classifier_classes_lut_to_labels, validate_classifier
 
 
 def cv_test_results():

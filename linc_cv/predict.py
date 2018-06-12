@@ -20,7 +20,7 @@ def predict_on_url(*, model, image_url, test_datagen, labels, num_results=20):
     arr = np.expand_dims(arr, axis=0)
     assert arr.shape == (1, 299, 299, 3,)
     X = next(test_datagen.flow(arr, shuffle=False, batch_size=1))
-    return {labels[i]: k for i, k in enumerate(model.predict(X)[0])}
+    return {labels[i]: float(k) for i, k in enumerate(model.predict(X)[0])}
 
 
 def validate_on_image_path(*, model, image_path, test_datagen, labels):
@@ -29,4 +29,4 @@ def validate_on_image_path(*, model, image_path, test_datagen, labels):
     arr = np.expand_dims(arr, axis=0)
     assert arr.shape == (1, 299, 299, 3,)
     X = next(test_datagen.flow(arr, shuffle=False, batch_size=1))
-    return {labels[i]: k for i, k in enumerate(model.predict(X)[0])}
+    return {labels[i]: float(k) for i, k in enumerate(model.predict(X)[0])}

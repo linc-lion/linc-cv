@@ -25,7 +25,56 @@ class LincClassifierCapabilitiesAPI(Resource):
             return {'status': 'error', 'info': 'authentication failure'}, 401
         cv_labels = classifier_classes_lut_to_labels(CV_CLASSES_LUT_PATH)
         whisker_labels = classifier_classes_lut_to_labels(WHISKER_CLASSES_LUT_PATH)
-        return {'valid_cv_lion_ids': cv_labels, 'valid_cv_whisker_labels': whisker_labels}
+        whisker_topk_classifier_accuracy = [
+            0.653169,
+            0.744718,
+            0.783451,
+            0.809859,
+            0.825704,
+            0.836268,
+            0.846831,
+            0.859155,
+            0.873239,
+            0.880282,
+            0.885563,
+            0.890845,
+            0.892606,
+            0.897887,
+            0.899648,
+            0.903169,
+            0.903169,
+            0.903169,
+            0.908451,
+            0.910211,
+        ]
+
+        cv_topk_classifier_accuracy = [
+            0.919628,
+            0.952623,
+            0.966159,
+            0.971235,
+            0.972927,
+            0.973773,
+            0.976311,
+            0.976311,
+            0.977157,
+            0.978849,
+            0.978849,
+            0.980541,
+            0.981387,
+            0.981387,
+            0.982234,
+            0.983926,
+            0.984772,
+            0.985618,
+            0.986464,
+            0.987310,
+        ]
+
+        return {
+            'valid_cv_lion_ids': cv_labels, 'valid_whisker_lion_ids': whisker_labels,
+            'cv_topk_classifier_accuracy': cv_topk_classifier_accuracy,
+            'whisker_topk_classifier_accuracy': whisker_topk_classifier_accuracy, }
 
 
 class LincClassifyAPI(Resource):
