@@ -8,8 +8,7 @@ import matplotlib
 
 matplotlib.use('Agg')
 from linc_cv import BASE_DIR
-from linc_cv.parse_lion_db import generate_images_lut
-from linc_cv.scrape_lion_db import scrape_lion_database
+from linc_cv.parse_lion_db import parse_lion_database
 from linc_cv.web import app
 from linc_cv.modality_whisker.download import download_whisker_images
 from linc_cv.modality_whisker.train import train_whisker_classifier
@@ -30,14 +29,8 @@ def main():
         description='LINC Lion Recognition System',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument(
-        '--scrape-lion-database', action='store_true',
-        help=inspect.getdoc(scrape_lion_database))
-    parser.add_argument(
-        '--generate-images-lut', action='store_true',
-        help=inspect.getdoc(generate_images_lut))
-    parser.add_argument(
-        '--max-lion-id', type=int, default=3000,
-        help='LINC database scrape id limit')
+        '--parse-lion-database',
+        help=inspect.getdoc(parse_lion_database))
 
     # < feature cv specific >
     parser.add_argument(
@@ -78,12 +71,9 @@ def main():
         help="Start API task worker monitor (Celery Flower)")
 
     args = parser.parse_args()
-    if args.scrape_lion_database:
-        scrape_lion_database(
-            max_lion_id=args.max_lion_id)
 
-    if args.generate_images_lut:
-        generate_images_lut()
+    if args.parse_lion_database:
+        parse_lion_database(args.parse_lion_database)
 
     # < feature cv specific >
 

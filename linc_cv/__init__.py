@@ -17,7 +17,6 @@ os.makedirs(datapath([]), exist_ok=True)
 
 INPUT_SHAPE = (299, 299, 3,)
 IMAGES_LUT_PATH = datapath(['images_lut.json'])
-LINC_DB_PATH = datapath(['linc_db.json'])
 LION_FEATURES_PATH = datapath(['lion_features.h5'])
 ACTIVATIONS_PATH = datapath(['activations'])
 VALID_LION_IMAGE_TYPES = [

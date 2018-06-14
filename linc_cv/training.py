@@ -1,9 +1,9 @@
 import json
 import os
 import shutil
+from collections.__init__ import Counter
 from multiprocessing import cpu_count
 
-from collections.__init__ import Counter
 from keras import Model
 from keras.applications import InceptionResNetV2
 from keras.callbacks import ModelCheckpoint, CSVLogger
@@ -28,6 +28,7 @@ def train(*, images_dir, images_traintest_dir, lut_path, model_path,
             X.append(path)
             y.append(label)
     valid_labels = set(label for label, count in Counter(y).items() if count > 2)
+    import ipdb; ipdb.set_trace()
     Xp = []
     yp = []
     for x_, y_ in zip(X, y):
@@ -45,7 +46,7 @@ def train(*, images_dir, images_traintest_dir, lut_path, model_path,
         for x, y in zip(eval(f'X_{mode}'), eval(f'y_{mode}')):
             np = os.path.join(images_traintest_dir, mode, y, os.path.basename(x) + '.jpg')
             os.makedirs(os.path.dirname(np), exist_ok=True)
-            shutil.copyfile(x, np)
+            os.symlink(x, np)
 
     train_datagen = ImageDataGenerator(**training_idg_params)
 
@@ -53,7 +54,8 @@ def train(*, images_dir, images_traintest_dir, lut_path, model_path,
         os.path.join(images_traintest_dir, 'train'),
         target_size=INPUT_SHAPE[:-1],
         batch_size=batch_size,
-        class_mode='categorical')
+        class_mode='categorical',
+        follow_links=True)
 
     test_datagen = ImageDataGenerator(**testing_idg_params)
 
@@ -61,7 +63,8 @@ def train(*, images_dir, images_traintest_dir, lut_path, model_path,
         os.path.join(images_traintest_dir, 'test'),
         target_size=INPUT_SHAPE[:-1],
         batch_size=batch_size,
-        class_mode='categorical')
+        class_mode='categorical',
+        follow_links=True)
 
     assert train_generator.num_classes == validation_generator.num_classes
     num_classes = validation_generator.num_classes

@@ -1,35 +1,40 @@
 import json
+from collections import defaultdict
 
-from . import IMAGES_LUT_PATH, LINC_DB_PATH
+from . import IMAGES_LUT_PATH
 
 
-def generate_images_lut():
+def parse_lion_database(db_path):
     """
     Parse LINC database into a lookup table consisting of lion_ids
     and image URLs for each feature type for each lion. Feature types
-    include whiskers, faces, and whole body images.
+    include whiskers and 'cv' images
     """
 
-    linc_images_lut = {}
+    with open(db_path) as f:
+        lions = json.load(f)
 
-    with open(LINC_DB_PATH) as f:
-        j = json.load(f)
-
-    cnt = 0
-    for i, k in enumerate(j):
-        try:
-            for imset in k['_embedded']['image_sets']:
-                for image in imset['_embedded']['images']:
-                    t = image['image_type']
-                    tn = image['url']
-                    linc_images_lut.setdefault(i, {})
-                    linc_images_lut[i].setdefault(t, [])
-                    linc_images_lut[i][t].append(tn)
-                    cnt += 1
-        except KeyError:
-            continue
+    lion_db = defaultdict(lambda: defaultdict(list))
+    for lion in lions:
+        lion_id = lion['id']
+        for image_set in lion['_embedded']['image_sets']:
+            for image in image_set['_embedded']['images']:
+                tags = image['image_tags']
+                image_type = None
+                for tag in tags:
+                    if 'whisker' in tag:
+                        image_type = 'whisker'
+                        break
+                for tag in tags:
+                    if 'cv' in tag:
+                        if image_type is not None:
+                            raise AssertionError(tags)
+                        image_type = 'cv'
+                        break
+                if image_type is None:
+                    continue
+                image_url = image['url']
+                lion_db[lion_id][image_type].append(image_url)
 
     with open(IMAGES_LUT_PATH, 'w') as f:
-        json.dump(linc_images_lut, f)
-
-    print('Successfully parsed LINC DB into image URL lookup table.')
+        json.dump(lion_db, f, sort_keys=True, indent=4)
