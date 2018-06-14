@@ -1,3 +1,4 @@
+from pprint import pprint
 import json
 import os
 from operator import itemgetter
@@ -24,5 +25,7 @@ def validate_classifier(*, traintest_path, model, test_datagen, labels):
             p = validate_on_image_path(
                 model=model, image_path=image_path, test_datagen=test_datagen,
                 labels=labels)
+            pprint(gt_label)
+            pprint(p)
             results.append([gt_label, p])
     return results

@@ -90,7 +90,7 @@ def train(*, images_dir, images_traintest_dir, lut_path, model_path,
     max_lr = 0.01000
     min_lr = 0.00001
     model.compile(
-        optimizer=SGD(lr=max_lr, momentum=0.8),
+        optimizer=SGD(momentum=0.8),
         loss='categorical_crossentropy', metrics=['accuracy'])
     class_weights = get_class_weights(train_generator.classes)
     mc = ModelCheckpoint(model_path, save_best_only=True, verbose=1)
@@ -103,7 +103,7 @@ def train(*, images_dir, images_traintest_dir, lut_path, model_path,
         mult_factor=1)
     csvl = CSVLogger(training_log)
     model.fit_generator(
-        train_generator, epochs=100,
+        train_generator, epochs=20,
         steps_per_epoch=len(X_train) // batch_size,
         validation_data=validation_generator,
         validation_steps=len(X_test) // batch_size,
