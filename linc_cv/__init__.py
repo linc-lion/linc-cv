@@ -30,17 +30,11 @@ CV_TRAINING_LOG_PATH = datapath(['cv_training_log.csv'])
 CV_CLASSIFICATION_REPORT_PATH = 'cv_classification_report.pkl'
 CV_VALIDATION_JSON_PATH = 'cv_validation.json'
 CV_TRAINING_IMAGEDATAGENERATOR_PARAMS = {
-    'rescale': 1. / 255,
-    'samplewise_center': True,
-    'samplewise_std_normalization': True,
     'width_shift_range': 0.1,
     'height_shift_range': 0.1,
     'zoom_range': 0.1,
     'rotation_range': 5, }
-CV_TESTING_IMAGEDATAGENERATOR_PARAMS = {
-    'rescale': 1. / 255,
-    'samplewise_center': True,
-    'samplewise_std_normalization': True}
+CV_TESTING_IMAGEDATAGENERATOR_PARAMS = CV_TRAINING_IMAGEDATAGENERATOR_PARAMS
 
 WHISKER_CLASSES_LUT_PATH = datapath(['whisker_classes_lut.json'])
 WHISKER_IMAGES_PATH = datapath(['whisker_images'])

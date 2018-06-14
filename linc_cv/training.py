@@ -5,15 +5,20 @@ from collections.__init__ import Counter
 from multiprocessing import cpu_count
 
 from keras import Model
-from keras.applications import InceptionResNetV2
+from keras.applications.inception_resnet_v2 import InceptionResNetV2, preprocess_input
 from keras.callbacks import ModelCheckpoint, CSVLogger
 from keras.layers import GlobalAveragePooling2D, Dense
 from keras.optimizers import SGD
-from keras.preprocessing.image import ImageDataGenerator
+from keras.preprocessing.image import ImageDataGenerator, img_to_array, array_to_img
 from sklearn.model_selection import train_test_split
 
 from linc_cv import get_class_weights, INPUT_SHAPE
 from linc_cv.sgdr import SGDRScheduler
+
+
+def preprocess_input_new(x):
+    img = preprocess_input(img_to_array(x))
+    return array_to_img(img)
 
 
 def train(*, images_dir, images_traintest_dir, lut_path, model_path,
@@ -28,7 +33,6 @@ def train(*, images_dir, images_traintest_dir, lut_path, model_path,
             X.append(path)
             y.append(label)
     valid_labels = set(label for label, count in Counter(y).items() if count > 2)
-    import ipdb; ipdb.set_trace()
     Xp = []
     yp = []
     for x_, y_ in zip(X, y):
@@ -48,8 +52,9 @@ def train(*, images_dir, images_traintest_dir, lut_path, model_path,
             os.makedirs(os.path.dirname(np), exist_ok=True)
             os.symlink(x, np)
 
-    train_datagen = ImageDataGenerator(**training_idg_params)
-
+    train_datagen = ImageDataGenerator(**{
+        **training_idg_params,
+        'preprocessing_function': preprocess_input_new})
     train_generator = train_datagen.flow_from_directory(
         os.path.join(images_traintest_dir, 'train'),
         target_size=INPUT_SHAPE[:-1],
@@ -57,7 +62,9 @@ def train(*, images_dir, images_traintest_dir, lut_path, model_path,
         class_mode='categorical',
         follow_links=True)
 
-    test_datagen = ImageDataGenerator(**testing_idg_params)
+    test_datagen = ImageDataGenerator(**{
+        **testing_idg_params,
+        'preprocessing_function': preprocess_input_new})
 
     validation_generator = test_datagen.flow_from_directory(
         os.path.join(images_traintest_dir, 'test'),
