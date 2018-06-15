@@ -69,7 +69,7 @@ def test_classify_load():
         whisker_data = json.load(f)
     with open('test_cv_classification.json') as f:
         cv_data = json.load(f)
-    for i in range(32):
+    for i in range(4):
         requests.post(
             f'{BASE_URL}/linc/v1/classify',
             json=whisker_data,
