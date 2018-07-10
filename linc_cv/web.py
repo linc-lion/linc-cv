@@ -1,11 +1,15 @@
+from celery.result import AsyncResult
 from flask import Flask
 from flask import request
 from flask_restful import Resource, Api
+from redis import StrictRedis
 
 from linc_cv import VALID_LION_IMAGE_TYPES, CV_CLASSES_LUT_PATH, WHISKER_CLASSES_LUT_PATH
 from linc_cv.keys import API_KEY
-from linc_cv.tasks import c, classify_image_url
+from linc_cv.tasks import c, classify_image_url, retrain
 from linc_cv.validation import classifier_classes_lut_to_labels
+
+TRAINING_CELERY_TASK_ID_KEY = 'training_celery_task_id'
 
 
 class LincResultAPI(Resource):
@@ -77,6 +81,24 @@ class LincClassifierCapabilitiesAPI(Resource):
             'whisker_topk_classifier_accuracy': whisker_topk_classifier_accuracy, }
 
 
+class LincTrainAPI(Resource):
+    def post(self):
+        # if request.headers.get('ApiKey') != API_KEY:
+        #     return {'status': 'error', 'info': 'authentication failure'}, 401
+
+        r = StrictRedis()
+        training_celery_task_id = r.get(TRAINING_CELERY_TASK_ID_KEY)
+        if training_celery_task_id:
+            task = AsyncResult(training_celery_task_id)
+            if task.state == 'SUCCESS':
+                r.set(TRAINING_CELERY_TASK_ID_KEY, None)
+                return {'id': task.id, 'state': task.state}, 200
+        else:
+            task = retrain.delay()
+            r.set(TRAINING_CELERY_TASK_ID_KEY, task)
+        return {'id': task.id, 'state': task.state}, 200
+
+
 class LincClassifyAPI(Resource):
     def post(self):
         if request.headers.get('ApiKey') != API_KEY:
@@ -124,6 +146,7 @@ app = Flask(__name__)
 api = Api(app)
 
 api.add_resource(LincClassifyAPI, '/linc/v1/classify')
+api.add_resource(LincTrainAPI, '/linc/v1/train')
 api.add_resource(LincClassifierCapabilitiesAPI, '/linc/v1/capabilities')
 api.add_resource(LincResultAPI, '/linc/v1/results/<string:celery_id>')
 

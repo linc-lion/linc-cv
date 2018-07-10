@@ -7,9 +7,16 @@ from linc_cv.modality_whisker.predict import predict_whisker_url
 c = Celery()
 c.conf.broker_url = 'redis://localhost:6379/0'
 c.conf.result_backend = 'redis://localhost:6379/0'
+c.conf.task_track_started = True
 
 
-@c.task(acks_late=True)
+@c.task(track_started=True, acks_late=True)
+def retrain():
+    import time
+    time.sleep(5)
+
+
+@c.task(track_started=True, acks_late=True)
 def classify_image_url(test_image_url, feature_type):
     try:
         if 'whisker' in feature_type:
