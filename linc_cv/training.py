@@ -6,7 +6,7 @@ from multiprocessing import cpu_count
 
 from keras import Model
 from keras.applications.inception_resnet_v2 import InceptionResNetV2, preprocess_input
-from keras.callbacks import ModelCheckpoint, CSVLogger
+from keras.callbacks import CSVLogger
 from keras.layers import GlobalAveragePooling2D, Dense
 from keras.optimizers import SGD
 from keras.preprocessing.image import ImageDataGenerator, img_to_array, array_to_img
@@ -14,7 +14,6 @@ from redis import StrictRedis
 from sklearn.model_selection import train_test_split
 
 from linc_cv import get_class_weights, INPUT_SHAPE, REDIS_MODEL_RELOAD_KEY
-from linc_cv.sgdr import SGDRScheduler
 
 
 def preprocess_input_new(x):
@@ -88,33 +87,34 @@ def train(*, images_dir, images_traintest_dir, lut_path, model_path,
     x = Dense(num_classes, activation='softmax')(x)
     model = Model(inputs=base_model.input, outputs=x)
     model.load_weights(imagenet_weights_path, by_name=True)
-    max_lr = 0.01000
-    min_lr = 0.00001
+    NUM_EPOCHS = 10
+    MAX_LR = 0.01
+    MIN_LR = MAX_LR / 100
+    ANNEALING = 0.2
+    WEIGHT_DECAY = 1e-5
     model.compile(
-        optimizer=SGD(momentum=0.8),
+        optimizer=SGD(momentum=0.8, decay=WEIGHT_DECAY),
         loss='categorical_crossentropy', metrics=['accuracy'])
     class_weights = get_class_weights(train_generator.classes)
-    mc = ModelCheckpoint(model_path, save_best_only=True, verbose=1)
-    lrs = SGDRScheduler(
-        max_lr=max_lr,
-        min_lr=min_lr,
-        steps_per_epoch=len(X_train) // batch_size,
-        lr_decay=1,
-        cycle_length=5,
-        mult_factor=1)
+    from .keras_CLR import CLR
+    training_steps_per_epoch = len(X_train) // batch_size
+    validation_steps_per_epoch = len(X_test) // batch_size
+    lrs = CLR(
+        min_lr=MIN_LR, max_lr=MAX_LR,
+        annealing=ANNEALING, num_steps=NUM_EPOCHS * training_steps_per_epoch)
     csvl = CSVLogger(training_log)
     model.fit_generator(
-        train_generator, epochs=1,
-        steps_per_epoch=len(X_train) // batch_size,
+        train_generator, epochs=NUM_EPOCHS,
+        steps_per_epoch=training_steps_per_epoch,
         validation_data=validation_generator,
-        validation_steps=len(X_test) // batch_size,
+        validation_steps=validation_steps_per_epoch,
         use_multiprocessing=mp,
         workers=cpu_count(),
         class_weight=class_weights,
-        callbacks=[csvl, mc, lrs])
+        callbacks=[csvl, lrs])
 
-    # deploy trained model
-    shutil.copyfile(model_path, model_path_final)
+    # use model_path in checkpoints
+    model.save(model_path_final)
 
     # trigger model reload on next classification task
     StrictRedis().set(REDIS_MODEL_RELOAD_KEY, True)
