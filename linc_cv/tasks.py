@@ -13,7 +13,7 @@ c = Celery(backend='redis://localhost:6379/0', broker='redis://localhost:6379/0'
 c.conf.task_track_started = True
 
 
-@c.task(track_started=True, acks_late=True)
+@c.task(track_started=True)
 def retrain():
     # TODO: download database and save it here
     print('parsing lion database')
@@ -30,7 +30,7 @@ def retrain():
     train_whisker_classifier(mp=False)
 
 
-@c.task(track_started=True, acks_late=True)
+@c.task(track_started=True)
 def classify_image_url(test_image_url, feature_type):
     try:
         if 'whisker' in feature_type:

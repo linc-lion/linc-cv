@@ -10,9 +10,10 @@ from keras.callbacks import ModelCheckpoint, CSVLogger
 from keras.layers import GlobalAveragePooling2D, Dense
 from keras.optimizers import SGD
 from keras.preprocessing.image import ImageDataGenerator, img_to_array, array_to_img
+from redis import StrictRedis
 from sklearn.model_selection import train_test_split
 
-from linc_cv import get_class_weights, INPUT_SHAPE
+from linc_cv import get_class_weights, INPUT_SHAPE, REDIS_MODEL_RELOAD_KEY
 from linc_cv.sgdr import SGDRScheduler
 
 
@@ -22,7 +23,7 @@ def preprocess_input_new(x):
 
 
 def train(*, images_dir, images_traintest_dir, lut_path, model_path,
-          training_idg_params, testing_idg_params, training_log, mp):
+          model_path_final, training_idg_params, testing_idg_params, training_log, mp):
     batch_size = 20
     X = []
     y = []
@@ -111,3 +112,9 @@ def train(*, images_dir, images_traintest_dir, lut_path, model_path,
         workers=cpu_count(),
         class_weight=class_weights,
         callbacks=[csvl, mc, lrs])
+
+    # deploy trained model
+    shutil.copyfile(model_path, model_path_final)
+
+    # trigger model reload on next classification task
+    StrictRedis().set(REDIS_MODEL_RELOAD_KEY, True)
