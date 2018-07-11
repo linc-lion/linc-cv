@@ -1,11 +1,10 @@
 import json
-import multiprocessing
 import os
 import shutil
-from PIL import Image
 from io import BytesIO
 
 import requests
+from PIL import Image
 
 from linc_cv import IMAGES_LUT_PATH
 
@@ -18,6 +17,7 @@ def download_image(images_path, image_url, lion_id, idx):
         try:
             Image.open(BytesIO(r.content)).convert('RGB').save(
                 filepath, format='JPEG', optimize=True)
+            print(filepath, image_url)
         except OSError:
             print(f'\nfailed to download image url {image_url}\n')
 
@@ -41,9 +41,12 @@ def download_images(*, images_path, modality, mp):
         except KeyError:
             continue
 
+    from multiprocessing import Pool, cpu_count
+    from multiprocessing.pool import ThreadPool
+    nproc = cpu_count() * 4
     if mp:
-        with multiprocessing.Pool(processes=multiprocessing.cpu_count() * 4) as pool:
+        with Pool(processes=nproc) as pool:
             pool.starmap(download_image, data)
     else:
-        for img in data:
-            download_image(*img)
+        with ThreadPool(processes=nproc) as pool:
+            pool.starmap(download_image, data)

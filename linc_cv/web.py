@@ -101,7 +101,7 @@ class LincTrainAPI(Resource):
             task = c.AsyncResult(id=task_id)
             if task.state == 'SUCCESS':
                 r.delete(REDIS_TRAINING_CELERY_TASK_ID_KEY)
-        return {'id': task_id, 'state': task.state}, 200
+        return {'state': task.state}, 200
 
 
 class LincClassifyAPI(Resource):
