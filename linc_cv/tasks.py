@@ -22,12 +22,12 @@ def retrain():
     print('downloading cv images')
     download_cv_images(mp=False)
     print('training cv classifier')
-    train_cv_classifier()
+    train_cv_classifier(mp=False)
 
     print('downloading whisker images')
     download_whisker_images(mp=False)
     print('training whisker classifier')
-    train_whisker_classifier()
+    train_whisker_classifier(mp=False)
 
 
 @c.task(track_started=True, acks_late=True)

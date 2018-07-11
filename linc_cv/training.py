@@ -22,7 +22,7 @@ def preprocess_input_new(x):
 
 
 def train(*, images_dir, images_traintest_dir, lut_path, model_path,
-          training_idg_params, testing_idg_params, training_log):
+          training_idg_params, testing_idg_params, training_log, mp):
     batch_size = 20
     X = []
     y = []
@@ -107,7 +107,7 @@ def train(*, images_dir, images_traintest_dir, lut_path, model_path,
         steps_per_epoch=len(X_train) // batch_size,
         validation_data=validation_generator,
         validation_steps=len(X_test) // batch_size,
-        use_multiprocessing=True,
+        use_multiprocessing=mp,
         workers=cpu_count(),
         class_weight=class_weights,
         callbacks=[csvl, mc, lrs])

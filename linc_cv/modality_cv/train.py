@@ -5,7 +5,7 @@ from linc_cv import CV_IMAGES_PATH, CV_IMAGES_TRAINTEST_PATH, \
 from linc_cv.training import train
 
 
-def train_cv_classifier():
+def train_cv_classifier(mp=True):
     return train(
         images_dir=CV_IMAGES_PATH,
         images_traintest_dir=CV_IMAGES_TRAINTEST_PATH,
@@ -13,4 +13,5 @@ def train_cv_classifier():
         model_path=CV_MODEL_PATH,
         training_idg_params=CV_TRAINING_IMAGEDATAGENERATOR_PARAMS,
         testing_idg_params=CV_TESTING_IMAGEDATAGENERATOR_PARAMS,
-        training_log=CV_TRAINING_LOG_PATH)
+        training_log=CV_TRAINING_LOG_PATH,
+        mp=mp)

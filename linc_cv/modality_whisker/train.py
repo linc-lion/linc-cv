@@ -6,7 +6,7 @@ from linc_cv import WHISKER_IMAGES_PATH, WHISKER_IMAGES_TRAINTEST_PATH, \
 from linc_cv.training import train
 
 
-def train_whisker_classifier():
+def train_whisker_classifier(mp=True):
     return train(
         images_dir=WHISKER_IMAGES_PATH,
         images_traintest_dir=WHISKER_IMAGES_TRAINTEST_PATH,
@@ -14,4 +14,5 @@ def train_whisker_classifier():
         model_path=WHISKER_MODEL_PATH,
         training_idg_params=WHISKER_TRAINING_IMAGEDATAGENERATOR_PARAMS,
         testing_idg_params=WHISKER_TESTING_IMAGEDATAGENERATOR_PARAMS,
-        training_log=WHISKER_TRAINING_LOG_PATH)
+        training_log=WHISKER_TRAINING_LOG_PATH,
+        mp=mp)

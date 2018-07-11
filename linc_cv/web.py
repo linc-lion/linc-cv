@@ -1,4 +1,3 @@
-from celery.result import AsyncResult
 from flask import Flask
 from flask import request
 from flask_restful import Resource, Api
@@ -87,16 +86,17 @@ class LincTrainAPI(Resource):
             return {'status': 'error', 'info': 'authentication failure'}, 401
 
         r = StrictRedis()
-        training_celery_task_id = r.get(TRAINING_CELERY_TASK_ID_KEY)
-        if training_celery_task_id:
-            task = c.AsyncResult(id=training_celery_task_id)
+        task_id = r.get(TRAINING_CELERY_TASK_ID_KEY)
+        if task_id is None:
+            task = retrain.delay()
+            task_id = task.id
+            r.set(TRAINING_CELERY_TASK_ID_KEY, task_id)
+        else:
+            task = c.AsyncResult(id=task_id)
             if task.state == 'SUCCESS':
                 r.delete(TRAINING_CELERY_TASK_ID_KEY)
-            return {'id': task.id.decode(), 'state': task.state}, 200
-        else:
-            task = retrain.delay()
-            r.set(TRAINING_CELERY_TASK_ID_KEY, task)
-        return {'id': task.id.decode(), 'state': task.state}, 200
+            task_id = str(task_id)
+        return {'id': task_id, 'state': task.state}, 200
 
 
 class LincClassifyAPI(Resource):
