@@ -10,6 +10,11 @@ from linc_cv.validation import classifier_classes_lut_to_labels
 
 TRAINING_CELERY_TASK_ID_KEY = 'training_celery_task_id'
 
+from celery.task.control import revoke
+task_id = StrictRedis().get(TRAINING_CELERY_TASK_ID_KEY)
+if task_id is not None:
+    revoke(str(task_id), terminate=True)
+StrictRedis().delete(TRAINING_CELERY_TASK_ID_KEY)
 
 class LincResultAPI(Resource):
     def get(self, celery_id):
