@@ -1,8 +1,13 @@
 from celery import Celery
 
 from linc_cv import ClassifierError
+from linc_cv.modality_cv.download import download_cv_images
 from linc_cv.modality_cv.predict import predict_cv_url
+from linc_cv.modality_cv.train import train_cv_classifier
+from linc_cv.modality_whisker.download import download_whisker_images
 from linc_cv.modality_whisker.predict import predict_whisker_url
+from linc_cv.modality_whisker.train import train_whisker_classifier
+from linc_cv.parse_lion_db import parse_lion_database
 
 c = Celery()
 c.conf.broker_url = 'redis://localhost:6379/0'
@@ -12,8 +17,19 @@ c.conf.task_track_started = True
 
 @c.task(track_started=True, acks_late=True)
 def retrain():
-    import time
-    time.sleep(5)
+    # TODO: download database and save it here
+    print('parsing lion database')
+    parse_lion_database('/home/adam/lion-db-dump-2018-07-11T01-21-10.json')
+
+    print('downloading cv images')
+    download_cv_images()
+    print('training cv classifier')
+    train_cv_classifier()
+
+    print('downloading whisker images')
+    download_whisker_images()
+    print('training whisker classifier')
+    train_whisker_classifier()
 
 
 @c.task(track_started=True, acks_late=True)
