@@ -14,6 +14,7 @@ from redis import StrictRedis
 from sklearn.model_selection import train_test_split
 
 from linc_cv import get_class_weights, INPUT_SHAPE, REDIS_MODEL_RELOAD_KEY
+from .keras_CLR import CLR
 
 
 def preprocess_input_new(x):
@@ -87,7 +88,7 @@ def train(*, images_dir, images_traintest_dir, lut_path, model_path,
     x = Dense(num_classes, activation='softmax')(x)
     model = Model(inputs=base_model.input, outputs=x)
     model.load_weights(imagenet_weights_path, by_name=True)
-    NUM_EPOCHS = 10
+    NUM_EPOCHS = 20
     MAX_LR = 0.01
     MIN_LR = MAX_LR / 100
     ANNEALING = 0.2
@@ -96,7 +97,6 @@ def train(*, images_dir, images_traintest_dir, lut_path, model_path,
         optimizer=SGD(momentum=0.8, decay=WEIGHT_DECAY),
         loss='categorical_crossentropy', metrics=['accuracy'])
     class_weights = get_class_weights(train_generator.classes)
-    from .keras_CLR import CLR
     training_steps_per_epoch = len(X_train) // batch_size
     validation_steps_per_epoch = len(X_test) // batch_size
     lrs = CLR(

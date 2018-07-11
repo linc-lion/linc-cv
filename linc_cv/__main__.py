@@ -105,7 +105,7 @@ def main():
         app.run(host='0.0.0.0', port=5000, debug=False)
 
     if args.worker:
-        cmd = f'{CELERY_EXE_PATH} worker -A linc_cv.tasks --concurrency=1 --max-tasks-per-child=64 -E'.split(' ')
+        cmd = f'{CELERY_EXE_PATH} worker -A linc_cv.tasks --max-tasks-per-child=512 -E'.split(' ')
         run(cmd, check=True, cwd=BASE_DIR)
 
     if args.flower:
