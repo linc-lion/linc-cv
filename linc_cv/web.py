@@ -13,7 +13,7 @@ TRAINING_CELERY_TASK_ID_KEY = 'training_celery_task_id'
 from celery.task.control import revoke
 task_id = StrictRedis().get(TRAINING_CELERY_TASK_ID_KEY)
 if task_id is not None:
-    revoke(str(task_id), terminate=True)
+    revoke(task_id.decode(), terminate=True)
 StrictRedis().delete(TRAINING_CELERY_TASK_ID_KEY)
 
 class LincResultAPI(Resource):
@@ -97,10 +97,10 @@ class LincTrainAPI(Resource):
             task_id = task.id
             r.set(TRAINING_CELERY_TASK_ID_KEY, task_id)
         else:
+            task_id = task_id.decode()
             task = c.AsyncResult(id=task_id)
             if task.state == 'SUCCESS':
                 r.delete(TRAINING_CELERY_TASK_ID_KEY)
-            task_id = str(task_id)
         return {'id': task_id, 'state': task.state}, 200
 
 
