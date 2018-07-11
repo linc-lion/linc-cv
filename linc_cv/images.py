@@ -2,11 +2,10 @@ import json
 import multiprocessing
 import os
 import shutil
-import sys
+from PIL import Image
 from io import BytesIO
 
 import requests
-from PIL import Image
 
 from linc_cv import IMAGES_LUT_PATH
 
@@ -21,9 +20,6 @@ def download_image(images_path, image_url, lion_id, idx):
                 filepath, format='JPEG', optimize=True)
         except OSError:
             print(f'\nfailed to download image url {image_url}\n')
-        else:
-            sys.stdout.write('.')
-        sys.stdout.flush()
 
 
 def download_images(*, images_path, modality, mp):
