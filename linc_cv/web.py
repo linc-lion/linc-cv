@@ -1,20 +1,20 @@
+from celery.task.control import revoke
 from flask import Flask
 from flask import request
 from flask_restful import Resource, Api
 from redis import StrictRedis
 
-from linc_cv import VALID_LION_IMAGE_TYPES, CV_CLASSES_LUT_PATH, WHISKER_CLASSES_LUT_PATH
+from linc_cv import VALID_LION_IMAGE_TYPES, CV_CLASSES_LUT_PATH, WHISKER_CLASSES_LUT_PATH, \
+    REDIS_TRAINING_CELERY_TASK_ID_KEY
 from linc_cv.keys import API_KEY
 from linc_cv.tasks import c, classify_image_url, retrain
 from linc_cv.validation import classifier_classes_lut_to_labels
 
-TRAINING_CELERY_TASK_ID_KEY = 'training_celery_task_id'
-
-from celery.task.control import revoke
-task_id = StrictRedis().get(TRAINING_CELERY_TASK_ID_KEY)
+task_id = StrictRedis().get(REDIS_TRAINING_CELERY_TASK_ID_KEY)
 if task_id is not None:
     revoke(task_id.decode(), terminate=True)
-StrictRedis().delete(TRAINING_CELERY_TASK_ID_KEY)
+StrictRedis().delete(REDIS_TRAINING_CELERY_TASK_ID_KEY)
+
 
 class LincResultAPI(Resource):
     def get(self, celery_id):
@@ -91,16 +91,16 @@ class LincTrainAPI(Resource):
             return {'status': 'error', 'info': 'authentication failure'}, 401
 
         r = StrictRedis()
-        task_id = r.get(TRAINING_CELERY_TASK_ID_KEY)
+        task_id = r.get(REDIS_TRAINING_CELERY_TASK_ID_KEY)
         if task_id is None:
             task = retrain.delay()
             task_id = task.id
-            r.set(TRAINING_CELERY_TASK_ID_KEY, task_id)
+            r.set(REDIS_TRAINING_CELERY_TASK_ID_KEY, task_id)
         else:
             task_id = task_id.decode()
             task = c.AsyncResult(id=task_id)
             if task.state == 'SUCCESS':
-                r.delete(TRAINING_CELERY_TASK_ID_KEY)
+                r.delete(REDIS_TRAINING_CELERY_TASK_ID_KEY)
         return {'id': task_id, 'state': task.state}, 200
 
 

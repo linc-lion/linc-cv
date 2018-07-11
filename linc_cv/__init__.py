@@ -21,6 +21,7 @@ LION_FEATURES_PATH = datapath(['lion_features.h5'])
 ACTIVATIONS_PATH = datapath(['activations'])
 VALID_LION_IMAGE_TYPES = [
     'cv', 'whisker', 'whisker-left', 'whisker-right']
+REDIS_TRAINING_CELERY_TASK_ID_KEY = 'training_task_id'
 
 CV_CLASSES_LUT_PATH = datapath(['cv_classes_lut.json'])
 CV_IMAGES_PATH = datapath(['cv_images'])
@@ -49,6 +50,7 @@ WHISKER_TRAINING_IMAGEDATAGENERATOR_PARAMS = CV_TRAINING_IMAGEDATAGENERATOR_PARA
 WHISKER_TESTING_IMAGEDATAGENERATOR_PARAMS = CV_TESTING_IMAGEDATAGENERATOR_PARAMS
 
 REDIS_MODEL_RELOAD_KEY = 'linc_reload_nn_model'
+
 
 class ClassifierError(Exception):
     @property

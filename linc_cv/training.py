@@ -104,7 +104,7 @@ def train(*, images_dir, images_traintest_dir, lut_path, model_path,
         mult_factor=1)
     csvl = CSVLogger(training_log)
     model.fit_generator(
-        train_generator, epochs=20,
+        train_generator, epochs=1,
         steps_per_epoch=len(X_train) // batch_size,
         validation_data=validation_generator,
         validation_steps=len(X_test) // batch_size,
