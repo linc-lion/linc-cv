@@ -9,9 +9,7 @@ from linc_cv.modality_whisker.predict import predict_whisker_url
 from linc_cv.modality_whisker.train import train_whisker_classifier
 from linc_cv.parse_lion_db import parse_lion_database
 
-c = Celery()
-c.conf.broker_url = 'redis://localhost:6379/0'
-c.conf.result_backend = 'redis://localhost:6379/0'
+c = Celery(backend='redis://localhost:6379/0', broker='redis://localhost:6379/0')
 c.conf.task_track_started = True
 
 
@@ -22,12 +20,12 @@ def retrain():
     parse_lion_database('/home/adam/lion-db-dump-2018-07-11T01-21-10.json')
 
     print('downloading cv images')
-    download_cv_images()
+    download_cv_images(mp=False)
     print('training cv classifier')
     train_cv_classifier()
 
     print('downloading whisker images')
-    download_whisker_images()
+    download_whisker_images(mp=False)
     print('training whisker classifier')
     train_whisker_classifier()
 

@@ -26,7 +26,7 @@ def download_image(images_path, image_url, lion_id, idx):
         sys.stdout.flush()
 
 
-def download_images(*, images_path, modality):
+def download_images(*, images_path, modality, mp):
     try:
         shutil.rmtree(images_path)
     except FileNotFoundError:
@@ -45,5 +45,9 @@ def download_images(*, images_path, modality):
         except KeyError:
             continue
 
-    with multiprocessing.Pool(processes=multiprocessing.cpu_count() * 4) as pool:
-        pool.starmap(download_image, data)
+    if mp:
+        with multiprocessing.Pool(processes=multiprocessing.cpu_count() * 4) as pool:
+            pool.starmap(download_image, data)
+    else:
+        for img in data:
+            download_image(*img)

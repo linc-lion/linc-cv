@@ -15,7 +15,7 @@ def parse_lion_database(db_path):
         lions = json.load(f)
 
     lion_db = defaultdict(lambda: defaultdict(list))
-    for lion in lions:
+    for lion in lions['data']:
         lion_id = lion['id']
         for image_set in lion['_embedded']['image_sets']:
             for image in image_set['_embedded']['images']:

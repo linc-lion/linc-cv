@@ -8,10 +8,10 @@ def download_cv_image(image_url, lion_id, idx):
         lion_id=lion_id, idx=idx)
 
 
-def download_cv_images():
+def download_cv_images(mp=True):
     """
     Download all cv images for processing and training a
     new whisker classifier
     """
     download_images(
-        images_path=CV_IMAGES_PATH, modality='cv', )
+        images_path=CV_IMAGES_PATH, modality='cv', mp=mp)

@@ -89,14 +89,14 @@ class LincTrainAPI(Resource):
         r = StrictRedis()
         training_celery_task_id = r.get(TRAINING_CELERY_TASK_ID_KEY)
         if training_celery_task_id:
-            task = AsyncResult(training_celery_task_id)
+            task = c.AsyncResult(id=training_celery_task_id)
             if task.state == 'SUCCESS':
                 r.delete(TRAINING_CELERY_TASK_ID_KEY)
-                return {'id': str(task.id), 'state': task.state}, 200
+            return {'id': task.id.decode(), 'state': task.state}, 200
         else:
             task = retrain.delay()
             r.set(TRAINING_CELERY_TASK_ID_KEY, task)
-        return {'id': str(task.id), 'state': task.state}, 200
+        return {'id': task.id.decode(), 'state': task.state}, 200
 
 
 class LincClassifyAPI(Resource):
