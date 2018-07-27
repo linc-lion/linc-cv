@@ -15,9 +15,8 @@ c.conf.task_track_started = True
 
 @c.task(track_started=True)
 def retrain():
-    # TODO: download database and save it here
     print('parsing lion database')
-    parse_lion_database('/home/adam/lion-db-dump-2018-07-11T01-21-10.json')
+    parse_lion_database(download_db_zip=True)
 
     print('downloading cv images')
     download_cv_images(mp=False)
