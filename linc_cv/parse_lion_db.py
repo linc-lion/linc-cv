@@ -2,6 +2,7 @@ import json
 from collections import defaultdict
 from io import BytesIO
 from json import dumps
+from tempfile import NamedTemporaryFile
 from urllib.request import urlretrieve as download_it
 from zipfile import ZipFile
 
@@ -29,7 +30,6 @@ def download_lion_db():
             url = respdb.json()['data']['url']
             fname = url.split('/')[-1]
             print(f'fname: {fname}')
-            from tempfile import NamedTemporaryFile
             with NamedTemporaryFile(suffix='.zip') as ntf:
                 download_it(url, ntf.name)
                 ntf.seek(0)
