@@ -4,9 +4,6 @@ import os
 import sys
 from subprocess import run
 
-import matplotlib
-
-matplotlib.use('Agg')
 from linc_cv import BASE_DIR
 from linc_cv.parse_lion_db import parse_lion_database
 from linc_cv.web import app
@@ -63,9 +60,11 @@ def main():
         '--web', action='store_true',
         help="Start HTTP REST API")
     parser.add_argument(
-        '--worker', action='store_true',
-        help="Start API task worker (at least one must always "
-             "be present for HTTP REST API to function properly.")
+        '--worker-training', action='store_true',
+        help="Training queue worker")
+    parser.add_argument(
+        '--worker-classification', action='store_true',
+        help="Classification queue worker")
     parser.add_argument(
         '--flower', action='store_true',
         help="Start API task worker monitor (Celery Flower)")
@@ -73,7 +72,7 @@ def main():
     args = parser.parse_args()
 
     if args.parse_lion_database:
-        parse_lion_database(args.parse_lion_database)
+        parse_lion_database(db_json_path=args.parse_lion_database)
 
     # < feature cv specific >
 
@@ -104,8 +103,14 @@ def main():
     if args.web:
         app.run(host='0.0.0.0', port=5000, debug=False)
 
-    if args.worker:
-        cmd = f'{CELERY_EXE_PATH} worker -A linc_cv.tasks --max-tasks-per-child=512 -E'.split(' ')
+    if args.worker_training:
+        cmd = f'{CELERY_EXE_PATH} worker -A linc_cv.tasks --concurrency 1 ' \
+              f'-Q training --max-tasks-per-child=512 -E -n training@%h'.split(' ')
+        run(cmd, check=True, cwd=BASE_DIR)
+
+    if args.worker_classification:
+        cmd = f'{CELERY_EXE_PATH} worker -A linc_cv.tasks --concurrency 1 ' \
+              f'-Q classification --max-tasks-per-child=512 -E -n classification@%h'.split(' ')
         run(cmd, check=True, cwd=BASE_DIR)
 
     if args.flower:

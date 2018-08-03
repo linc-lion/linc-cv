@@ -11,9 +11,12 @@ from linc_cv.parse_lion_db import parse_lion_database
 
 c = Celery(backend='redis://localhost:6379/0', broker='redis://localhost:6379/0')
 c.conf.task_track_started = True
+c.conf.task_routes = {
+    'linc_cv.tasks.retrain': {'queue': 'training'},
+    'linc_cv.tasks.classify_image_url': {'queue': 'classification'}}
 
 
-@c.task(track_started=True)
+@c.task(track_started=True, acks_late=True)
 def retrain():
     print('parsing lion database')
     parse_lion_database(download_db_zip=True)
@@ -29,7 +32,7 @@ def retrain():
     train_whisker_classifier(mp=False)
 
 
-@c.task(track_started=True)
+@c.task(track_started=True, acks_late=True)
 def classify_image_url(test_image_url, feature_type):
     try:
         if 'whisker' in feature_type:

@@ -1,7 +1,7 @@
 import json
 import os
 import shutil
-from collections.__init__ import Counter
+from collections import Counter
 from multiprocessing import cpu_count
 
 from keras import Model

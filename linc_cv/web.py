@@ -1,4 +1,3 @@
-from celery.task.control import revoke
 from flask import Flask
 from flask import request
 from flask_restful import Resource, Api
@@ -12,7 +11,7 @@ from linc_cv.validation import classifier_classes_lut_to_labels
 
 task_id = StrictRedis().get(REDIS_TRAINING_CELERY_TASK_ID_KEY)
 if task_id is not None:
-    revoke(task_id.decode(), terminate=True)
+    c.control.revoke(task_id.decode(), terminate=True)
 StrictRedis().delete(REDIS_TRAINING_CELERY_TASK_ID_KEY)
 
 
