@@ -1,10 +1,13 @@
-from keras.models import load_model
-from keras.preprocessing.image import ImageDataGenerator
-from redis import StrictRedis
+from io import BytesIO
 
-from linc_cv import WHISKER_MODEL_PATH_FINAL, WHISKER_TESTING_IMAGEDATAGENERATOR_PARAMS, WHISKER_CLASSES_LUT_PATH, REDIS_MODEL_RELOAD_KEY
-from linc_cv.predict import predict_on_url
+from redis import StrictRedis
+import requests
+from PIL import Image
+
+from linc_cv import WHISKER_MODEL_PATH_FINAL, WHISKER_CLASSES_LUT_PATH, REDIS_MODEL_RELOAD_KEY
 from linc_cv.validation import classifier_classes_lut_to_labels
+
+from .inference import YOLO
 
 whisker_model = None
 test_datagen = None
@@ -19,10 +22,19 @@ def predict_whisker_url(test_image_url):
     reload_nn_model = sr.get(REDIS_MODEL_RELOAD_KEY)
     if reload_nn_model or whisker_model is None:
         sr.delete(REDIS_MODEL_RELOAD_KEY)
-        whisker_model = load_model(WHISKER_MODEL_PATH_FINAL)
-    if test_datagen is None:
-        test_datagen = ImageDataGenerator(**WHISKER_TESTING_IMAGEDATAGENERATOR_PARAMS)
-    topk_labels = predict_on_url(
-        model=whisker_model, image_url=test_image_url,
-        test_datagen=test_datagen, labels=labels)
+        whisker_model = YOLO(WHISKER_MODEL_PATH_FINAL)
+
+    r = requests.get(test_image_url)
+    if not r.ok:
+        return None
+    buf = BytesIO(r.content)
+    try:
+        image = Image.open(buf).convert('RGB')
+    except OSError:
+        return None
+    rois = whisker_model.detect_image(image)
+    if not rois:
+        return None
+    print(rois)
+    topk_labels = None
     return topk_labels
