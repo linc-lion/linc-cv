@@ -155,11 +155,9 @@ def predict_whisker_url(test_image_url):
         whisker_scores.append([idx, score])
     whisker_scores = sorted(whisker_scores, key=itemgetter(1))
     max_score = max(whisker_scores, key=itemgetter(1))[1]
-    print('max_score', max_score)
-
-    topk_results = []
+    results = {'predictions': []}
     for idx, score in whisker_scores[:topk]:
-        label = y[idx]
-        proba = round(1 - score / max_score, 3)
-        topk_results.append([label, proba])
-    return topk_results
+        lion_id = y[idx]
+        probability = round(1 - score / max_score, 3)
+        results['predictions'].append({'lion_id': lion_id, 'probability': probability})
+    return results
