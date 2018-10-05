@@ -11,7 +11,7 @@ import pickle
 
 from .icp import icp
 
-from linc_cv import WHISKER_MODEL_PATH_FINAL, WHISKER_CLASSES_LUT_PATH, REDIS_MODEL_RELOAD_KEY
+from linc_cv import WHISKERS_PKL_PATH_FINAL, WHISKER_MODEL_PATH_FINAL, WHISKER_CLASSES_LUT_PATH, REDIS_MODEL_RELOAD_KEY
 from linc_cv.validation import classifier_classes_lut_to_labels
 
 from .inference import YOLO
@@ -20,7 +20,7 @@ whisker_model = None
 test_datagen = None
 labels = classifier_classes_lut_to_labels(WHISKER_CLASSES_LUT_PATH)
 
-with open('data/Xy.pkl', 'rb') as fd:
+with open(WHISKERS_PKL_PATH_FINAL, 'rb') as fd:
     Xy = pickle.load(fd)
     X, y = zip(*Xy)
 
@@ -117,6 +117,7 @@ def predict_whisker_url(test_image_url):
     reload_nn_model = sr.get(REDIS_MODEL_RELOAD_KEY)
     if reload_nn_model or whisker_model is None:
         sr.delete(REDIS_MODEL_RELOAD_KEY)
+        print('Loading YOLO model')
         whisker_model = YOLO(WHISKER_MODEL_PATH_FINAL)
 
     r = requests.get(test_image_url)

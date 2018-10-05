@@ -8,8 +8,6 @@ from linc_cv import BASE_DIR
 from linc_cv.parse_lion_db import parse_lion_database
 from linc_cv.web import app
 from linc_cv.modality_whisker.download import download_whisker_images
-from linc_cv.modality_whisker.train import train_whisker_classifier
-from linc_cv.modality_whisker.validation import validate_whisker_classifier
 from linc_cv.modality_cv.download import download_cv_images
 from linc_cv.modality_cv.train import train_cv_classifier
 from linc_cv.modality_cv.validation import validate_cv_classifier
@@ -47,12 +45,12 @@ def main():
     parser.add_argument(
         '--download-whisker-images', action='store_true',
         help=inspect.getdoc(download_whisker_images))
-    parser.add_argument(
-        '--train-whisker-classifier', action='store_true',
-        help=inspect.getdoc(train_whisker_classifier))
-    parser.add_argument(
-        '--validate-whisker-classifier', action='store_true',
-        help=inspect.getdoc(validate_whisker_classifier))
+    # parser.add_argument(
+    #     '--train-whisker-classifier', action='store_true',
+    #     help=inspect.getdoc(train_whisker_classifier))
+    # parser.add_argument(
+    #     '--validate-whisker-classifier', action='store_true',
+    #     help=inspect.getdoc(validate_whisker_classifier))
 
     # </ whisker specific >
 
@@ -92,11 +90,11 @@ def main():
     if args.download_whisker_images:
         download_whisker_images()
 
-    if args.train_whisker_classifier:
-        train_whisker_classifier()
+    # if args.train_whisker_classifier:
+    #     train_whisker_classifier()
 
-    if args.validate_whisker_classifier:
-        validate_whisker_classifier()
+    # if args.validate_whisker_classifier:
+    #     validate_whisker_classifier()
 
     # </ whisker specific >
 
@@ -110,7 +108,7 @@ def main():
 
     if args.worker_classification:
         cmd = f'{CELERY_EXE_PATH} worker -A linc_cv.tasks --concurrency 1 ' \
-              f'-Q classification --max-tasks-per-child=512 -E -n classification@%h'.split(' ')
+              f'-Q classification --max-tasks-per-child=1000 -E -n classification@%h'.split(' ')
         run(cmd, check=True, cwd=BASE_DIR)
 
     if args.flower:

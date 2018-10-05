@@ -42,6 +42,7 @@ WHISKER_CLASSES_LUT_PATH = datapath(['whisker_classes_lut.json'])
 WHISKER_IMAGES_PATH = datapath(['whisker_images'])
 WHISKER_IMAGES_TRAINTEST_PATH = datapath(['whisker_images_traintest'])
 WHISKER_MODEL_PATH = datapath(['whisker_model.h5'])  # for saving model checkpoints only
+WHISKERS_PKL_PATH_FINAL = datapath(['Xy.pkl'])
 WHISKER_MODEL_PATH_FINAL = datapath(['whisker_model.final.h5'])  # final model to be used for predictions
 WHISKER_TRAINING_LOG_PATH = datapath(['whisker_training_log.csv'])
 WHISKER_CLASSIFICATION_REPORT_PATH = 'whisker_classification_report.pkl'

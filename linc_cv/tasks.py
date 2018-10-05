@@ -6,7 +6,6 @@ from linc_cv.modality_cv.predict import predict_cv_url
 from linc_cv.modality_cv.train import train_cv_classifier
 from linc_cv.modality_whisker.download import download_whisker_images
 from linc_cv.modality_whisker.predict import predict_whisker_url
-from linc_cv.modality_whisker.train import train_whisker_classifier
 from linc_cv.parse_lion_db import parse_lion_database
 
 c = Celery(backend='redis://localhost:6379/0', broker='redis://localhost:6379/0')
@@ -28,8 +27,9 @@ def retrain():
 
     print('downloading whisker images')
     download_whisker_images(mp=False)
-    print('training whisker classifier')
-    train_whisker_classifier(mp=False)
+    # TODO
+    # print('training whisker classifier')
+    # train_whisker_classifier(mp=False)
 
 
 @c.task(track_started=True, acks_late=True)
