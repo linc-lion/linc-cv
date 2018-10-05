@@ -9,16 +9,11 @@ import cv2
 import numpy as np
 import pickle
 
+from linc_cv import WHISKERS_PKL_PATH_FINAL, WHISKER_MODEL_PATH_FINAL, REDIS_MODEL_RELOAD_KEY
 from .icp import icp
-
-from linc_cv import WHISKERS_PKL_PATH_FINAL, WHISKER_MODEL_PATH_FINAL, WHISKER_CLASSES_LUT_PATH, REDIS_MODEL_RELOAD_KEY
-from linc_cv.validation import classifier_classes_lut_to_labels
-
 from .inference import YOLO
 
 whisker_model = None
-test_datagen = None
-labels = classifier_classes_lut_to_labels(WHISKER_CLASSES_LUT_PATH)
 
 with open(WHISKERS_PKL_PATH_FINAL, 'rb') as fd:
     Xy = pickle.load(fd)
@@ -109,8 +104,6 @@ def preprocess(image, bbox, d, e, ma, t1, t2, sz):
 
 def predict_whisker_url(test_image_url):
     global whisker_model
-    global labels
-    global test_datagen
     global X
     global y
     sr = StrictRedis()

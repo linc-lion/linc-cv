@@ -1,10 +1,12 @@
+import pickle
+
 from flask import Flask
 from flask import request
 from flask_restful import Resource, Api
 from redis import StrictRedis
 
-from linc_cv import VALID_LION_IMAGE_TYPES, CV_CLASSES_LUT_PATH, WHISKER_CLASSES_LUT_PATH, \
-    REDIS_TRAINING_CELERY_TASK_ID_KEY
+from linc_cv import VALID_LION_IMAGE_TYPES, CV_CLASSES_LUT_PATH, \
+    REDIS_TRAINING_CELERY_TASK_ID_KEY, WHISKERS_PKL_PATH_FINAL
 from linc_cv.keys import API_KEY
 from linc_cv.tasks import c, classify_image_url, retrain
 from linc_cv.validation import classifier_classes_lut_to_labels
@@ -31,52 +33,18 @@ class LincClassifierCapabilitiesAPI(Resource):
         if request.headers.get('ApiKey') != API_KEY:
             return {'status': 'error', 'info': 'authentication failure'}, 401
         cv_labels = classifier_classes_lut_to_labels(CV_CLASSES_LUT_PATH)
-        whisker_labels = classifier_classes_lut_to_labels(WHISKER_CLASSES_LUT_PATH)
+
+        with open(WHISKERS_PKL_PATH_FINAL, 'rb') as fd:
+            X, y = zip(*pickle.load(fd))
+            whisker_labels = sorted(list(set(y)))
+
         whisker_topk_classifier_accuracy = [
-            0.653169,
-            0.744718,
-            0.783451,
-            0.809859,
-            0.825704,
-            0.836268,
-            0.846831,
-            0.859155,
-            0.873239,
-            0.880282,
-            0.885563,
-            0.890845,
-            0.892606,
-            0.897887,
-            0.899648,
-            0.903169,
-            0.903169,
-            0.903169,
-            0.908451,
-            0.910211,
-        ]
+            0.0, 0.28, 0.333, 0.364, 0.384, 0.396, 0.407, 0.42, 0.436, 0.44, 0.449,
+            0.453, 0.458, 0.46, 0.464, 0.471, 0.473, 0.48, 0.487, 0.491]
 
         cv_topk_classifier_accuracy = [
-            0.919628,
-            0.952623,
-            0.966159,
-            0.971235,
-            0.972927,
-            0.973773,
-            0.976311,
-            0.976311,
-            0.977157,
-            0.978849,
-            0.978849,
-            0.980541,
-            0.981387,
-            0.981387,
-            0.982234,
-            0.983926,
-            0.984772,
-            0.985618,
-            0.986464,
-            0.987310,
-        ]
+            0.010, 0.010, 0.010, 0.010, 0.010, 0.010, 0.010, 0.010, 0.010, 0.010, 0.010,
+            0.010, 0.010, 0.010, 0.010, 0.010, 0.010, 0.010, 0.010, 0.010]
 
         return {
             'valid_cv_lion_ids': cv_labels, 'valid_whisker_lion_ids': whisker_labels,

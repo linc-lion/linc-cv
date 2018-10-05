@@ -13,7 +13,6 @@ labels = classifier_classes_lut_to_labels(CV_CLASSES_LUT_PATH)
 
 def predict_cv_url(test_image_url):
     global cv_model
-    global labels
     global test_datagen
     sr = StrictRedis()
     reload_nn_model = sr.get(REDIS_MODEL_RELOAD_KEY)

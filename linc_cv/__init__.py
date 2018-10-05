@@ -38,7 +38,6 @@ CV_TRAINING_IMAGEDATAGENERATOR_PARAMS = {
     'rotation_range': 5, }
 CV_TESTING_IMAGEDATAGENERATOR_PARAMS = CV_TRAINING_IMAGEDATAGENERATOR_PARAMS
 
-WHISKER_CLASSES_LUT_PATH = datapath(['whisker_classes_lut.json'])
 WHISKER_IMAGES_PATH = datapath(['whisker_images'])
 WHISKER_IMAGES_TRAINTEST_PATH = datapath(['whisker_images_traintest'])
 WHISKER_MODEL_PATH = datapath(['whisker_model.h5'])  # for saving model checkpoints only
