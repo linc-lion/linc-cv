@@ -9,7 +9,7 @@ import cv2
 import numpy as np
 import pickle
 
-from linc_cv import WHISKERS_PKL_PATH_FINAL, WHISKER_MODEL_PATH_FINAL, REDIS_MODEL_RELOAD_KEY
+from linc_cv import WHISKERS_PKL_PATH_FINAL, WHISKER_MODEL_PATH_FINAL, REDIS_MODEL_RELOAD_KEY, ClassifierError
 from .icp import icp
 from .inference import YOLO
 
@@ -123,13 +123,13 @@ def predict_whisker_url(test_image_url):
         return None
     rois = whisker_model.detect_image(image)
     if not rois:
-        print('insufficient roi count')
-        return None
+        raise ClassifierError('No whisker ROIs found in source image.')
+
     # select roi with highest detection probability
     roi = sorted(rois, key=itemgetter(1), reverse=True)[0]
     _, confidence, im_x, im_y, im_w, im_h = roi
 
-    # magic values discovered using probabilistic regression
+    # magic values discovered using prior probabilistic regression experiments
     d = 5
     e = 2
     ma = 15
@@ -138,9 +138,8 @@ def predict_whisker_url(test_image_url):
     sz = 400
     topk = 10
 
-    if confidence < 0.99:
-        print('insufficient roi confidence', confidence)
-        return None
+    if confidence < 0.98:
+        raise ClassifierError(f'Insufficient ROI confidence score. Ignoring detected ROI. Confidence: {confidence}')
     bbox = (im_y, im_x, im_h, im_w,)
     A = preprocess(image, bbox, d, e, ma, t1, t2, sz)
     whisker_scores = []

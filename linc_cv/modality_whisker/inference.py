@@ -136,12 +136,13 @@ if __name__ == '__main__':
     import os.path
     import argparse
 
+    model_path = "whisker_model.h5"
     parser = argparse.ArgumentParser(
         description='Find whisker bounding box from lion face image')
     parser.add_argument('whisker_image_path')
     args = parser.parse_args()
     assert os.path.isfile(args.whisker_image_path), args.whisker_image_path
-    yolo = YOLO()
+    yolo = YOLO(model_path=model_path)
     for _ in range(20):
         rois = yolo.detect_image(args.whisker_image_path)
         print('rois', rois)

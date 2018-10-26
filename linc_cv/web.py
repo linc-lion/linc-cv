@@ -15,6 +15,7 @@ task_id = StrictRedis().get(REDIS_TRAINING_CELERY_TASK_ID_KEY)
 if task_id is not None:
     c.control.revoke(task_id.decode(), terminate=True)
 StrictRedis().delete(REDIS_TRAINING_CELERY_TASK_ID_KEY)
+app = Flask(__name__)
 
 
 class LincResultAPI(Resource):
@@ -80,26 +81,27 @@ class LincClassifyAPI(Resource):
         failure = False
 
         rj = request.get_json()
+        app.logger.debug(['request json', rj])
         if rj is None:
-            errors.append('could not parse JSON data from request')
+            errors.append('Could not parse JSON data from request')
             failure = True
 
         image_type = None
         try:
             image_type = rj['type']
         except KeyError:
-            errors.append('missing image type')
+            errors.append('Missing image type')
             failure = True
 
         if image_type not in VALID_LION_IMAGE_TYPES:
-            errors.append(f'invalid type: type must be one of {VALID_LION_IMAGE_TYPES}')
+            errors.append(f'Invalid type: type must be one of {VALID_LION_IMAGE_TYPES}')
             failure = True
 
         image_url = None
         try:
             image_url = rj['url']
         except KeyError:
-            errors.append('missing url')
+            errors.append('Missing URL')
             failure = True
 
         job_id = None
@@ -114,7 +116,6 @@ class LincClassifyAPI(Resource):
         return {'id': job_id, 'status': status, 'errors': errors}, status_code
 
 
-app = Flask(__name__)
 api = Api(app)
 
 api.add_resource(LincClassifyAPI, '/linc/v1/classify')

@@ -1,4 +1,5 @@
 from celery import Celery
+import requests
 
 from linc_cv import ClassifierError
 from linc_cv.modality_cv.download import download_cv_images
@@ -27,7 +28,7 @@ def retrain():
 
     print('downloading whisker images')
     download_whisker_images(mp=False)
-    # TODO
+    # TODO: recompute whisker spot lookup table on demand
     # print('training whisker classifier')
     # train_whisker_classifier(mp=False)
 
@@ -41,9 +42,16 @@ def classify_image_url(test_image_url, feature_type):
             results = predict_cv_url(test_image_url)
         else:
             raise ClassifierError(f'unknown feature_type {feature_type}')
-        return {
-            'status': 'finished', **results}
+        try:
+            return {
+                'status': 'finished', **results}
+        except TypeError:
+            raise ClassifierError('General classification failure. Contact support.')
     except ClassifierError as e:
         return {
             'status': 'error',
             'info': e.message}
+    except requests.exceptions.SSLError:
+        return {
+            'status': 'error',
+            'info': 'Failed to download image from lion image host due to an SSL error'}
