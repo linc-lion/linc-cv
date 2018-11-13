@@ -103,12 +103,12 @@ def main():
 
     if args.worker_training:
         cmd = f'{CELERY_EXE_PATH} worker -A linc_cv.tasks --concurrency 1 ' \
-              f'-Q training --max-tasks-per-child=512 -E -n training@%h'.split(' ')
+              f'-Q training -E -n training@%h'.split(' ')
         run(cmd, check=True, cwd=BASE_DIR)
 
     if args.worker_classification:
         cmd = f'{CELERY_EXE_PATH} worker -A linc_cv.tasks --concurrency 1 ' \
-              f'-Q classification --max-tasks-per-child=1000 -E -n classification@%h'.split(' ')
+              f'-Q classification -E -n classification@%h'.split(' ')
         run(cmd, check=True, cwd=BASE_DIR)
 
     if args.flower:

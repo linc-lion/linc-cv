@@ -11,6 +11,8 @@ from linc_cv.parse_lion_db import parse_lion_database
 
 c = Celery(backend='redis://localhost:6379/0', broker='redis://localhost:6379/0')
 c.conf.task_track_started = True
+c.conf.task_time_limit = 60 * 10  # 10 minutes expiration
+c.conf.result_expires = 60 * 10  # 10 minutes expiration
 c.conf.task_routes = {
     'linc_cv.tasks.retrain': {'queue': 'training'},
     'linc_cv.tasks.classify_image_url': {'queue': 'classification'}}
