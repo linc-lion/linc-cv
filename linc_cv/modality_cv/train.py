@@ -58,15 +58,16 @@ def extract_features_cv(*, images_dir, images_traintest_dir):
 
 
 class CV_NN_Model(object):
-    def __init__(self):
+    def __init__(self, use_cuda=True):
+        self.use_cuda = use_cuda
         print('loading pytorch model')
         self.ap2d = torch.nn.AvgPool2d(7)
         model_name = 'senet154'  # could be fbresnet152 or inceptionresnetv2
         model = pretrainedmodels.__dict__[model_name](num_classes=1000, pretrained='imagenet')
         model.eval()
-        model.cuda()
+        if use_cuda:
+            model.cuda()
         self.model = model
-
         self.load_img = utils.LoadImage()
         # transformations depending on the model
         # rescale, center crop, normalize, and others (ex: ToBGR, ToRange255)
@@ -78,8 +79,14 @@ class CV_NN_Model(object):
         input_tensor = self.tf_img(input_img)  # 3x400x225 -> 3x299x299 size may differ
         input_tensor = input_tensor.unsqueeze(0)  # 3x299x299 -> 1x3x299x299
         input_ = torch.autograd.Variable(input_tensor, requires_grad=False)
-        output_features = self.model.features(input_.cuda())  # 1x14x14x2048 size may differ
-        output_features_f = self.ap2d(output_features).cpu().flatten().detach().numpy()
+        if self.use_cuda:
+            output_features = self.model.features(input_.cuda())  # 1x14x14x2048 size may di
+        else:
+            output_features = self.model.features(input_)  # 1x14x14x2048 size may differ
+        output_features_f = self.ap2d(output_features)
+        if self.use_cuda:
+            output_features_f = output_features_f.cpu()
+        output_features_f = output_features_f.flatten().detach().numpy()
         return output_features_f
 
 

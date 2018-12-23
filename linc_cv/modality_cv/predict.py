@@ -18,7 +18,7 @@ def predict(image, num_results):
     global cv_nn_model
     if cv_model is None or cv_nn_model is None:
         cv_model = joblib.load(CV_CLASSIFIER_PATH)
-        cv_nn_model = CV_NN_Model()
+        cv_nn_model = CV_NN_Model(use_cuda=False)
     feature = cv_nn_model.predict(image)[None, :]
     pl = list(zip(cv_model.classes_, cv_model.predict_proba(feature)[0], ))
     pl = sorted(pl, key=itemgetter(1), reverse=True)[:num_results]
@@ -31,7 +31,7 @@ def predict_cv_url(image_url, num_results=20):
     global cv_nn_model
     if cv_model is None or cv_nn_model is None:
         cv_model = joblib.load(CV_CLASSIFIER_PATH)
-        cv_nn_model = CV_NN_Model()
+        cv_nn_model = CV_NN_Model(use_cuda=False)
     r = requests.get(image_url)
     if not r.ok:
         return None
