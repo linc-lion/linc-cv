@@ -133,8 +133,8 @@ def train_whisker_classifier():
         feature, label = whisker_image_to_feature(image, bbox, label, d, e, ma, t1, t2, sz)
         X.append(feature)
         y.append(label)
-    joblib.dump(WHISKER_FEATURE_X_PATH, X, compress=('xz', 9,))
-    joblib.dump(WHISKER_FEATURE_Y_PATH, y, compress=('xz', 9,))
+    joblib.dump(X, WHISKER_FEATURE_X_PATH, compress=('xz', 9,))
+    joblib.dump(y, WHISKER_FEATURE_Y_PATH, compress=('xz', 9,))
     print('dumped whisker feature db')
 
 
