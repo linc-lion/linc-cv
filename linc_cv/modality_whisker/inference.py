@@ -11,6 +11,7 @@ from keras import backend as K
 from keras.models import load_model
 from keras.layers import Input
 
+from linc_cv import YOLO_ANCHORS_PATH, YOLO_ANCHORS_CLASSES
 from .yolo3.model import yolo_eval, yolo_body, tiny_yolo_body
 from .yolo3.utils import letterbox_image
 
@@ -19,8 +20,8 @@ class YOLO(object):
     def __init__(self, model_path):
         # model path or trained weights path
         self.model_path = model_path
-        self.anchors_path = 'modality_whisker/anchors.txt'
-        self.classes_path = 'modality_whisker/classes.txt'
+        self.anchors_path = YOLO_ANCHORS_PATH
+        self.classes_path = YOLO_ANCHORS_CLASSES
         self.score = 0.3
         self.iou = 0.45
         self.class_names = self._get_class()
@@ -99,8 +100,6 @@ class YOLO(object):
                               image.height - (image.height % 32))
             boxed_image = letterbox_image(image, new_image_size)
         image_data = np.array(boxed_image, dtype='float32')
-
-        print(image_data.shape)
         image_data /= 255.
         image_data = np.expand_dims(image_data, 0)  # Add batch dimension.
 

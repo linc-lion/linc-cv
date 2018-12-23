@@ -1,5 +1,3 @@
-import pickle
-
 from flask import Flask
 from flask import request
 from flask_restful import Resource, Api
@@ -7,7 +5,7 @@ from redis import StrictRedis
 import joblib
 
 from linc_cv import VALID_LION_IMAGE_TYPES, REDIS_TRAINING_CELERY_TASK_ID_KEY, \
-    WHISKERS_PKL_PATH_FINAL, CV_CLASSIFIER_PATH, CV_MODEL_CLASSES_JSON
+    WHISKER_FEATURE_X_PATH, WHISKER_FEATURE_Y_PATH, CV_CLASSIFIER_PATH, CV_MODEL_CLASSES_JSON
 from linc_cv.keys import API_KEY
 from linc_cv.tasks import c, classify_image_url, retrain
 import linc_cv.modality_cv.predict
@@ -35,10 +33,8 @@ class LincClassifierCapabilitiesAPI(Resource):
     def get(self):
         if request.headers.get('ApiKey') != API_KEY:
             return {'status': 'error', 'info': 'authentication failure'}, 401
-
-        with open(WHISKERS_PKL_PATH_FINAL, 'rb') as fd:
-            X, y = zip(*pickle.load(fd))
-            whisker_labels = sorted(list(set(y)))
+        y = joblib.load(WHISKER_FEATURE_Y_PATH)
+        whisker_labels = sorted(list(set(y)))
 
         whisker_topk_classifier_accuracy = [
             0.0, 0.28, 0.333, 0.364, 0.384, 0.396, 0.407, 0.42, 0.436, 0.44, 0.449,

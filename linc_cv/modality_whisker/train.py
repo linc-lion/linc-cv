@@ -1,22 +1,19 @@
-from io import BytesIO
-from redis import StrictRedis
-import requests
+import json
+import os
 from operator import itemgetter
 
 from sklearn.metrics.pairwise import pairwise_distances
 from PIL import Image
 import cv2
 import numpy as np
+from tqdm import tqdm
 import joblib
 
+from linc_cv.modality_whisker.icp import icp
 from linc_cv import WHISKER_FEATURE_X_PATH, WHISKER_FEATURE_Y_PATH, \
-    WHISKER_BBOX_MODEL_PATH, REDIS_MODEL_RELOAD_KEY, ClassifierError
-from .icp import icp
-from .inference import YOLO
+    WHISKER_IMAGES_PATH, WHISKER_BBOX_MODEL_PATH
 
-whisker_bbox_model = None
-X = None
-y = None
+from .inference import YOLO
 
 
 def resize_to_longer_edge(im, target_size):
@@ -85,52 +82,23 @@ def comparator(A, B):
             B_m[list(idxs)] = False
             B = B[B_m]
 
-    distances = icp(A, B)
+    T, distances, i = icp(A, B)
 
     # median is best so far... 46% @ top-10
     return np.median(distances)
 
 
-def preprocess(image, bbox, d, e, ma, t1, t2, sz):
+def whisker_image_to_feature(image, bbox, label, d, e, ma, t1, t2, sz):
     crop = image.convert('L')
     crop = crop.crop(bbox)
     crop = resize_to_longer_edge(crop, target_size=(sz, sz,))
     crop = np.array(crop, dtype=np.uint8)
     im, kpts = simplify_whisker(crop, d, e, ma, t1, t2)
     feature = np.array([k.pt for k in kpts], dtype=np.float64)
-    return feature
+    return feature, label
 
 
-def predict_whisker_url(test_image_url):
-    global whisker_bbox_model
-    global X
-    global y
-    if X is None and y is None:
-        X, y = zip(*joblib.load(WHISKER_FEATURE_DB_PATH))
-    sr = StrictRedis()
-    reload_nn_model = sr.get(REDIS_MODEL_RELOAD_KEY)
-    if reload_nn_model or whisker_bbox_model is None:
-        sr.delete(REDIS_MODEL_RELOAD_KEY)
-        print('Loading YOLO model')
-        whisker_bbox_model = YOLO(WHISKER_BBOX_MODEL_PATH)
-
-    r = requests.get(test_image_url)
-    if not r.ok:
-        return None
-    buf = BytesIO(r.content)
-    try:
-        image = Image.open(buf).convert('RGB')
-    except OSError:
-        return None
-    rois = whisker_bbox_model.detect_image(image)
-    if not rois:
-        raise ClassifierError('No whisker ROIs found in source image.')
-
-    # select roi with highest detection probability
-    roi = sorted(rois, key=itemgetter(1), reverse=True)[0]
-    _, confidence, im_x, im_y, im_w, im_h = roi
-
-    # magic values discovered using prior probabilistic regression experiments
+def train_whisker_classifier():
     # TODO: move these magic values into a common dictionary
     d = 5
     e = 2
@@ -140,19 +108,48 @@ def predict_whisker_url(test_image_url):
     sz = 400
     topk = 10
 
-    if confidence < 0.98:
-        raise ClassifierError(f'Insufficient ROI confidence score. Ignoring detected ROI. Confidence: {confidence}')
-    bbox = (im_y, im_x, im_h, im_w,)
-    A = preprocess(image, bbox, d, e, ma, t1, t2, sz)
+    whisker_bbox_model = YOLO(WHISKER_BBOX_MODEL_PATH)
+
+    paths = []
+    for root, dirs, files in os.walk(WHISKER_IMAGES_PATH):
+        for f in files:
+            paths.append(os.path.join(root, f))
+
+    X = []
+    y = []
+    for path in tqdm(paths, desc="extracting whisker bboxes and features"):
+        label = path.split(os.sep)[-2]
+        image = Image.open(path)
+        rois = whisker_bbox_model.detect_image(image)
+        if not rois:
+            print(f'no rois found for {path}, SKIPPING...')
+            continue
+        # select roi with highest detection probability
+        roi = sorted(rois, key=itemgetter(1), reverse=True)[0]
+        _, confidence, box_x, box_y, box_w, box_h = roi
+        if confidence < 0.99:
+            continue
+        bbox = (box_y, box_x, box_h, box_w,)
+        feature, label = whisker_image_to_feature(image, bbox, label, d, e, ma, t1, t2, sz)
+        X.append(feature)
+        y.append(label)
+    joblib.dump(WHISKER_FEATURE_X_PATH, X, compress=('xz', 9,))
+    joblib.dump(WHISKER_FEATURE_Y_PATH, y, compress=('xz', 9,))
+    print('dumped whisker feature db')
+
+
+def validate_whisker_classifier():
     whisker_scores = []
-    for idx, B in enumerate(X):
+    A = X[0]
+    for idx, B in enumerate(tqdm(X, desc='chamfer distance computation')):
         score = comparator(A, B)
         whisker_scores.append([idx, score])
     whisker_scores = sorted(whisker_scores, key=itemgetter(1))
     max_score = max(whisker_scores, key=itemgetter(1))[1]
-    results = {'predictions': []}
+    print('max_score', max_score)
+    topk_results = []
     for idx, score in whisker_scores[:topk]:
-        lion_id = y[idx]
-        probability = round(1 - score / max_score, 3)
-        results['predictions'].append({'lion_id': lion_id, 'probability': probability})
-    return results
+        label = y[idx]
+        proba = round(1 - score / max_score, 3)
+        topk_results.append([label, proba])
+    print(topk_results)

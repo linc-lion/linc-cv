@@ -110,14 +110,14 @@ def train(x_train_path, y_train_path, x_test_path, y_test_path, clf_save_path):
     with open(y_test_path) as fd:
         y_test = json.load(fd)
     clf = RandomForestClassifier(
-        n_estimators=100, class_weight='balanced', oob_score=True, n_jobs=-1, verbose=2)
+        n_estimators=500, class_weight='balanced', oob_score=True, n_jobs=-1, verbose=2)
     clf.fit(X_train, y_train)
     score = clf.score(X_test, y_test)
     print(f'clf score: {round(score, 3)}')
     print(classification_report(y_test, clf.predict(X_test)))
-    joblib.dump(clf, clf_save_path)
+    joblib.dump(clf, clf_save_path, compress=('xz', 9,))
     with open(CV_MODEL_CLASSES_JSON, 'w') as fd:
-        json.dump(clf.classes_, fd)
+        json.dump(clf.classes_.tolist(), fd)
 
 
 def extract_cv_features():

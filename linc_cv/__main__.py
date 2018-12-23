@@ -7,9 +7,9 @@ from linc_cv import BASE_DIR
 from linc_cv.parse_lion_db import parse_lion_database
 from linc_cv.web import app
 from linc_cv.modality_whisker.download import download_whisker_images
+from linc_cv.modality_whisker.train import train_whisker_classifier
 from linc_cv.modality_cv.download import download_cv_images
 from linc_cv.modality_cv.train import extract_cv_features, train_cv_classifier
-from linc_cv.modality_cv.validation import validate_cv_classifier
 
 CELERY_EXE_PATH = os.path.join(os.path.dirname(sys.argv[0]), 'celery')
 FLOWER_EXE_PATH = os.path.join(os.path.dirname(sys.argv[0]), 'flower')
@@ -34,8 +34,6 @@ def main():
         '--extract-cv-features', action='store_true')
     parser.add_argument(
         '--train-cv-classifier', action='store_true')
-    parser.add_argument(
-        '--validate-cv-classifier', action='store_true')
 
     # </ feature cv specific >
 
@@ -45,8 +43,6 @@ def main():
         '--download-whisker-images', action='store_true', )
     parser.add_argument(
         '--train-whisker-classifier', action='store_true', )
-    parser.add_argument(
-        '--validate-whisker-classifier', action='store_true', )
 
     # </ whisker specific >
 
@@ -82,9 +78,6 @@ def main():
     if args.train_cv_classifier:
         train_cv_classifier()
 
-    if args.validate_cv_classifier:
-        validate_cv_classifier()
-
     # </ feature cv specific >
 
     # < whisker specific >
@@ -92,11 +85,8 @@ def main():
     if args.download_whisker_images:
         download_whisker_images()
 
-    # if args.train_whisker_classifier:
-    #     train_whisker_classifier()
-
-    # if args.validate_whisker_classifier:
-    #     validate_whisker_classifier()
+    if args.train_whisker_classifier:
+        train_whisker_classifier()
 
     # </ whisker specific >
 
