@@ -105,13 +105,11 @@ def predict_whisker_url(test_image_url):
     global whisker_bbox_model
     global X
     global y
-    if X is None and y is None:
-        X, y = zip(*joblib.load(WHISKER_FEATURE_DB_PATH))
-    sr = StrictRedis()
-    reload_nn_model = sr.get(REDIS_MODEL_RELOAD_KEY)
-    if reload_nn_model or whisker_bbox_model is None:
-        sr.delete(REDIS_MODEL_RELOAD_KEY)
-        print('Loading YOLO model')
+    if X is None or y is None:
+        X = joblib.load(WHISKER_FEATURE_X_PATH)
+        y = joblib.load(WHISKER_FEATURE_Y_PATH)
+
+    if whisker_bbox_model is None:
         whisker_bbox_model = YOLO(WHISKER_BBOX_MODEL_PATH)
 
     r = requests.get(test_image_url)
@@ -143,6 +141,7 @@ def predict_whisker_url(test_image_url):
     if confidence < 0.98:
         raise ClassifierError(f'Insufficient ROI confidence score. Ignoring detected ROI. Confidence: {confidence}')
     bbox = (im_y, im_x, im_h, im_w,)
+
     A = preprocess(image, bbox, d, e, ma, t1, t2, sz)
     whisker_scores = []
     for idx, B in enumerate(X):
