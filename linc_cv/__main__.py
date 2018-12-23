@@ -1,5 +1,4 @@
 import argparse
-import inspect
 import os
 import sys
 from subprocess import run
@@ -24,39 +23,30 @@ def main():
         description='LINC Lion Recognition System',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument(
-        '--parse-lion-database',
-        help=inspect.getdoc(parse_lion_database))
+        '--parse-lion-database')
     parser.add_argument(
-        '--download-lion-database', action='store_true',
-        help=inspect.getdoc(parse_lion_database))
+        '--download-lion-database', action='store_true')
 
     # < feature cv specific >
     parser.add_argument(
-        '--download-cv-images', action='store_true',
-        help=inspect.getdoc(download_cv_images))
+        '--download-cv-images', action='store_true')
     parser.add_argument(
-        '--extract-cv-features', action='store_true',
-        help=inspect.getdoc(extract_cv_features))
+        '--extract-cv-features', action='store_true')
     parser.add_argument(
-        '--train-cv-classifier', action='store_true',
-        help=inspect.getdoc(train_cv_classifier))
+        '--train-cv-classifier', action='store_true')
     parser.add_argument(
-        '--validate-cv-classifier', action='store_true',
-        help=inspect.getdoc(validate_cv_classifier))
+        '--validate-cv-classifier', action='store_true')
 
     # </ feature cv specific >
 
     # < whisker specific >
 
     parser.add_argument(
-        '--download-whisker-images', action='store_true',
-        help=inspect.getdoc(download_whisker_images))
-    # parser.add_argument(
-    #     '--train-whisker-classifier', action='store_true',
-    #     help=inspect.getdoc(train_whisker_classifier))
-    # parser.add_argument(
-    #     '--validate-whisker-classifier', action='store_true',
-    #     help=inspect.getdoc(validate_whisker_classifier))
+        '--download-whisker-images', action='store_true', )
+    parser.add_argument(
+        '--train-whisker-classifier', action='store_true', )
+    parser.add_argument(
+        '--validate-whisker-classifier', action='store_true', )
 
     # </ whisker specific >
 
