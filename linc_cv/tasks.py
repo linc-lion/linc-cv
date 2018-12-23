@@ -4,7 +4,7 @@ import requests
 from linc_cv import ClassifierError
 from linc_cv.modality_cv.download import download_cv_images
 from linc_cv.modality_cv.predict import predict_cv_url
-from linc_cv.modality_cv.train import train_cv_classifier
+from linc_cv.modality_cv.train import extract_cv_features
 from linc_cv.modality_whisker.download import download_whisker_images
 from linc_cv.modality_whisker.predict import predict_whisker_url
 from linc_cv.parse_lion_db import parse_lion_database
@@ -26,10 +26,11 @@ def retrain():
     print('downloading cv images')
     download_cv_images(mp=False)
     print('training cv classifier')
-    train_cv_classifier(mp=False)
+    extract_cv_features()
 
-    print('downloading whisker images')
-    download_whisker_images(mp=False)
+    # print('downloading whisker images')
+    # download_whisker_images(mp=False)
+
     # TODO: recompute whisker spot lookup table on demand
     # print('training whisker classifier')
     # train_whisker_classifier(mp=False)

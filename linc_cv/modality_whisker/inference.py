@@ -101,7 +101,6 @@ class YOLO(object):
         image_data = np.array(boxed_image, dtype='float32')
 
         print(image_data.shape)
-        print('running YOLOv3 detect_image...')
         image_data /= 255.
         image_data = np.expand_dims(image_data, 0)  # Add batch dimension.
 

@@ -9,15 +9,13 @@ import cv2
 import numpy as np
 import pickle
 
-from linc_cv import WHISKERS_PKL_PATH_FINAL, WHISKER_MODEL_PATH_FINAL, REDIS_MODEL_RELOAD_KEY, ClassifierError
+from linc_cv import WHISKERS_PKL_PATH_FINAL, WHISKER_MODEL_YOLO_PATH_FINAL, REDIS_MODEL_RELOAD_KEY, ClassifierError
 from .icp import icp
 from .inference import YOLO
 
 whisker_model = None
-
-with open(WHISKERS_PKL_PATH_FINAL, 'rb') as fd:
-    Xy = pickle.load(fd)
-    X, y = zip(*Xy)
+X = None
+y = None
 
 
 def resize_to_longer_edge(im, target_size):
@@ -106,12 +104,15 @@ def predict_whisker_url(test_image_url):
     global whisker_model
     global X
     global y
+    if X is None and y is None:
+        with open(WHISKERS_PKL_PATH_FINAL, 'rb') as fd:
+            X, y = zip(*pickle.load(fd))
     sr = StrictRedis()
     reload_nn_model = sr.get(REDIS_MODEL_RELOAD_KEY)
     if reload_nn_model or whisker_model is None:
         sr.delete(REDIS_MODEL_RELOAD_KEY)
         print('Loading YOLO model')
-        whisker_model = YOLO(WHISKER_MODEL_PATH_FINAL)
+        whisker_model = YOLO(WHISKER_MODEL_YOLO_PATH_FINAL)
 
     r = requests.get(test_image_url)
     if not r.ok:

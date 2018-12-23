@@ -8,12 +8,15 @@ celery[redis]
 scikit-learn
 flask
 flask_restful
-tensorflow
 h5py
 Pillow
 imgaug
 toolz
-tables
 flower
 pandas
 pytest
+https://download.pytorch.org/whl/cu100/torch-1.0.0-cp37-cp37m-linux_x86_64.whl
+torchvision
+pretrainedmodels
+tqdm
+joblib

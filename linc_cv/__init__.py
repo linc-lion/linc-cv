@@ -23,31 +23,24 @@ VALID_LION_IMAGE_TYPES = [
     'cv', 'whisker', 'whisker-left', 'whisker-right']
 REDIS_TRAINING_CELERY_TASK_ID_KEY = 'training_task_id'
 
-CV_CLASSES_LUT_PATH = datapath(['cv_classes_lut.json'])
 CV_IMAGES_PATH = datapath(['cv_images'])
 CV_IMAGES_TRAINTEST_PATH = datapath(['cv_images_traintest'])
-CV_MODEL_PATH = datapath(['cv_model.h5'])  # for saving model checkpoints only
-CV_MODEL_PATH_FINAL = datapath(['cv_model.final.h5'])  # final model to be used for predictions
-CV_TRAINING_LOG_PATH = datapath(['cv_training_log.csv'])
-CV_CLASSIFICATION_REPORT_PATH = 'cv_classification_report.pkl'
 CV_VALIDATION_JSON_PATH = 'cv_validation.json'
-CV_TRAINING_IMAGEDATAGENERATOR_PARAMS = {
-    'width_shift_range': 0.1,
-    'height_shift_range': 0.1,
-    'zoom_range': 0.1,
-    'rotation_range': 5, }
-CV_TESTING_IMAGEDATAGENERATOR_PARAMS = CV_TRAINING_IMAGEDATAGENERATOR_PARAMS
+CV_FEATURES_TRAIN_X = datapath(['features_train.npy'])
+CV_FEATURES_TRAIN_Y = datapath(['labels_train.json'])
+CV_FEATURES_TEST_X = datapath(['features_test.npy'])
+CV_FEATURES_TEST_Y = datapath(['labels_test.json'])
+CV_CLASSIFIER_PATH = datapath(['cv.clf'])
+CV_MODEL_CLASSES_JSON = datapath(['cv_classes.json'])
 
 WHISKER_IMAGES_PATH = datapath(['whisker_images'])
 WHISKER_IMAGES_TRAINTEST_PATH = datapath(['whisker_images_traintest'])
-WHISKER_MODEL_PATH = datapath(['whisker_model.h5'])  # for saving model checkpoints only
 WHISKERS_PKL_PATH_FINAL = datapath(['Xy.pkl'])
-WHISKER_MODEL_PATH_FINAL = datapath(['whisker_model.final.h5'])  # final model to be used for predictions
+WHISKER_MODEL_YOLO_PATH = datapath(['whisker_model.h5'])  # for saving model checkpoints only
+WHISKER_MODEL_YOLO_PATH_FINAL = datapath(['whisker_model.final.h5'])  # final model to be used for predictions
 WHISKER_TRAINING_LOG_PATH = datapath(['whisker_training_log.csv'])
 WHISKER_CLASSIFICATION_REPORT_PATH = 'whisker_classification_report.pkl'
 WHISKER_VALIDATION_JSON_PATH = 'whisker_validation.json'
-WHISKER_TRAINING_IMAGEDATAGENERATOR_PARAMS = CV_TRAINING_IMAGEDATAGENERATOR_PARAMS
-WHISKER_TESTING_IMAGEDATAGENERATOR_PARAMS = CV_TESTING_IMAGEDATAGENERATOR_PARAMS
 
 REDIS_MODEL_RELOAD_KEY = 'linc_reload_nn_model'
 

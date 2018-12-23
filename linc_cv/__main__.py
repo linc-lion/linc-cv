@@ -9,7 +9,7 @@ from linc_cv.parse_lion_db import parse_lion_database
 from linc_cv.web import app
 from linc_cv.modality_whisker.download import download_whisker_images
 from linc_cv.modality_cv.download import download_cv_images
-from linc_cv.modality_cv.train import train_cv_classifier
+from linc_cv.modality_cv.train import extract_cv_features, train_cv_classifier
 from linc_cv.modality_cv.validation import validate_cv_classifier
 
 CELERY_EXE_PATH = os.path.join(os.path.dirname(sys.argv[0]), 'celery')
@@ -26,11 +26,17 @@ def main():
     parser.add_argument(
         '--parse-lion-database',
         help=inspect.getdoc(parse_lion_database))
+    parser.add_argument(
+        '--download-lion-database', action='store_true',
+        help=inspect.getdoc(parse_lion_database))
 
     # < feature cv specific >
     parser.add_argument(
         '--download-cv-images', action='store_true',
         help=inspect.getdoc(download_cv_images))
+    parser.add_argument(
+        '--extract-cv-features', action='store_true',
+        help=inspect.getdoc(extract_cv_features))
     parser.add_argument(
         '--train-cv-classifier', action='store_true',
         help=inspect.getdoc(train_cv_classifier))
@@ -72,10 +78,16 @@ def main():
     if args.parse_lion_database:
         parse_lion_database(db_json_path=args.parse_lion_database)
 
+    if args.download_lion_database:
+        parse_lion_database(download_db_zip=True)
+
     # < feature cv specific >
 
     if args.download_cv_images:
         download_cv_images()
+
+    if args.extract_cv_features:
+        extract_cv_features()
 
     if args.train_cv_classifier:
         train_cv_classifier()
@@ -103,12 +115,12 @@ def main():
 
     if args.worker_training:
         cmd = f'{CELERY_EXE_PATH} worker -A linc_cv.tasks --concurrency 1 ' \
-              f'-Q training -E -n training@%h'.split(' ')
+            f'-Q training -E -n training@%h'.split(' ')
         run(cmd, check=True, cwd=BASE_DIR)
 
     if args.worker_classification:
         cmd = f'{CELERY_EXE_PATH} worker -A linc_cv.tasks --concurrency 1 ' \
-              f'-Q classification -E -n classification@%h'.split(' ')
+            f'-Q classification -E -n classification@%h'.split(' ')
         run(cmd, check=True, cwd=BASE_DIR)
 
     if args.flower:

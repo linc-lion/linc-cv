@@ -1,27 +1,45 @@
-from keras.models import load_model
-from keras.preprocessing.image import ImageDataGenerator
-from redis import StrictRedis
+import joblib
+from io import BytesIO
+import tempfile
+from operator import itemgetter
 
-from linc_cv import CV_MODEL_PATH_FINAL, CV_TESTING_IMAGEDATAGENERATOR_PARAMS, CV_CLASSES_LUT_PATH, REDIS_MODEL_RELOAD_KEY
-from linc_cv.predict import predict_on_url
-from linc_cv.validation import classifier_classes_lut_to_labels
+import requests
+from PIL import Image
+
+from linc_cv import REDIS_MODEL_RELOAD_KEY, CV_CLASSIFIER_PATH
+from .train import CV_NN_Model
 
 cv_model = None
-test_datagen = None
-labels = classifier_classes_lut_to_labels(CV_CLASSES_LUT_PATH)
+cv_nn_model = None
 
 
-def predict_cv_url(test_image_url):
+def predict(image, num_results):
     global cv_model
-    global test_datagen
-    sr = StrictRedis()
-    reload_nn_model = sr.get(REDIS_MODEL_RELOAD_KEY)
-    if reload_nn_model or cv_model is None:
-        sr.delete(REDIS_MODEL_RELOAD_KEY)
-        cv_model = load_model(CV_MODEL_PATH_FINAL)
-    if test_datagen is None:
-        test_datagen = ImageDataGenerator(**CV_TESTING_IMAGEDATAGENERATOR_PARAMS)
-    topk_labels = predict_on_url(
-        model=cv_model, image_url=test_image_url,
-        test_datagen=test_datagen, labels=labels)
-    return topk_labels
+    global cv_nn_model
+    if cv_model is None or cv_nn_model is None:
+        cv_model = joblib.load(CV_CLASSIFIER_PATH)
+        cv_nn_model = CV_NN_Model()
+    feature = cv_nn_model.predict(image)[None, :]
+    pl = list(zip(cv_model.classes_, cv_model.predict_proba(feature)[0], ))
+    pl = sorted(pl, key=itemgetter(1), reverse=True)[:num_results]
+    predictions = [{'lion_id': lion_id, 'probability': probability} for lion_id, probability in pl]
+    return {'predictions': predictions}
+
+
+def predict_cv_url(image_url, num_results=20):
+    global cv_model
+    global cv_nn_model
+    if cv_model is None or cv_nn_model is None:
+        cv_model = joblib.load(CV_CLASSIFIER_PATH)
+        cv_nn_model = CV_NN_Model()
+    r = requests.get(image_url)
+    if not r.ok:
+        return None
+    try:
+        with tempfile.NamedTemporaryFile(suffix='.jpg') as ntf:
+            image = Image.open(BytesIO(r.content)).convert('RGB')
+            image.save(ntf.name, format='JPEG')
+            ntf.flush()
+            return predict(image=ntf.name, num_results=num_results)
+    except OSError:
+        return None

@@ -1,7 +1,10 @@
 import json
 import os
 import shutil
+from multiprocessing import Pool, cpu_count
+from multiprocessing.pool import ThreadPool
 from io import BytesIO
+from ssl import SSLError
 
 import requests
 from PIL import Image
@@ -12,7 +15,10 @@ from linc_cv import IMAGES_LUT_PATH
 def download_image(images_path, image_url, lion_id, idx):
     filepath = os.path.join(images_path, f'{lion_id}/{idx}.jpg')
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
-    r = requests.get(image_url)
+    try:
+        r = requests.get(image_url)
+    except SSLError:
+        return
     if r.ok:
         try:
             Image.open(BytesIO(r.content)).convert('RGB').save(
@@ -41,8 +47,6 @@ def download_images(*, images_path, modality, mp):
         except KeyError:
             continue
 
-    from multiprocessing import Pool, cpu_count
-    from multiprocessing.pool import ThreadPool
     nproc = cpu_count() * 4
     if mp:
         with Pool(processes=nproc) as pool:

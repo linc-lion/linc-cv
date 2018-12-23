@@ -4,12 +4,13 @@ from flask import Flask
 from flask import request
 from flask_restful import Resource, Api
 from redis import StrictRedis
+import joblib
 
-from linc_cv import VALID_LION_IMAGE_TYPES, CV_CLASSES_LUT_PATH, \
-    REDIS_TRAINING_CELERY_TASK_ID_KEY, WHISKERS_PKL_PATH_FINAL
+from linc_cv import VALID_LION_IMAGE_TYPES, REDIS_TRAINING_CELERY_TASK_ID_KEY, \
+    WHISKERS_PKL_PATH_FINAL, CV_CLASSIFIER_PATH, CV_MODEL_CLASSES_JSON
 from linc_cv.keys import API_KEY
 from linc_cv.tasks import c, classify_image_url, retrain
-from linc_cv.validation import classifier_classes_lut_to_labels
+import linc_cv.modality_cv.predict
 
 task_id = StrictRedis().get(REDIS_TRAINING_CELERY_TASK_ID_KEY)
 if task_id is not None:
@@ -30,10 +31,10 @@ class LincResultAPI(Resource):
 
 
 class LincClassifierCapabilitiesAPI(Resource):
+
     def get(self):
         if request.headers.get('ApiKey') != API_KEY:
             return {'status': 'error', 'info': 'authentication failure'}, 401
-        cv_labels = classifier_classes_lut_to_labels(CV_CLASSES_LUT_PATH)
 
         with open(WHISKERS_PKL_PATH_FINAL, 'rb') as fd:
             X, y = zip(*pickle.load(fd))
@@ -46,6 +47,9 @@ class LincClassifierCapabilitiesAPI(Resource):
         cv_topk_classifier_accuracy = [
             0.010, 0.010, 0.010, 0.010, 0.010, 0.010, 0.010, 0.010, 0.010, 0.010, 0.010,
             0.010, 0.010, 0.010, 0.010, 0.010, 0.010, 0.010, 0.010, 0.010]
+
+        with open(CV_MODEL_CLASSES_JSON) as fd:
+            cv_labels = json.load(fd)
 
         return {
             'valid_cv_lion_ids': cv_labels, 'valid_whisker_lion_ids': whisker_labels,
