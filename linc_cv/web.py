@@ -3,6 +3,7 @@ from flask import request
 from flask_restful import Resource, Api
 from redis import StrictRedis
 import joblib
+import json
 
 from linc_cv import VALID_LION_IMAGE_TYPES, REDIS_TRAINING_CELERY_TASK_ID_KEY, \
     WHISKER_FEATURE_X_PATH, WHISKER_FEATURE_Y_PATH, CV_CLASSIFIER_PATH, CV_MODEL_CLASSES_JSON
