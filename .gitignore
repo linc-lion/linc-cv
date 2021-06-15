@@ -6,3 +6,5 @@ __pycache__
 linc_cv/keys.py
 .pytest_cache
 .DS_Store
+celerybeat-schedule.db
+celerybeat.pid

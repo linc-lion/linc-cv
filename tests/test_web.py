@@ -7,7 +7,11 @@ import requests
 from linc_cv.keys import API_KEY
 from pprint import pprint
 
-HOST = sys.argv[1]
+if len(sys.argv) > 1:
+    HOST = sys.argv[1]
+else:
+    HOST = 'http://0.0.0.0'
+    
 STATUSES_IGNORED = {'STARTED', 'PENDING'}
 headers = {'ApiKey': API_KEY}
 
