@@ -1,4 +1,4 @@
-from linc_cv import WHISKER_IMAGES_PATH
+from linc_cv.settings import WHISKER_IMAGES_PATH
 from linc_cv.images import download_image, download_images
 
 

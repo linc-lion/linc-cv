@@ -1,10 +1,10 @@
+import os
 import sys
 import json
 import time
 sys.path.append('..')
 
 import requests
-from linc_cv.keys import API_KEY
 from pprint import pprint
 
 if len(sys.argv) > 1:
@@ -13,6 +13,7 @@ else:
     HOST = 'http://0.0.0.0'
     
 STATUSES_IGNORED = {'STARTED', 'PENDING'}
+API_KEY = os.environ['API_KEY']
 headers = {'ApiKey': API_KEY}
 
 capabilities = requests.get(f'{HOST}/linc/v1/capabilities', headers=headers).json()

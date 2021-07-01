@@ -9,7 +9,7 @@ import cv2
 import numpy as np
 import joblib
 
-from linc_cv import WHISKER_FEATURE_X_PATH, WHISKER_FEATURE_Y_PATH, \
+from linc_cv.settings import WHISKER_FEATURE_X_PATH, WHISKER_FEATURE_Y_PATH, \
     WHISKER_BBOX_MODEL_PATH, REDIS_MODEL_RELOAD_KEY, ClassifierError
 from .icp import icp
 from .inference import YOLO

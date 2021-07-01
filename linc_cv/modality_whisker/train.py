@@ -10,7 +10,7 @@ from tqdm import tqdm
 import joblib
 
 from linc_cv.modality_whisker.icp import icp
-from linc_cv import WHISKER_FEATURE_X_PATH, WHISKER_FEATURE_Y_PATH, \
+from linc_cv.settings import WHISKER_FEATURE_X_PATH, WHISKER_FEATURE_Y_PATH, \
     WHISKER_IMAGES_PATH, WHISKER_BBOX_MODEL_PATH
 
 from .inference import YOLO

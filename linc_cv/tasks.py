@@ -1,7 +1,7 @@
 from celery import Celery
 import requests
 
-from linc_cv import ClassifierError
+from linc_cv.settings import ClassifierError
 from linc_cv.modality_cv.download import download_cv_images
 from linc_cv.modality_cv.predict import predict_cv_url
 from linc_cv.modality_cv.train import extract_cv_features
@@ -21,7 +21,7 @@ c.conf.task_routes = {
 @c.task(track_started=True, acks_late=True)
 def retrain():
     print('parsing lion database')
-    parse_lion_database(download_db_zip=True)
+    parse_lion_database()
 
     print('downloading cv images')
     download_cv_images(mp=False)
@@ -36,8 +36,10 @@ def retrain():
     # train_whisker_classifier(mp=False)
 
 
+import pydevd_pycharm
 @c.task(track_started=True, acks_late=True)
 def classify_image_url(test_image_url, feature_type):
+    pydevd_pycharm.settrace('localhost', port=54312, stdoutToServer=True, stderrToServer=True)
     try:
         if 'whisker' in feature_type:
             results = predict_whisker_url(test_image_url)

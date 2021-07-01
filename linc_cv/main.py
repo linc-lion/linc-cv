@@ -3,7 +3,7 @@ import os
 import sys
 from subprocess import run
 
-from linc_cv import BASE_DIR
+from linc_cv.settings import BASE_DIR
 from linc_cv.parse_lion_db import parse_lion_database
 from linc_cv.web import app
 from linc_cv.modality_whisker.download import download_whisker_images
@@ -11,8 +11,8 @@ from linc_cv.modality_whisker.train import train_whisker_classifier
 from linc_cv.modality_cv.download import download_cv_images
 from linc_cv.modality_cv.train import extract_cv_features, train_cv_classifier
 
-CELERY_EXE_PATH = os.path.join(os.path.dirname(sys.argv[0]), 'celery')
-FLOWER_EXE_PATH = os.path.join(os.path.dirname(sys.argv[0]), 'flower')
+CELERY_EXE_PATH = os.path.join(os.path.dirname(sys.executable), 'celery')
+FLOWER_EXE_PATH = os.path.join(os.path.dirname(sys.executable), 'flower')
 
 
 def main():
@@ -23,9 +23,7 @@ def main():
         description='LINC Lion Recognition System',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument(
-        '--parse-lion-database')
-    parser.add_argument(
-        '--download-lion-database', action='store_true')
+        '--parse-lion-database', action='store_true')
 
     # < feature cv specific >
     parser.add_argument(
@@ -62,10 +60,7 @@ def main():
     args = parser.parse_args()
 
     if args.parse_lion_database:
-        parse_lion_database(db_json_path=args.parse_lion_database)
-
-    if args.download_lion_database:
-        parse_lion_database(download_db_zip=True)
+        parse_lion_database()
 
     # < feature cv specific >
 
@@ -106,3 +101,7 @@ def main():
     if args.flower:
         cmd = f'{FLOWER_EXE_PATH} flower -A linc_cv.tasks --address=0.0.0.0 --port=5555'.split(' ')
         run(cmd, check=True, cwd=BASE_DIR)
+
+
+if __name__ == '__main__':
+    main()

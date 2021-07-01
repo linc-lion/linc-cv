@@ -9,7 +9,7 @@ from ssl import SSLError
 import requests
 from PIL import Image
 
-from linc_cv import IMAGES_LUT_PATH
+from linc_cv.settings import IMAGES_LUT_PATH
 
 
 def download_image(images_path, image_url, lion_id, idx):

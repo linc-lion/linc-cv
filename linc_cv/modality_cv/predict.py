@@ -6,7 +6,7 @@ from operator import itemgetter
 import requests
 from PIL import Image
 
-from linc_cv import REDIS_MODEL_RELOAD_KEY, CV_CLASSIFIER_PATH
+from linc_cv.settings import REDIS_MODEL_RELOAD_KEY, CV_CLASSIFIER_PATH
 from .train import CV_NN_Model
 
 cv_model = None

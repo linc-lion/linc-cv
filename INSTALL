@@ -1,0 +1,7 @@
+# Configuration
+
+Add to ~/.bashrc:
+
+export LINC_USERNAME=''
+export LINC_PASSWORD=''
+export API_KEY=''

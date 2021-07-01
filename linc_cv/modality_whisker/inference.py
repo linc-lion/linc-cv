@@ -11,7 +11,7 @@ from keras import backend as K
 from keras.models import load_model
 from keras.layers import Input
 
-from linc_cv import YOLO_ANCHORS_PATH, YOLO_ANCHORS_CLASSES
+from linc_cv.settings import YOLO_ANCHORS_PATH, YOLO_ANCHORS_CLASSES
 from .yolo3.model import yolo_eval, yolo_body, tiny_yolo_body
 from .yolo3.utils import letterbox_image
 

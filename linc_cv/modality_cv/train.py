@@ -13,7 +13,7 @@ from tqdm import tqdm
 import joblib
 from sklearn.metrics import classification_report
 
-from linc_cv import CV_IMAGES_PATH, CV_IMAGES_TRAINTEST_PATH, \
+from linc_cv.settings import CV_IMAGES_PATH, CV_IMAGES_TRAINTEST_PATH, \
     CV_CLASSIFIER_PATH, CV_FEATURES_TRAIN_X, CV_FEATURES_TRAIN_Y, \
     CV_FEATURES_TEST_X, CV_FEATURES_TEST_Y, CV_MODEL_CLASSES_JSON
 

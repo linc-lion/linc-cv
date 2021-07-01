@@ -1,3 +1,4 @@
+import os
 import json
 from collections import defaultdict
 from io import BytesIO
@@ -8,12 +9,12 @@ from zipfile import ZipFile
 
 from requests import get, post
 
-from . import IMAGES_LUT_PATH, ClassifierError
-from .keys import LINC_USERNAME, LINC_PASSWORD
+from .settings import IMAGES_LUT_PATH, ClassifierError
 
 
 def download_lion_db():
-    body = {'username': LINC_USERNAME, 'password': LINC_PASSWORD}
+    print('Downloading LION DB')
+    body = {'username': os.environ['LINC_USERNAME'], 'password': os.environ['LINC_PASSWORD']}
     headers = {'Content-Type': 'application/json'}
     urllogin = 'https://linc-api.herokuapp.com/auth/login'
     urldbdump = 'https://linc-api.herokuapp.com/lions/'
@@ -41,20 +42,14 @@ def download_lion_db():
         print('Authentication failure')
 
 
-def parse_lion_database(*, db_json_path=None, download_db_zip=False):
+def parse_lion_database():
     """
     Parse LINC database into a lookup table consisting of lion_ids
     and image URLs for each feature type for each lion. Feature types
     include whiskers and 'cv' images
     """
 
-    if db_json_path:
-        with open(db_json_path) as f:
-            lions = json.load(f)
-    elif download_db_zip:
-        lions = download_lion_db()
-    else:
-        raise ClassifierError('database path or url not specified')
+    lions = download_lion_db()
 
     lion_db = defaultdict(lambda: defaultdict(list))
     for lion in lions['data']:

@@ -1,3 +1,4 @@
+import os
 import json
 import sys
 import time
@@ -6,9 +7,8 @@ import requests
 
 sys.path.append('..')
 
-from linc_cv.keys import API_KEY
-
-BASE_URL = 'http://52.207.96.155:5000'
+API_KEY = os.environ['API_KEY']
+BASE_URL = 'http://ec2-34-204-218-173.compute-1.amazonaws.com:5000'
 
 
 def test_capabilities():
