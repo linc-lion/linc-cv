@@ -1,13 +1,12 @@
-from celery import Celery
 import requests
+from celery import Celery
 
-from linc_cv.settings import ClassifierError
 from linc_cv.modality_cv.download import download_cv_images
 from linc_cv.modality_cv.predict import predict_cv_url
 from linc_cv.modality_cv.train import extract_cv_features
-from linc_cv.modality_whisker.download import download_whisker_images
 from linc_cv.modality_whisker.predict import predict_whisker_url
 from linc_cv.parse_lion_db import parse_lion_database
+from linc_cv.settings import ClassifierError
 
 c = Celery(backend='redis://localhost:6379/0', broker='redis://localhost:6379/0')
 c.conf.task_track_started = True
@@ -36,10 +35,10 @@ def retrain():
     # train_whisker_classifier(mp=False)
 
 
-import pydevd_pycharm
+# import pydevd_pycharm
 @c.task(track_started=True, acks_late=True)
 def classify_image_url(test_image_url, feature_type):
-    pydevd_pycharm.settrace('localhost', port=54312, stdoutToServer=True, stderrToServer=True)
+    # pydevd_pycharm.settrace('localhost', port=54312, stdoutToServer=True, stderrToServer=True)
     try:
         if 'whisker' in feature_type:
             results = predict_whisker_url(test_image_url)
