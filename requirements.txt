@@ -3,7 +3,7 @@ matplotlib
 scikit-image
 numpy
 requests
-keras==2.1.5
+keras==2.2.4
 celery[redis]
 scikit-learn
 flask
@@ -21,4 +21,4 @@ pretrainedmodels
 tqdm
 joblib
 numba
-tensorflow==1.6.0
+tensorflow==1.12.0
