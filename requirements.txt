@@ -14,7 +14,7 @@ imgaug==0.2.7
 toolz==0.9.0
 flower==0.9.3
 pandas==0.23.4
-pytest==4.0.2
+pytest==6.2.5
 torch==1.0.0
 torchvision==0.2.1
 pretrainedmodels==0.7.4
