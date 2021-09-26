@@ -1,4 +1,4 @@
-linc_cv/data/*
+    linc_cv/data/*
 .idea
 *.egg*
 __pycache__
@@ -7,3 +7,5 @@ __pycache__
 .DS_Store
 celerybeat-schedule.db
 celerybeat.pid
+*.log
+linc_cv/data/*
