@@ -22,7 +22,7 @@ linc-cv uses of 3 components: [Flower](https://flower.readthedocs.io/en/latest/)
   * Replace `johndoe` for `command` and `user` variables with your own username. This is the username you use to log in to your machine.
 * Run `sudo /usr/local/opt/supervisor/bin/supervisord -c /usr/local/etc/supervisord.conf --nodaemon`
 * `celery-classification.log`, `celery-training.log` and `flower.log` will be created under `linc_cv/tests` folder. 
-
+* Now you should be able to navigate to Flower UI - http://localhost:5555/
 ## Resources
 * [Conda cheat sheet](https://docs.conda.io/projects/conda/en/4.6.0/_downloads/52a95608c49671267e40c689e0bc00ca/conda-cheatsheet.pdf)
 * [Install Supervisor on Mac](https://tn710617.github.io/supervisor/)
