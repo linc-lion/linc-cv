@@ -4,7 +4,7 @@ scikit-image==0.14.1
 numpy==1.15.4
 requests==2.21.0
 keras==2.2.4
-celery[redis]==4.2.1
+celery[redis]==4.4.7
 scikit-learn==0.20.2
 flask==1.0.2
 flask_restful==0.3.7
