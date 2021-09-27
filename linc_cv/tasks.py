@@ -35,10 +35,8 @@ def retrain():
     # train_whisker_classifier(mp=False)
 
 
-# import pydevd_pycharm
 @c.task(track_started=True, acks_late=True)
 def classify_image_url(test_image_url, feature_type):
-    # pydevd_pycharm.settrace('localhost', port=54312, stdoutToServer=True, stderrToServer=True)
     try:
         if 'whisker' in feature_type:
             results = predict_whisker_url(test_image_url)
