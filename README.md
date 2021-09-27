@@ -44,7 +44,67 @@ linc-cv uses of 3 components: [Flower](https://flower.readthedocs.io/en/latest/)
     ```
     
 ### Service usage
-* TBD
+* Example of request and response for lion face recognition:
+  * ```
+    curl --location --request POST 'http://192.168.86.137:5000/linc/v1/classify' \
+    --header 'ApiKey: blah' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{
+         "type": "cv", 
+         "url": "https://raw.githubusercontent.com/linc-lion/linc-cv/lee-dev/tests/images/1311.jpg"
+    }'
+    ```
+    * ```json
+     {
+      "status": "finished",
+      "predictions": [
+          {
+              "lion_id": "80",
+              "probability": 0.412
+          },
+          {
+              "lion_id": "40",
+              "probability": 0.032
+          },
+          {
+              "lion_id": "297",
+              "probability": 0.028
+          },
+          ...
+       ]
+      }
+      ```
+  * Example of request and response for lion whisker recognition: 
+  * ```
+    curl --location --request POST 'http://192.168.86.137:5000/linc/v1/classify' \
+    --header 'ApiKey: blah' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{
+        "type": "whisker", 
+        "url": "https://raw.githubusercontent.com/linc-lion/linc-cv/lee-dev/tests/images/23.jpg"
+    }'
+    ```
+  * ```json
+    {
+       "status": "finished",
+       "predictions": [
+           {
+               "lion_id": "15",
+               "probability": 0.951
+           },
+           {
+               "lion_id": "372",
+               "probability": 0.79
+           },
+           {
+               "lion_id": "94",
+               "probability": 0.785
+           },
+           ...
+       ]
+    }
+
+    ```
 
 ## Resources
 * [Conda cheat sheet](https://docs.conda.io/projects/conda/en/4.6.0/_downloads/52a95608c49671267e40c689e0bc00ca/conda-cheatsheet.pdf)
