@@ -34,8 +34,8 @@ linc-cv uses of 3 components: [Flower](https://flower.readthedocs.io/en/latest/)
     >>> model_name = 'senet154'
     >>> model = pretrainedmodels.__dict__[model_name](num_classes=1000, pretrained='imagenet')
     ```
-  * The pretrained model will be saved to `$HOME/.torch`.
-* Under the root package, `linc-cv`, execute the following in terminal:
+  * The pretrained model is saved to `$HOME/.torch`.
+* Under the root package, `linc_cv`, execute the following in terminal:
   * ```
     > export API_KEY=blah
     > PYTHONPATH=$(pwd) python linc_cv/main.py --web
