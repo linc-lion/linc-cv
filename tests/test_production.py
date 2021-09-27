@@ -7,9 +7,10 @@ import requests
 
 sys.path.append('..')
 
-API_KEY = os.environ['API_KEY']
-BASE_URL = 'http://ec2-34-204-218-173.compute-1.amazonaws.com:5000'
-
+# API_KEY = os.environ['API_KEY']
+# BASE_URL = 'http://ec2-3-91-242-237.compute-1.amazonaws.com:5000'
+BASE_URL = ' http://192.168.86.137:5000/'   # local url
+API_KEY = 'blah'
 
 def test_capabilities():
     r = requests.get(
