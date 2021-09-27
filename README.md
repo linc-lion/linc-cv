@@ -54,26 +54,26 @@ linc-cv uses of 3 components: [Flower](https://flower.readthedocs.io/en/latest/)
          "url": "https://raw.githubusercontent.com/linc-lion/linc-cv/lee-dev/tests/images/1311.jpg"
     }'
     ```
-    * ```json
-     {
-      "status": "finished",
-      "predictions": [
-          {
-              "lion_id": "80",
-              "probability": 0.412
-          },
-          {
-              "lion_id": "40",
-              "probability": 0.032
-          },
-          {
-              "lion_id": "297",
-              "probability": 0.028
-          },
-          ...
+  * ```json
+    {
+       "status": "finished",
+       "predictions": [
+           {
+               "lion_id": "80",
+               "probability": 0.412
+           },
+           {
+               "lion_id": "40",
+               "probability": 0.032
+           },
+           {
+               "lion_id": "297",
+               "probability": 0.028
+           },
+           ...
        ]
-      }
-      ```
+    }
+    ```
   * Example of request and response for lion whisker recognition: 
   * ```
     curl --location --request POST 'http://192.168.86.137:5000/linc/v1/classify' \
