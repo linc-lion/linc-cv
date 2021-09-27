@@ -56,6 +56,18 @@ linc-cv uses of 3 components: [Flower](https://flower.readthedocs.io/en/latest/)
     ```
   * ```json
     {
+       "id": "f9591d42-96e6-4178-9022-cab02cd86b3b",
+       "status": "PENDING",
+       "errors": []
+    }
+    ```
+  * ```
+    curl --location --request GET 'http://192.168.86.137:5000//linc/v1/results/f9591d42-96e6-4178-9022-cab02cd86b3b' \
+    --header 'ApiKey: blah' \
+    --header 'Content-Type: application/json'
+    ```
+  * ```json
+    {
        "status": "finished",
        "predictions": [
            {
@@ -69,8 +81,7 @@ linc-cv uses of 3 components: [Flower](https://flower.readthedocs.io/en/latest/)
            {
                "lion_id": "297",
                "probability": 0.028
-           },
-           ...
+           }
        ]
     }
     ```
@@ -83,6 +94,18 @@ linc-cv uses of 3 components: [Flower](https://flower.readthedocs.io/en/latest/)
         "type": "whisker", 
         "url": "https://raw.githubusercontent.com/linc-lion/linc-cv/lee-dev/tests/images/23.jpg"
     }'
+    ```
+  * ```json
+    {
+       "id": "3f6dbfdf-98ea-4d76-92af-e5ff9912546b",
+       "status": "PENDING",
+       "errors": []
+    }
+    ```
+  * ```
+    curl --location --request GET 'http://192.168.86.137:5000//linc/v1/results/3f6dbfdf-98ea-4d76-92af-e5ff9912546b' \
+    --header 'ApiKey: blah' \
+    --header 'Content-Type: application/json'
     ```
   * ```json
     {
@@ -99,8 +122,7 @@ linc-cv uses of 3 components: [Flower](https://flower.readthedocs.io/en/latest/)
            {
                "lion_id": "94",
                "probability": 0.785
-           },
-           ...
+           }
        ]
     }
 
