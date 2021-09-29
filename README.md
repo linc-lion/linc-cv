@@ -51,7 +51,7 @@ linc-cv uses of 3 components: [Flower](https://flower.readthedocs.io/en/latest/)
     --header 'Content-Type: application/json' \
     --data-raw '{
          "type": "cv", 
-         "url": "https://raw.githubusercontent.com/linc-lion/linc-cv/master/tests/images/1311.jpg"
+         "url": "https://raw.githubusercontent.com/linc-lion/linc-cv/master/tests/images/female_lion_face_1.jpeg"
     }'
     ```
   * ```json
@@ -92,7 +92,7 @@ linc-cv uses of 3 components: [Flower](https://flower.readthedocs.io/en/latest/)
     --header 'Content-Type: application/json' \
     --data-raw '{
         "type": "whisker", 
-        "url": "https://raw.githubusercontent.com/linc-lion/linc-cv/master/tests/images/23.jpg"
+        "url": "https://raw.githubusercontent.com/linc-lion/linc-cv/master/tests/images/sample_lion_whisker_23.jpg"
     }'
     ```
   * ```json
