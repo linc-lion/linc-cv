@@ -47,7 +47,8 @@ def classify_image_url(test_image_url, feature_type):
         try:
             return {
                 'status': 'finished', **results}
-        except TypeError:
+        except TypeError as te:
+            print("General Classification error: {0}".format(te))
             raise ClassifierError('General classification failure. Contact support.')
     except ClassifierError as e:
         return {
