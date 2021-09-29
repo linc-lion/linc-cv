@@ -44,7 +44,7 @@ linc-cv uses of 3 components: [Flower](https://flower.readthedocs.io/en/latest/)
     ```
     
 ### Service usage
-* Example of request and response for lion face recognition:
+* Example of request and response (truncated for brievity) for lion face recognition:
   * ```
     curl --location --request POST 'http://192.168.86.137:5000/linc/v1/classify' \
     --header 'ApiKey: blah' \
@@ -85,7 +85,7 @@ linc-cv uses of 3 components: [Flower](https://flower.readthedocs.io/en/latest/)
        ]
     }
     ```
-  * Example of request and response for lion whisker recognition: 
+  * Example of request and response (truncated for brievity) for lion whisker recognition: 
   * ```
     curl --location --request POST 'http://192.168.86.137:5000/linc/v1/classify' \
     --header 'ApiKey: blah' \
