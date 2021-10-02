@@ -10,7 +10,7 @@ linc-cv uses of 3 components: [Flower](https://flower.readthedocs.io/en/latest/)
 * Run `conda activate linc-cv`
 * Run `pip install -r requirements.txt`
 * Install [redis](https://gist.github.com/tomysmile/1b8a321e7c58499ef9f9441b2faa0aa8). Celery uses redis message broker.
-* Download models from `s3://linc-cv/data/20181223` to `linc_cv/data`
+* Download models from [linc-cv-data repository](https://github.com/linc-lion/linc-cv-data) to `linc_cv/data`
 
 ### supervisor setup
 * Install [Homebrew](https://brew.sh/)
