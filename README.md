@@ -42,7 +42,7 @@ linc-cv uses of 3 components: [Flower](https://flower.readthedocs.io/en/latest/)
 * Under project directory `linc-cv`, execute the following in terminal:
   * ```
     > export API_KEY=blah
-    > PYTHONPATH=$(pwd) python linc_cv/main.py --web
+    > PYTHONPATH=$(pwd) python linc_cv/web.py
     ```
     
 ### Service usage
