@@ -1,4 +1,6 @@
-# LINC Computer Vision System
+# LINC Lion Recognition Service
+
+A lion recognition service based on lion face and whisker.
 
 ## Local setup for Mac
 
