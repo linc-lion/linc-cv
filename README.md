@@ -1,6 +1,6 @@
 # LINC Lion Recognition Service
 
-A lion recognition service based on lion face and whisker.
+A lion recognition service based on lion face and whisker predictions.
 
 ## Local setup for Mac
 
