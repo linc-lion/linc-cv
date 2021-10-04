@@ -1,10 +1,10 @@
 # LINC Lion Identification Service
 
-A lion identification service based on lion face and whisker recognitions.
+A lion identification service based on lion face and whiskers recognitions.
 
 ## Local setup for Mac
 
-linc-cv uses of 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [Celery](https://docs.celeryproject.org/en/stable/getting-started/introduction.html) and [Supervisor](http://supervisord.org/) 
+linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [Celery](https://docs.celeryproject.org/en/stable/getting-started/introduction.html) and [Supervisor](http://supervisord.org/) 
 
 ### linc-cv service setup
 * Download [Conda](https://www.anaconda.com/products/individual)
