@@ -21,6 +21,6 @@ joblib==1.0.1
 numba==0.49.1
 tensorflow==1.12.0
 opencv-python-headless==3.4.3.18
-opencv-contrib-python-headless==3.4.3.18
+opencv-contrib-python-headless==3.4.7.28
 flower==1.0.0
 celery[redis]==5.1.2
