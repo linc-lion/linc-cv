@@ -9,7 +9,7 @@ from zipfile import ZipFile
 
 from requests import get, post
 
-from .settings import IMAGES_LUT_PATH, ClassifierError
+from .settings import IMAGES_LUT_PATH, ClassifierError, IMAGES_LUT_ERROR_PATH
 
 
 def download_lion_db():
@@ -52,12 +52,14 @@ def parse_lion_database():
     lions = download_lion_db()
 
     lion_db = defaultdict(lambda: defaultdict(list))
+    lion_db_error = defaultdict(lambda: defaultdict(list))
     for lion in lions['data']:
         lion_id = lion['id']
         for image_set in lion['_embedded']['image_sets']:
             for image in image_set['_embedded']['images']:
                 tags = image['image_tags']
                 image_type = None
+                error = False
                 for tag in tags:
                     if 'whisker' in tag:
                         image_type = 'whisker'
@@ -65,13 +67,18 @@ def parse_lion_database():
                 for tag in tags:
                     if 'cv' in tag:
                         if image_type is not None:
-                            raise AssertionError(tags)
+                            lion_db_error[lion_id][image_type].append(image['url'])
+                            error = True    # Image tag cannot have both whisker and cv
+                            print("Lion ID {0} has both whisker and cv tags. Skipping ...".format(lion_id))
                         image_type = 'cv'
                         break
-                if image_type is None:
+                if image_type is None or error:
                     continue
                 image_url = image['url']
                 lion_db[lion_id][image_type].append(image_url)
 
     with open(IMAGES_LUT_PATH, 'w') as f:
         json.dump(lion_db, f, sort_keys=True, indent=4)
+
+    with open(IMAGES_LUT_ERROR_PATH, 'w') as f:
+        json.dump(lion_db_error, f, sort_keys=True, indent=4)
