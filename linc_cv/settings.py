@@ -21,6 +21,7 @@ os.makedirs(datapath([]), exist_ok=True)
 
 INPUT_SHAPE = (299, 299, 3,)
 IMAGES_LUT_PATH = datapath(['images_lut.json'])
+IMAGES_LUT_ERROR_PATH = datapath(['images_lut_error.json'])
 LION_FEATURES_PATH = datapath(['lion_features.h5'])
 ACTIVATIONS_PATH = datapath(['activations'])
 VALID_LION_IMAGE_TYPES = [

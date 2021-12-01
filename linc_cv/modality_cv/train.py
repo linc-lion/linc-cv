@@ -91,7 +91,7 @@ class CV_NN_Model(object):
 
 
 def extract_features(x_path, y_path, rootdir, mode):
-    cv_nn_model = CV_NN_Model()
+    cv_nn_model = CV_NN_Model(use_cuda=False)
     ps = []
     for root, dirs, files in os.walk(rootdir):
         for f in files:
