@@ -35,6 +35,7 @@ linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [
     > (linc-cv) python
     ```
   * ```python
+    >>> import pretrainedmodels
     >>> model_name = 'senet154'
     >>> model = pretrainedmodels.__dict__[model_name](num_classes=1000, pretrained='imagenet')
     ```
