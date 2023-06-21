@@ -3,11 +3,6 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
-variable "aws_profile" {
-  description = "AWS Profile"
-  default     = "linc-cv"
-}
-
 variable "ami_id" {
   description = "AMI ID for linc-cv"
   default     = "ami-02f53e5bce1535b6c"
