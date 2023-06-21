@@ -1,10 +1,12 @@
 name: Provision EC2 Instance with Terraform
 
-on: [push]
+on:
+  workflow_dispatch:
 
 jobs:
   terraform:
     runs-on: ubuntu-latest
+    name: Terraform deploy
 
     steps:
       - uses: actions/checkout@v3
@@ -36,3 +38,4 @@ jobs:
         id: apply
         working-directory: ./terraform
         run: terraform apply -auto-approve
+
