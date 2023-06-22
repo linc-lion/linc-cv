@@ -60,5 +60,6 @@ resource "aws_instance" "ec2_instance" {
     Name = "Linc-CV-Prod-06-2023"
   }
     user_data = file("startup_script.sh")
+    user_data_replace_on_change = true
 }
 
