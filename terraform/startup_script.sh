@@ -1,9 +1,18 @@
 #!/bin/bash
-echo "Made it to the user_data"
-mv /home/ubuntu/linc-cv /home/ubuntu/linc-cv-backup
-aws s3 cp s3://linc-backup/linc-cv/linc-cv-20181223.tar.gz /home/ubuntu/linc-cv-backup/linc-cv-20181223.tar.gz
+echo "Made it to the user_data 12345"
+echo "$PWD"
 sudo supervisorctl stop all
 sudo supervisorctl status
-scp -r /path/to/updated/linc-cv ubuntu@current_instance_ip:/home/ubuntu/
+mv /home/ubuntu/linc-cv/ /home/ubuntulinc-cv-backup
+cd /home/ubuntu/
+git clone https://github.com/linc-lion/linc-cv
+sudo apt-get upgrade -y
+sudo apt-get -f install -y
+sudo apt-get install ec2-instance-connect -y
+sudo apt install awscli -y
+aws s3 cp s3://linc-model-artifact/linc-cv/20230619/ /linc-cv/linc-cv/
+cd /linc-cv/linc-cv/
+tar -xvzf data.tar.gz
+echo "$PWD"
 sudo supervisorctl start all
 sudo supervisorctl status
