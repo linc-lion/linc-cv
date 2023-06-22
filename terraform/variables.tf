@@ -15,5 +15,5 @@ variable "instance_type" {
 
 variable "key_name" {
   description = "EC2 key pair name"
-  default     = "linc-cv-dev"
+  default     = "linc-cv"
 }
