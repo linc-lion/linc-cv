@@ -5,7 +5,7 @@ variable "aws_region" {
 
 variable "ami_id" {
   description = "AMI ID for linc-cv"
-  default     = "ami-02f53e5bce1535b6c"
+  default     = "ami-0a9ca2a242d7fc4df"
 }
 
 variable "instance_type" {
@@ -15,5 +15,5 @@ variable "instance_type" {
 
 variable "key_name" {
   description = "EC2 key pair name"
-  default     = "thomas-dev"
+  default     = "linc-cv-dev"
 }
