@@ -1,6 +1,6 @@
 name: Provision EC2 Instance with Terraform
 
-on: [push]
+on: workflow_dispatch
 
 jobs:
   terraform:
