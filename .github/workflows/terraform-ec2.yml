@@ -5,7 +5,7 @@ on: [push]
 jobs:
   terraform-staging-plan:
     runs-on: ubuntu-latest
-    name: Terraform deploy
+    name: Terraform plan staging
 
     steps:
       - uses: actions/checkout@v3
@@ -36,6 +36,7 @@ jobs:
   terraform-staging-deploy:
     runs-on: ubuntu-latest
     name: Terraform deploy
+    needs: [terraform-staging-plan]
     environment:
       name: staging
       url: 'https://www.google.com'
@@ -61,7 +62,7 @@ jobs:
         run: terraform init
 
       - name: Terraform Select Staging
-        id: init
+        id: select-staging
         working-directory: ./terraform
         run: terraform workspace select staging
 
