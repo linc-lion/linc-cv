@@ -62,7 +62,7 @@ jobs:
         run: terraform init
 
       - name: Terraform Select Staging
-        id: select-staging
+        id: select-environment
         working-directory: ./terraform
         run: terraform workspace select staging
 
