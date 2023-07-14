@@ -59,7 +59,7 @@ resource "aws_instance" "ec2_instance" {
   tags = {
     Name = "Linc-CV-${terraform.workspace}-${formatdate("YYYY-MM-DD-hh:mm", timestamp() )}"
   }
-    user_data = file("startup_script.sh")
+    user_data = terraform.workspace == "prod" ? file("startup_script.sh") : file("startup_script_staging.sh")
     user_data_replace_on_change = true
 }
 
