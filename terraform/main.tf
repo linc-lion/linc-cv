@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 resource "aws_security_group" "linc-cv-sg" {
-  name = "sec-grp"
+  name = "linc-cv-sec-group-${terraform.workspace}"
   description = "Allow HTTP and SSH traffic via Terraform"
 
   ingress {
@@ -57,9 +57,16 @@ resource "aws_instance" "ec2_instance" {
   }
 
   tags = {
-    Name = "Linc-CV-Prod-${formatdate("YYYY-MM-DD-hh:mm", timestamp() )}"
+    Name = "Linc-CV-${terraform.workspace}-${formatdate("YYYY-MM-DD-hh:mm", timestamp() )}"
   }
-    user_data = file("startup_script.sh")
+    user_data = terraform.workspace == "prod" ? file("startup_script.sh") : file("startup_script_staging.sh")
     user_data_replace_on_change = true
 }
+
+resource "aws_eip_association" "eip_assoc" {
+  count = terraform.workspace == "prod" ? 1 : 0
+  instance_id   = aws_instance.ec2_instance.id
+  allocation_id = "eipalloc-05ddad883ecfba225"
+}
+
 
