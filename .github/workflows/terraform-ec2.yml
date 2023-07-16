@@ -116,7 +116,7 @@ jobs:
     name: Deploy green
     needs: [terraform-green-plan]
     environment:
-      name: prod
+      name: green
 
     steps:
       - uses: actions/checkout@v3
@@ -188,7 +188,7 @@ jobs:
     name: Deploy blue
     needs: [ terraform-blue-plan ]
     environment:
-      name: prod
+      name: blue
 
     steps:
       - uses: actions/checkout@v3
@@ -263,7 +263,7 @@ jobs:
     name: Destroy green
     needs: [ terraform-green-deploy ]
     environment:
-      name: prod
+      name: green
 
     steps:
       - uses: actions/checkout@v3
@@ -300,7 +300,7 @@ jobs:
     name: Destroy blue
     needs: [ terraform-blue-deploy ]
     environment:
-      name: prod
+      name: blue
 
     steps:
       - uses: actions/checkout@v3
