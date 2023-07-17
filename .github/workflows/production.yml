@@ -1,7 +1,7 @@
 name: Provision EC2 Instance in production with Terraform
 
 on:
-  push:
+  workflow_dispatch:
     branches:
       - main
 
