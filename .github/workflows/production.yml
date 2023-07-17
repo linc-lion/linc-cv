@@ -1,85 +1,14 @@
-name: Provision EC2 Instance with Terraform
+name: Provision EC2 Instance in production with Terraform
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
-  terraform-staging-plan:
-    runs-on: ubuntu-latest
-    name: Plan staging
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.1.7
-
-      - name: Terraform Init
-        id: init
-        working-directory: ./terraform
-        run: terraform init
-
-      - name: Terraform Select Staging
-        id: select-environment
-        working-directory: ./terraform
-        run: terraform workspace select staging
-
-      - name: Terraform Plan
-        id: plan
-        working-directory: ./terraform
-        run: terraform plan
-
-
-  terraform-staging-deploy:
-    runs-on: ubuntu-latest
-    name: Deploy staging
-    needs: [terraform-staging-plan]
-    environment:
-      name: staging
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.1.7
-
-      - name: Terraform Init
-        id: init
-        working-directory: ./terraform
-        run: terraform init
-
-      - name: Terraform Select Staging
-        id: select-environment
-        working-directory: ./terraform
-        run: terraform workspace select staging
-
-      - name: Terraform Apply
-        id: apply
-        working-directory: ./terraform
-        run: terraform apply -auto-approve
-
-
   terraform-green-plan:
     runs-on: ubuntu-latest
     name: Plan green
-    needs: [terraform-staging-deploy]
     steps:
       - uses: actions/checkout@v3
 
@@ -114,7 +43,7 @@ jobs:
   terraform-green-deploy:
     runs-on: ubuntu-latest
     name: Deploy green
-    needs: [terraform-green-plan]
+    needs: [ terraform-green-plan ]
     environment:
       name: green
 
@@ -151,7 +80,6 @@ jobs:
   terraform-blue-plan:
     runs-on: ubuntu-latest
     name: Plan blue
-    needs: [ terraform-staging-deploy ]
     steps:
       - uses: actions/checkout@v3
 
@@ -220,50 +148,13 @@ jobs:
         working-directory: ./terraform
         run: terraform apply -auto-approve
 
-  terraform-staging-destroy:
-    runs-on: ubuntu-latest
-    name: Destroy staging
-    needs: [ terraform-staging-deploy ]
-    environment:
-      name: staging
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.1.7
-
-      - name: Terraform Init
-        id: init
-        working-directory: ./terraform
-        run: terraform init
-
-      - name: Terraform Select Staging
-        id: select-environment
-        working-directory: ./terraform
-        run: terraform workspace select staging
-
-      - name: Terraform Destroy
-        id: apply
-        working-directory: ./terraform
-        run: terraform destroy -auto-approve
-
 
   terraform-green-destroy:
     runs-on: ubuntu-latest
     name: Destroy green
     needs: [ terraform-green-deploy ]
     environment:
-      name: green
+      name: green-destroy
 
     steps:
       - uses: actions/checkout@v3
@@ -300,7 +191,7 @@ jobs:
     name: Destroy blue
     needs: [ terraform-blue-deploy ]
     environment:
-      name: blue
+      name: blue-destroy
 
     steps:
       - uses: actions/checkout@v3
