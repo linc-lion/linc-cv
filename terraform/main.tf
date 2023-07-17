@@ -59,14 +59,8 @@ resource "aws_instance" "ec2_instance" {
   tags = {
     Name = "Linc-CV-${terraform.workspace}-${formatdate("YYYY-MM-DD-hh:mm", timestamp() )}"
   }
-    user_data = terraform.workspace == "prod" ? file("startup_script.sh") : file("startup_script_staging.sh")
+    user_data = terraform.workspace == "staging" ? file("startup_script_staging.sh") : file("startup_script.sh")
     user_data_replace_on_change = true
-}
-
-resource "aws_eip_association" "eip_assoc" {
-  count = terraform.workspace == "prod" ? 1 : 0
-  instance_id   = aws_instance.ec2_instance.id
-  allocation_id = "eipalloc-05ddad883ecfba225"
 }
 
 
