@@ -14,6 +14,22 @@ linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [
 * Install [redis](https://gist.github.com/tomysmile/1b8a321e7c58499ef9f9441b2faa0aa8). Celery uses redis message broker.
 * Download models from [linc-cv-data repository](https://github.com/linc-lion/linc-cv-data) to `linc_cv/data`
 
+### linc-cv training
+* Clone [linc-cv-data](https://github.com/linc-lion/linc-cv-data).
+* Create a `data` folder under linc-cv/linc-cv.
+* Copy `whisker_model_yolo.h5` from `linc-cv-data` to linc-cv/linc-cv/data.
+  * The `whisker_model_yolo.h5` model was built by previous developers. Unfortunately, the training code is missing.
+* Export the following ENV variables:
+  * LINC_USERNAME
+  * LINC_PASSWORD
+* Execute the following training commands in linc-cv/linc-cv/main.py:
+  * python <path_to>/linc-cv/linc_cv/main.py --parse-lion-database
+  * python <path_to>/linc-cv/linc_cv/main.py --download-cv-images
+  * python <path_to>/linc-cv/linc_cv/main.py --extract-cv-features
+  * python <path_to>/linc-cv/linc_cv/main.py --train-cv-classifier
+  * python <path_to>/linc-cv/linc_cv/main.py --download-whisker-images
+  * python <path_to>/linc-cv/linc_cv/main.py --train-whisker-classifier
+
 ### supervisor setup
 * Install [Homebrew](https://brew.sh/)
 * Run `brew install supervisor`
