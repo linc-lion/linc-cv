@@ -2,19 +2,7 @@
 
 A lion identification service based on lion face and whiskers recognitions.
 
-## Local setup for Mac
-
-linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [Celery](https://docs.celeryproject.org/en/stable/getting-started/introduction.html) and [Supervisor](http://supervisord.org/) 
-
-### linc-cv service setup
-* Download [Conda](https://www.anaconda.com/products/individual)
-* Run `conda create --name linc-cv python=3.6`
-* Run `conda activate linc-cv`
-* Run `pip install -r requirements.txt`
-* Install [redis](https://gist.github.com/tomysmile/1b8a321e7c58499ef9f9441b2faa0aa8). Celery uses redis message broker.
-* Download models from [linc-cv-data repository](https://github.com/linc-lion/linc-cv-data) to `linc_cv/data`
-
-### linc-cv training
+## linc-cv training
 * Clone [linc-cv-data](https://github.com/linc-lion/linc-cv-data).
 * Create a `data` folder under linc-cv/linc-cv.
 * Copy `whisker_model_yolo.h5` from `linc-cv-data` to linc-cv/linc-cv/data.
@@ -29,6 +17,18 @@ linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [
   * python <path_to>/linc-cv/linc_cv/main.py --train-cv-classifier
   * python <path_to>/linc-cv/linc_cv/main.py --download-whisker-images
   * python <path_to>/linc-cv/linc_cv/main.py --train-whisker-classifier
+
+## Local setup for Mac
+
+linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [Celery](https://docs.celeryproject.org/en/stable/getting-started/introduction.html) and [Supervisor](http://supervisord.org/)
+
+### linc-cv service setup
+* Download [Conda](https://www.anaconda.com/products/individual)
+* Run `conda create --name linc-cv python=3.6`
+* Run `conda activate linc-cv`
+* Run `pip install -r requirements.txt`
+* Install [redis](https://gist.github.com/tomysmile/1b8a321e7c58499ef9f9441b2faa0aa8). Celery uses redis message broker.
+* Download models from [linc-cv-data repository](https://github.com/linc-lion/linc-cv-data) to `linc_cv/data`
 
 ### supervisor setup
 * Install [Homebrew](https://brew.sh/)
