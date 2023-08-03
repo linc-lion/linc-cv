@@ -2,19 +2,6 @@
 
 A lion identification service based on lion face and whiskers recognitions.
 
-## Deployment
-This application is currently deployed via a blue green methodology using Github Actions. The process is as follows:
-1. Work on code changes in a feature branch based off of the staging branch
-2. Submit a merge request to the staging branch
-3. Run the ***Deploy*** Github Action workflow pointed to the staging branch
-4. Receive approval from project administrators
-5. Submit a merge request to the master branch
-6. Determine which environment (blue, green) is active in production
-7. Run the ***Deploy*** Github Action workflow pointed to the inactive environment
-8. Point the staging and production webapp in Heroku to the inactive environment, making it active
-9. Run the ***Destroy*** Github Action workflow pointed to the new inactive branch
-
-
 ## Local setup for Mac
 
 linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [Celery](https://docs.celeryproject.org/en/stable/getting-started/introduction.html) and [Supervisor](http://supervisord.org/) 
@@ -143,6 +130,18 @@ linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [
     }
 
     ```
+    
+## Deployment
+This application is currently deployed via a blue green methodology using Github Actions. The process is as follows:
+1. Work on code changes in a feature branch based off of the staging branch
+2. Submit a merge request to the staging branch
+3. Run the ***Deploy*** Github Action workflow pointed to the staging branch
+4. Receive approval from project administrators
+5. Submit a merge request to the master branch
+6. Determine which environment (blue, green) is active in production
+7. Run the ***Deploy*** Github Action workflow pointed to the inactive branch
+8. Point the webapp in Heroku to the inactive branch, making it active
+9. Run the ***Destroy*** Github Action workflow pointed to the new inactive branch
 
 ## Resources
 * [Conda cheat sheet](https://docs.conda.io/projects/conda/en/4.6.0/_downloads/52a95608c49671267e40c689e0bc00ca/conda-cheatsheet.pdf)
