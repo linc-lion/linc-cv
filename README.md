@@ -2,9 +2,37 @@
 
 A lion identification service based on lion face and whiskers recognitions.
 
+## Deployment
+This application is currently deployed via a blue green methodology using Github Actions. The process is as follows:
+1. Work on code changes in a feature branch based off of the staging branch
+2. Submit a merge request to the staging branch
+3. Run the ***Deploy*** Github Action workflow pointed to the staging branch
+4. Receive approval from project administrators
+5. Submit a merge request to the master branch
+6. Determine which environment (blue, green) is active in production
+7. Run the ***Deploy*** Github Action workflow pointed to the inactive environment
+8. Point the staging and production webapp in Heroku to the inactive environment, making it active
+9. Run the ***Destroy*** Github Action workflow pointed to the new inactive environment
+
+## linc-cv training
+* Clone [linc-cv-data](https://github.com/linc-lion/linc-cv-data).
+* Create a `data` folder under linc-cv/linc-cv.
+* Copy `whisker_model_yolo.h5` from `linc-cv-data` to linc-cv/linc-cv/data.
+  * The `whisker_model_yolo.h5` model was built by previous developers. Unfortunately, the training code is missing.
+* Export the following ENV variables:
+  * LINC_USERNAME
+  * LINC_PASSWORD
+* Execute the following training commands in linc-cv/linc-cv/main.py:
+  * python <path_to>/linc-cv/linc_cv/main.py --parse-lion-database
+  * python <path_to>/linc-cv/linc_cv/main.py --download-cv-images
+  * python <path_to>/linc-cv/linc_cv/main.py --extract-cv-features
+  * python <path_to>/linc-cv/linc_cv/main.py --train-cv-classifier
+  * python <path_to>/linc-cv/linc_cv/main.py --download-whisker-images
+  * python <path_to>/linc-cv/linc_cv/main.py --train-whisker-classifier
+
 ## Local setup for Mac
 
-linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [Celery](https://docs.celeryproject.org/en/stable/getting-started/introduction.html) and [Supervisor](http://supervisord.org/) 
+linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [Celery](https://docs.celeryproject.org/en/stable/getting-started/introduction.html) and [Supervisor](http://supervisord.org/)
 
 ### linc-cv service setup
 * Download [Conda](https://www.anaconda.com/products/individual)
@@ -130,6 +158,7 @@ linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [
     }
 
     ```
+
 
 ## Resources
 * [Conda cheat sheet](https://docs.conda.io/projects/conda/en/4.6.0/_downloads/52a95608c49671267e40c689e0bc00ca/conda-cheatsheet.pdf)
