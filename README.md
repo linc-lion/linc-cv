@@ -2,9 +2,25 @@
 
 A lion identification service based on lion face and whiskers recognitions.
 
+## linc-cv training
+* Clone [linc-cv-data](https://github.com/linc-lion/linc-cv-data).
+* Create a `data` folder under linc-cv/linc-cv.
+* Copy `whisker_model_yolo.h5` from `linc-cv-data` to linc-cv/linc-cv/data.
+  * The `whisker_model_yolo.h5` model was built by previous developers. Unfortunately, the training code is missing.
+* Export the following ENV variables:
+  * LINC_USERNAME
+  * LINC_PASSWORD
+* Execute the following training commands in linc-cv/linc-cv/main.py:
+  * python <path_to>/linc-cv/linc_cv/main.py --parse-lion-database
+  * python <path_to>/linc-cv/linc_cv/main.py --download-cv-images
+  * python <path_to>/linc-cv/linc_cv/main.py --extract-cv-features
+  * python <path_to>/linc-cv/linc_cv/main.py --train-cv-classifier
+  * python <path_to>/linc-cv/linc_cv/main.py --download-whisker-images
+  * python <path_to>/linc-cv/linc_cv/main.py --train-whisker-classifier
+
 ## Local setup for Mac
 
-linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [Celery](https://docs.celeryproject.org/en/stable/getting-started/introduction.html) and [Supervisor](http://supervisord.org/) 
+linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [Celery](https://docs.celeryproject.org/en/stable/getting-started/introduction.html) and [Supervisor](http://supervisord.org/)
 
 ### linc-cv service setup
 * Download [Conda](https://www.anaconda.com/products/individual)
