@@ -55,7 +55,7 @@ linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [
 * Open `celery.conf` and `flower.conf` under `linc_cv/tests/supervisord`
   * Replace `johndoe` with your own username. This is the username you use to log in to your machine.
   * You may need to modify the path in `command=/opt/anaconda3/envs/...`, if your conda is not installed in the default location.
-  * Make sure the path in `environment=PYTHONPATH=/Users/...` and `stdout_logfile=/Users/` are correct.
+  * Make sure the path in `environment=PYTHONPATH=/Users/...` and `stdout_logfile=/Users/...` are correct.
   * **NOTE:** Don't commit the changes to `celery.conf` and `flower.conf`
 * Run `/opt/homebrew/opt/supervisor/bin/supervisord -c /opt/homebrew/etc/supervisord.conf --nodaemon`
   * Make sure redis is installed and running on your machine. If not, run `brew install redis` and run `redis-server` in terminal. 
