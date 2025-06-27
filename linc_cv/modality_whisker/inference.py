@@ -10,6 +10,7 @@ import numpy as np
 from keras import backend as K
 from keras.models import load_model
 from keras.layers import Input
+import tensorflow as tf
 
 from linc_cv.settings import YOLO_ANCHORS_PATH, YOLO_ANCHORS_CLASSES
 from .yolo3.model import yolo_eval, yolo_body, tiny_yolo_body
@@ -26,7 +27,8 @@ class YOLO(object):
         self.iou = 0.45
         self.class_names = self._get_class()
         self.anchors = self._get_anchors()
-        self.sess = K.get_session()
+        tf.compat.v1.disable_eager_execution()
+        self.sess = tf.compat.v1.keras.backend.get_session()
         self.model_image_size = (416, 416)  # fixed size or (None, None), hw
         self.boxes, self.scores, self.classes = self.generate()
 
@@ -146,4 +148,3 @@ if __name__ == '__main__':
         rois = yolo.detect_image(args.whisker_image_path)
         print('rois', rois)
     yolo.close_session()
-
