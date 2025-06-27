@@ -5,8 +5,8 @@ scipy==1.10.0
 scikit-image==0.21.0
 requests==2.21.0
 keras==2.15.0
-flask==1.0.2
-flask_restful==0.3.7
+flask==2.2.5
+flask_restful==0.3.10
 h5py==3.8.0
 Pillow==9.5.0
 imgaug==0.2.7
