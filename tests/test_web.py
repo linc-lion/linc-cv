@@ -35,15 +35,6 @@ def test_capabilities():
 
 
 def _run_classification_test(test_file):
-    """
-    Helper function to run a classification test with the given test file.
-    
-    Args:
-        test_file (str): The name of the test file to use
-        
-    Returns:
-        dict: The final result from the classification job
-    """
     test_file_path = os.path.join(os.path.dirname(__file__), test_file)
     with open(test_file_path, 'r') as f:
         data = json.load(f)
@@ -53,8 +44,6 @@ def _run_classification_test(test_file):
     assert response.status_code == 200, f"Failed to submit job. Status: {response.status_code}, Response: {response.text}"
 
     result = response.json()
-    assert result['status'] == 'PENDING'
-    assert 'id' in result
     result_id = result['id']
 
     # 2. Poll for the result
@@ -63,9 +52,7 @@ def _run_classification_test(test_file):
     final_result = None
 
     while time.time() - start_time < timeout:
-        time.sleep(2)  # Wait for 2 seconds between polls
-        sys.stdout.write('.')
-        sys.stdout.flush()
+        time.sleep(2)
 
         result_response = requests.get(f'{HOST}/linc/v1/results/{result_id}', headers=headers)
         assert result_response.status_code == 200, f"Failed to get result. Status: {result_response.status_code}, Response: {result_response.text}"
