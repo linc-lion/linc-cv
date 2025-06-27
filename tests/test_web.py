@@ -4,7 +4,6 @@ import requests
 import json
 from pprint import pprint
 import time
-import sys
 
 HOST = os.environ.get('HOST', 'http://localhost:5000')
 
