@@ -35,9 +35,11 @@ This application is currently deployed via a blue green methodology using Github
 linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [Celery](https://docs.celeryproject.org/en/stable/getting-started/introduction.html) and [Supervisor](http://supervisord.org/)
 
 ### linc-cv service setup
+* Run `brew install gcc`, if you are using Mac Apple Silicon.
 * Download [Conda](https://www.anaconda.com/products/individual)
 * Run `conda create --name linc-cv python=3.6`
 * Run `conda activate linc-cv`
+* Run `pip install --upgrade pip setuptools wheel`
 * Run `pip install -r requirements.txt`
 * Install [redis](https://gist.github.com/tomysmile/1b8a321e7c58499ef9f9441b2faa0aa8). Celery uses redis message broker.
 * Download models from [linc-cv-data repository](https://github.com/linc-lion/linc-cv-data) to `linc_cv/data`
@@ -45,14 +47,17 @@ linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [
 ### supervisor setup
 * Install [Homebrew](https://brew.sh/)
 * Run `brew install supervisor`
-* Open `/usr/local/etc/supervisord.conf` with your editor of choice
+* Open `/usr/local/etc/supervisord.conf (Intel)` or `/opt/homebrew/etc/supervisord.conf (ARM)` with your editor of choice
   * Scroll to the bottom of the page.
   * Replace `files = /usr/local/etc/supervisor.d/*.ini` with `files = /path/to/linc_cv/tests/supervisord/*.conf`.
   * You need to replace `/path/to` with your local path to `linc_cv` project.
 * Open `celery.conf` and `flower.conf` under `linc_cv/tests/supervisord`
-  * Replace `johndoe` for `command` and `user` variables with your own username. This is the username you use to log in to your machine.
-  * You may need to modify the path for `command` if your conda is not installed in the default location.
-* Run `sudo /usr/local/opt/supervisor/bin/supervisord -c /usr/local/etc/supervisord.conf --nodaemon`
+  * Replace `johndoe` with your own username. This is the username you use to log in to your machine.
+  * You may need to modify the path in `command=/opt/anaconda3/envs/...`, if your conda is not installed in the default location.
+  * Make sure the path in `environment=PYTHONPATH=/Users/...` and `stdout_logfile=/Users/` are correct.
+  * **NOTE:** Don't commit the changes to `celery.conf` and `flower.conf`
+* Run `/opt/homebrew/opt/supervisor/bin/supervisord -c /opt/homebrew/etc/supervisord.conf --nodaemon`
+  * Make sure redis is installed and running on your machine. If not, run `brew install redis` and run `redis-server` in terminal. 
 * `celery-classification.log`, `celery-training.log` and `flower.log` will be created under `linc_cv/tests` folder. 
 * Now you should be able to navigate to Flower UI - http://localhost:5555/
 
