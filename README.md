@@ -20,8 +20,9 @@ This application is currently deployed via a blue green methodology using Github
 * Copy `whisker_model_yolo.h5` from `linc-cv-data` to linc-cv/linc-cv/data.
   * The `whisker_model_yolo.h5` model was built by previous developers. Unfortunately, the training code is missing.
 * Export the following ENV variables:
-  * LINC_USERNAME
-  * LINC_PASSWORD
+  * LINC_USERNAME. Username used to login to https://linc-website.herokuapp.com/
+  * LINC_PASSWORD. Password used to login to https://linc-website.herokuapp.com/
+* Make sure your LINC_USERNAME is added to the ALLOWED_EMAILS environment variable on Heroku linc-api app.
 * Execute the following training commands in linc-cv/linc-cv/main.py:
   * python <path_to>/linc-cv/linc_cv/main.py --parse-lion-database
   * python <path_to>/linc-cv/linc_cv/main.py --download-cv-images
