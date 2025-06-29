@@ -81,9 +81,10 @@ linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [
     ```
     
 ### Service usage
+* Replace `http://localhost:5000` with real service IP address and port number.
 * Example of request and response (truncated for brievity) for lion face recognition:
   * ```
-    curl --location --request POST 'http://192.168.86.137:5000/linc/v1/classify' \
+    curl --location --request POST 'http://localhost:5000/linc/v1/classify' \
     --header 'ApiKey: blah' \
     --header 'Content-Type: application/json' \
     --data-raw '{
@@ -98,8 +99,9 @@ linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [
        "errors": []
     }
     ```
+  * Replace the last part of the url with the request id.
   * ```
-    curl --location --request GET 'http://192.168.86.137:5000//linc/v1/results/f9591d42-96e6-4178-9022-cab02cd86b3b' \
+    curl --location --request GET 'http://localhost:5000//linc/v1/results/f9591d42-96e6-4178-9022-cab02cd86b3b' \
     --header 'ApiKey: blah' \
     --header 'Content-Type: application/json'
     ```
@@ -124,7 +126,7 @@ linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [
     ```
   * Example of request and response (truncated for brievity) for lion whisker recognition: 
   * ```
-    curl --location --request POST 'http://192.168.86.137:5000/linc/v1/classify' \
+    curl --location --request POST 'http://localhost:5000/linc/v1/classify' \
     --header 'ApiKey: blah' \
     --header 'Content-Type: application/json' \
     --data-raw '{
@@ -132,6 +134,7 @@ linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [
         "url": "https://raw.githubusercontent.com/linc-lion/linc-cv/master/tests/images/sample_lion_whisker_23.jpg"
     }'
     ```
+  * Replace the last part of the url with the request id.
   * ```json
     {
        "id": "3f6dbfdf-98ea-4d76-92af-e5ff9912546b",
@@ -140,7 +143,7 @@ linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [
     }
     ```
   * ```
-    curl --location --request GET 'http://192.168.86.137:5000//linc/v1/results/3f6dbfdf-98ea-4d76-92af-e5ff9912546b' \
+    curl --location --request GET 'http://localhost:5000//linc/v1/results/3f6dbfdf-98ea-4d76-92af-e5ff9912546b' \
     --header 'ApiKey: blah' \
     --header 'Content-Type: application/json'
     ```
