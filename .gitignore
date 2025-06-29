@@ -7,7 +7,7 @@ __pycache__
 celerybeat-schedule.db
 celerybeat.pid
 *.log
-linc_cv/data/*
-linc-cv/tests/supervisord_local/*
+/linc_cv/data*
+/tests/supervisord_local/
 /terraform/.terraform/
 /terraform/.terraform.lock.hcl

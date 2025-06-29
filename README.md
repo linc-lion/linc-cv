@@ -38,7 +38,7 @@ linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [
 ### linc-cv service setup
 * Run `brew install gcc`, if you are using Mac Apple Silicon.
 * Download [Conda](https://www.anaconda.com/products/individual)
-* Run `conda create --name linc-cv python=3.6`
+* Run `conda create --name linc-cv python=3.10`
 * Run `conda activate linc-cv`
 * Run `pip install --upgrade pip setuptools wheel`
 * Run `pip install -r requirements.txt`
