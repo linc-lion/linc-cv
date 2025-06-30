@@ -8,6 +8,7 @@ celerybeat-schedule.db
 celerybeat.pid
 *.log
 /linc_cv/data*
+/linc_cv/logs/
 /tests/supervisord_local/
 /terraform/.terraform/
 /terraform/.terraform.lock.hcl

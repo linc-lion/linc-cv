@@ -53,10 +53,11 @@ linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [
   * Scroll to the bottom of the page.
   * Replace `files = /usr/local/etc/supervisor.d/*.ini` with `files = /path/to/linc-cv/linc_cv/tests/supervisord_local/*.conf`.
   * You need to replace `/path/to` with your local path to `linc-cv` project.
+* Create a logs folder in `linc-cv`
 * Open `celery.conf` and `flower.conf` in `linc-cv/linc_cv/tests/supervisord_local`
   * Replace `user=johndoe` with your own username. This is the username you use to log in to your machine.
   * You may need to modify the path in `command=/opt/anaconda3/envs/...`, if your conda is not installed in the default location.
-  * Make sure the path in `environment=PYTHONPATH=/Users/.../linc/linc-cv` and `stdout_logfile=/Users/.../linc/linc-cv/...` are correct.
+  * Make sure the path in `environment=PYTHONPATH=/Users/.../linc/linc-cv` and `stdout_logfile=/Users/.../linc/linc-cv/logs/...` are correct.
 * Run `/opt/homebrew/opt/supervisor/bin/supervisord -c /opt/homebrew/etc/supervisord.conf --nodaemon`
   * Make sure redis is installed and running on your machine. If not, run `brew install redis` and run `redis-server` in terminal. 
 * `celery-classification.log`, `celery-training.log` and `flower.log` will be created under `linc_cv/tests` folder. 
