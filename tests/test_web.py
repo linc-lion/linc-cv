@@ -16,21 +16,7 @@ headers = {
     'ApiKey': API_KEY
 }
 
-STATUSES_IGNORED = ['PENDING', 'PROGRESS']
-
-
-def test_capabilities():
-    """
-    Tests if the /capabilities endpoint is reachable and returns a valid response.
-    """ 
-    response = requests.get(f'{HOST}/linc/v1/capabilities', headers=headers)
-    assert response.status_code == 200, f"Expected status code 200, but got {response.status_code}. Response: {response.text}"
-
-    data = response.json()
-    assert 'valid_cv_lion_ids' in data
-    assert 'valid_whisker_lion_ids' in data
-    assert 'cv_topk_classifier_accuracy' in data
-    assert 'whisker_topk_classifier_accuracy' in data
+STATUSES_IGNORED = ['STARTED', 'PENDING', 'PROGRESS']
 
 
 def _run_classification_test(test_file):
@@ -62,11 +48,27 @@ def _run_classification_test(test_file):
     else:
         pytest.fail(f"Test timed out after {timeout} seconds waiting for result for job {result_id}")
 
+    assert final_result.get('status') == 'finished'
     print()
     pprint(final_result)
-    assert final_result.get('status') == 'finished'
 
     return final_result
+
+
+def test_capabilities():
+    """
+    Tests if the /capabilities endpoint is reachable and returns a valid response.
+    """
+    response = requests.get(f'{HOST}/linc/v1/capabilities', headers=headers)
+    assert response.status_code == 200, f"Expected status code 200, but got {response.status_code}. Response: {response.text}"
+
+    data = response.json()
+    assert 'valid_cv_lion_ids' in data
+    assert 'valid_whisker_lion_ids' in data
+    assert 'cv_topk_classifier_accuracy' in data
+    assert 'whisker_topk_classifier_accuracy' in data
+
+    pprint(data)
 
 
 def test_cv_classification():
@@ -74,7 +76,7 @@ def test_cv_classification():
     Tests the /classify endpoint using CV classification test data.
     """
     final_result = _run_classification_test('test_cv_classification.json')
-    
+
     # Add any CV-specific assertions here
     assert len(final_result['predictions']) > 0
 
@@ -84,6 +86,6 @@ def test_whisker_classification():
     Tests the /classify endpoint using whisker classification test data.
     """
     final_result = _run_classification_test('test_whisker_classification.json')
-    
+
     # Add any whisker-specific assertions here
     assert len(final_result['predictions']) > 0
