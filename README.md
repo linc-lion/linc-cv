@@ -60,7 +60,7 @@ linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [
   * Make sure the path in `environment=PYTHONPATH=/Users/.../linc/linc-cv` and `stdout_logfile=/Users/.../linc/linc-cv/logs/...` are correct.
 * Run `/opt/homebrew/opt/supervisor/bin/supervisord -c /opt/homebrew/etc/supervisord.conf --nodaemon`
   * Make sure redis is installed and running on your machine. If not, run `brew install redis` and run `redis-server` in terminal. 
-* `celery-classification.log`, `celery-training.log` and `flower.log` will be created under `linc_cv/tests` folder. 
+* `celery-classification.log`, `celery-training.log` and `flower.log` will be created in `linc-cv/logs` folder. 
 * Now you should be able to navigate to Flower UI - http://localhost:5555/
 
 ### Service startup
