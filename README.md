@@ -23,13 +23,13 @@ This application is currently deployed via a blue green methodology using Github
   * LINC_USERNAME. Username used to login to LINC website.
   * LINC_PASSWORD. Password used to login to LINC website.
 * Make sure your LINC_USERNAME is added to the ALLOWED_EMAILS environment variable on Heroku linc-api app.
-* Execute the following training commands in linc-cv/linc_cv/main.py:
-  * python <path_to>/linc-cv/linc_cv/main.py --parse-lion-database
-  * python <path_to>/linc-cv/linc_cv/main.py --download-cv-images
-  * python <path_to>/linc-cv/linc_cv/main.py --extract-cv-features
-  * python <path_to>/linc-cv/linc_cv/main.py --train-cv-classifier
-  * python <path_to>/linc-cv/linc_cv/main.py --download-whisker-images
-  * python <path_to>/linc-cv/linc_cv/main.py --train-whisker-classifier
+* Execute the following training commands in linc-cv/main.py:
+  * PYTHONPATH=$(pwd) python linc_cv/main.py --parse-lion-database
+  * PYTHONPATH=$(pwd) python linc_cv/main.py --download-cv-images
+  * PYTHONPATH=$(pwd) python linc_cv/main.py --extract-cv-features
+  * PYTHONPATH=$(pwd) python linc_cv/main.py --train-cv-classifier
+  * PYTHONPATH=$(pwd) python linc_cv/main.py --download-whisker-images
+  * PYTHONPATH=$(pwd) python linc_cv/main.py --train-whisker-classifier
 
 ## Local setup for Mac
 
