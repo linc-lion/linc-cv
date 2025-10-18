@@ -16,28 +16,31 @@ This application is currently deployed via a blue green methodology using Github
 
 ## linc-cv training
 * Clone [linc-cv-data](https://github.com/linc-lion/linc-cv-data).
-* Create a `data` folder under linc-cv/linc-cv.
-* Copy `whisker_model_yolo.h5` from `linc-cv-data` to linc-cv/linc-cv/data.
+* Create a `data` folder under linc-cv/linc_cv.
+* Copy `whisker_model_yolo.h5` from `linc-cv-data` to linc-cv/linc_cv/data.
   * The `whisker_model_yolo.h5` model was built by previous developers. Unfortunately, the training code is missing.
 * Export the following ENV variables:
-  * LINC_USERNAME
-  * LINC_PASSWORD
-* Execute the following training commands in linc-cv/linc-cv/main.py:
-  * python <path_to>/linc-cv/linc_cv/main.py --parse-lion-database
-  * python <path_to>/linc-cv/linc_cv/main.py --download-cv-images
-  * python <path_to>/linc-cv/linc_cv/main.py --extract-cv-features
-  * python <path_to>/linc-cv/linc_cv/main.py --train-cv-classifier
-  * python <path_to>/linc-cv/linc_cv/main.py --download-whisker-images
-  * python <path_to>/linc-cv/linc_cv/main.py --train-whisker-classifier
+  * LINC_USERNAME. Username used to login to LINC website.
+  * LINC_PASSWORD. Password used to login to LINC website.
+* Make sure your LINC_USERNAME is added to the ALLOWED_EMAILS environment variable on Heroku linc-api app.
+* Execute the following training commands in linc-cv/main.py:
+  * PYTHONPATH=$(pwd) python linc_cv/main.py --parse-lion-database
+  * PYTHONPATH=$(pwd) python linc_cv/main.py --download-cv-images
+  * PYTHONPATH=$(pwd) python linc_cv/main.py --extract-cv-features
+  * PYTHONPATH=$(pwd) python linc_cv/main.py --train-cv-classifier
+  * PYTHONPATH=$(pwd) python linc_cv/main.py --download-whisker-images
+  * PYTHONPATH=$(pwd) python linc_cv/main.py --train-whisker-classifier
 
 ## Local setup for Mac
 
 linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [Celery](https://docs.celeryproject.org/en/stable/getting-started/introduction.html) and [Supervisor](http://supervisord.org/)
 
 ### linc-cv service setup
+* Run `brew install gcc`, if you are using Mac Apple Silicon.
 * Download [Conda](https://www.anaconda.com/products/individual)
-* Run `conda create --name linc-cv python=3.6`
+* Run `conda create --name linc-cv python=3.10`
 * Run `conda activate linc-cv`
+* Run `pip install --upgrade pip setuptools wheel`
 * Run `pip install -r requirements.txt`
 * Install [redis](https://gist.github.com/tomysmile/1b8a321e7c58499ef9f9441b2faa0aa8). Celery uses redis message broker.
 * Download models from [linc-cv-data repository](https://github.com/linc-lion/linc-cv-data) to `linc_cv/data`
@@ -45,15 +48,19 @@ linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [
 ### supervisor setup
 * Install [Homebrew](https://brew.sh/)
 * Run `brew install supervisor`
-* Open `/usr/local/etc/supervisord.conf` with your editor of choice
+* Make a copy of `linc-cv/linc_cv/tests/supervisord` to `linc-cv/linc_cv/tests/supervisord_local`
+* Open `/opt/homebrew/etc/supervisord.conf` with your editor of choice
   * Scroll to the bottom of the page.
-  * Replace `files = /usr/local/etc/supervisor.d/*.ini` with `files = /path/to/linc_cv/tests/supervisord/*.conf`.
-  * You need to replace `/path/to` with your local path to `linc_cv` project.
-* Open `celery.conf` and `flower.conf` under `linc_cv/tests/supervisord`
-  * Replace `johndoe` for `command` and `user` variables with your own username. This is the username you use to log in to your machine.
-  * You may need to modify the path for `command` if your conda is not installed in the default location.
-* Run `sudo /usr/local/opt/supervisor/bin/supervisord -c /usr/local/etc/supervisord.conf --nodaemon`
-* `celery-classification.log`, `celery-training.log` and `flower.log` will be created under `linc_cv/tests` folder. 
+  * Replace `files = /usr/local/etc/supervisor.d/*.ini` with `files = /path/to/linc-cv/linc_cv/tests/supervisord_local/*.conf`.
+  * You need to replace `/path/to` with your local path to `linc-cv` project.
+* Create a logs folder in `linc-cv`
+* Open `celery.conf` and `flower.conf` in `linc-cv/linc_cv/tests/supervisord_local`
+  * Replace `user=johndoe` with your own username. This is the username you use to log in to your machine.
+  * You may need to modify the path in `command=/opt/anaconda3/envs/...`, if your conda is not installed in the default location.
+  * Make sure the path in `environment=PYTHONPATH=/Users/.../linc/linc-cv` and `stdout_logfile=/Users/.../linc/linc-cv/logs/...` are correct.
+* Run `/opt/homebrew/opt/supervisor/bin/supervisord -c /opt/homebrew/etc/supervisord.conf --nodaemon`
+  * Make sure redis is installed and running on your machine. If not, run `brew install redis` and run `redis-server` in terminal. 
+* `celery-classification.log`, `celery-training.log` and `flower.log` will be created in `linc-cv/logs` folder. 
 * Now you should be able to navigate to Flower UI - http://localhost:5555/
 
 ### Service startup
@@ -75,9 +82,10 @@ linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [
     ```
     
 ### Service usage
+* Replace `http://localhost:5000` with real service IP address and port number.
 * Example of request and response (truncated for brievity) for lion face recognition:
   * ```
-    curl --location --request POST 'http://192.168.86.137:5000/linc/v1/classify' \
+    curl --location --request POST 'http://localhost:5000/linc/v1/classify' \
     --header 'ApiKey: blah' \
     --header 'Content-Type: application/json' \
     --data-raw '{
@@ -92,8 +100,9 @@ linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [
        "errors": []
     }
     ```
+  * Replace the last part of the url with the request id.
   * ```
-    curl --location --request GET 'http://192.168.86.137:5000//linc/v1/results/f9591d42-96e6-4178-9022-cab02cd86b3b' \
+    curl --location --request GET 'http://localhost:5000//linc/v1/results/f9591d42-96e6-4178-9022-cab02cd86b3b' \
     --header 'ApiKey: blah' \
     --header 'Content-Type: application/json'
     ```
@@ -118,7 +127,7 @@ linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [
     ```
   * Example of request and response (truncated for brievity) for lion whisker recognition: 
   * ```
-    curl --location --request POST 'http://192.168.86.137:5000/linc/v1/classify' \
+    curl --location --request POST 'http://localhost:5000/linc/v1/classify' \
     --header 'ApiKey: blah' \
     --header 'Content-Type: application/json' \
     --data-raw '{
@@ -126,6 +135,7 @@ linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [
         "url": "https://raw.githubusercontent.com/linc-lion/linc-cv/master/tests/images/sample_lion_whisker_23.jpg"
     }'
     ```
+  * Replace the last part of the url with the request id.
   * ```json
     {
        "id": "3f6dbfdf-98ea-4d76-92af-e5ff9912546b",
@@ -134,7 +144,7 @@ linc-cv uses 3 components: [Flower](https://flower.readthedocs.io/en/latest/), [
     }
     ```
   * ```
-    curl --location --request GET 'http://192.168.86.137:5000//linc/v1/results/3f6dbfdf-98ea-4d76-92af-e5ff9912546b' \
+    curl --location --request GET 'http://localhost:5000//linc/v1/results/3f6dbfdf-98ea-4d76-92af-e5ff9912546b' \
     --header 'ApiKey: blah' \
     --header 'Content-Type: application/json'
     ```
