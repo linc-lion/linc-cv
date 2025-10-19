@@ -117,7 +117,7 @@ def train(x_train_path, y_train_path, x_test_path, y_test_path, clf_save_path):
     with open(y_test_path) as fd:
         y_test = json.load(fd)
     clf = RandomForestClassifier(
-        n_estimators=500, class_weight='balanced', oob_score=True, n_jobs=-1, verbose=2)
+        n_estimators=250, class_weight='balanced', oob_score=True, n_jobs=-1, verbose=2)
     clf.fit(X_train, y_train)
     score = clf.score(X_test, y_test)
     print(f'clf score: {round(score, 3)}')

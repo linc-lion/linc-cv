@@ -5,12 +5,12 @@ variable "aws_region" {
 
 variable "ami_id" {
   description = "AMI ID for linc-cv"
-  default     = "ami-0a9ca2a242d7fc4df"
+  default     = "ami-07c6a705483a25f67"
 }
 
 variable "instance_type" {
   description = "EC2 instance type"
-  default     = "t3.xlarge"
+  default     = "r5.xlarge"
 }
 
 variable "key_name" {
